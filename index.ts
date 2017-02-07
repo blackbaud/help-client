@@ -1,4 +1,3 @@
-declare const jQuery: any;
 declare const BBHELP: any;
 
 export class BBHelp {
@@ -13,19 +12,7 @@ export class BBHelp {
   }
 
   public static load(config: any = {}): Promise<any> {
-    let promises: Promise<any>[] = [];
-
-    if (!jQuery) {
-      promises.push(
-        BBHelp.registerScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js')
-      );
-    }
-
-    promises.push(
-      BBHelp.registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
-    );
-
-    return Promise.all(promises)
+    return BBHelp.registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
       .then(() => {
         BBHELP.HelpWidget.load(config);
       });
