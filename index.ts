@@ -13,8 +13,9 @@ export class BBHelp {
 
   public static addStyles(): void {
     let css = `
-      .bb-omnibar-bar.bar { padding-right: 50px; }
+      .bb-omnibar-bar.bar { padding-right: 50px !important; }
       .bb-omnibar > .bb-omnibar-desktop > .bb-omnibar-accountflyout { right: 50px !important; }
+      #bb-help-container { z-index: 9999; }
     `;
     let style = document.createElement('style');
     style.type = 'text/css';
