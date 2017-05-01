@@ -1,16 +1,8 @@
 declare const BBHELP: any;
 
-export class BBHelp {
-  public static registerScript(url: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      const scriptEl = document.createElement('script');
-      scriptEl.onload = resolve;
-      scriptEl.onerror = reject;
-      scriptEl.src = url;
-      document.body.appendChild(scriptEl);
-    });
-  }
+import { registerScript } from './register-script';
 
+export class BBHelp {
   public static addStyles(): void {
     const css = `
       .bb-omnibar-bar.bar { padding-right: 50px !important; }
@@ -24,7 +16,7 @@ export class BBHelp {
   }
 
   public static load(config: any = {}): Promise<any> {
-    return BBHelp.registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
+    return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
       .then(() => {
         BBHelp.addStyles();
 
