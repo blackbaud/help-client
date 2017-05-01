@@ -3,7 +3,7 @@ declare const BBHELP: any;
 export class BBHelp {
   public static registerScript(url: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      let scriptEl = document.createElement('script');
+      const scriptEl = document.createElement('script');
       scriptEl.onload = resolve;
       scriptEl.onerror = reject;
       scriptEl.src = url;
@@ -12,12 +12,12 @@ export class BBHelp {
   }
 
   public static addStyles(): void {
-    let css = `
+    const css = `
       .bb-omnibar-bar.bar { padding-right: 50px !important; }
       .bb-omnibar > .bb-omnibar-desktop > .bb-omnibar-accountflyout { right: 50px !important; }
       #bb-help-container { z-index: 9999; }
     `;
-    let style = document.createElement('style');
+    const style = document.createElement('style');
     style.type = 'text/css';
     style.appendChild(document.createTextNode(css));
     document.head.appendChild(style);
