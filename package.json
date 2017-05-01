@@ -12,6 +12,7 @@
   },
   "scripts": {
     "ci": "npm run test:ci && npm run build",
+    "test": "npm run ci",
     "test:ci": "npm run test:unit:ci",
     "test:unit:ci": "npm run test:unit:base -- config/karma/ci.karma.conf.js",
     "test:unit:base": "node --max-old-space-size=4096 node_modules/karma/bin/karma start",
