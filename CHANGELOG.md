@@ -1,4 +1,3 @@
-# 1.0.1 (2017-05-02)
+# 1.0.0 (2017-05-02)
 
-- Added Travis-CI
-- Added unit tests
+- Initial release
