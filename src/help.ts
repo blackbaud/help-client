@@ -3,7 +3,8 @@ declare const BBHELP: any;
 import { registerScript } from './register-script';
 
 export class BBHelp {
-  private static CURRENT_HELP_KEY: string = 'default.html';
+  private static defaultHelpKey: string = 'default.html';
+  private static currentHelpKey: string;
 
   public static addStyles(): void {
     const css = `
@@ -18,25 +19,33 @@ export class BBHelp {
   }
 
   public static load(config: any = {}): Promise<any> {
+    if (config.defaultHelpKey !== undefined) {
+      BBHelp.defaultHelpKey = config.defaultHelpKey;
+    }
+
+    config.getCurrentHelpKey = BBHelp.getCurrentHelpKey;
+
     return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
       .then(() => {
         BBHelp.addStyles();
-        config.getCurrentHelpKey = this.getCurrentHelpKey;
-
         // Initialize the widget.
         BBHELP.HelpWidget.load(config);
       });
   }
 
-  public static getCurrentHelpKey(): string {
-    return BBHelp.CURRENT_HELP_KEY;
+  public static setCurrentHelpKey(helpKey: string = BBHelp.defaultHelpKey): void {
+    BBHelp.currentHelpKey = helpKey;
   }
 
-  public static setCurrentHelpKey(helpKey: string): void {
-    BBHelp.CURRENT_HELP_KEY = helpKey;
+  public static resetCurrentHelpKeyToDefault(): void {
+    BBHelp.currentHelpKey = BBHelp.defaultHelpKey;
   }
 
-  public static openWidget(): void {
-    BBHELP.HelpWidget.open(BBHELP.CURRENT_HELP_KEY);
+  public static openWidgetToHelpKey(helpKey: string = BBHelp.currentHelpKey): void {
+    BBHELP.HelpWidget.open(helpKey);
+  }
+
+  private static getCurrentHelpKey(): string {
+    return BBHelp.currentHelpKey;
   }
 }
