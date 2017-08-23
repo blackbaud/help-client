@@ -38,10 +38,10 @@ export class BBHelp {
   }
 
   public static resetCurrentHelpKeyToDefault(): void {
-    BBHelp.currentHelpKey = BBHelp.defaultHelpKey;
+    BBHelp.setCurrentHelpKey(BBHelp.defaultHelpKey);
   }
 
-  public static openWidgetToHelpKey(helpKey: string = BBHelp.currentHelpKey): void {
+  public static openWidgetToHelpKey(helpKey: string = BBHelp.defaultHelpKey): void {
     BBHELP.HelpWidget.open(helpKey);
   }
 
