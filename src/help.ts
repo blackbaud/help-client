@@ -41,7 +41,7 @@ export class BBHelp {
     BBHelp.setCurrentHelpKey(BBHelp.defaultHelpKey);
   }
 
-  public static openWidgetToHelpKey(helpKey: string = BBHelp.defaultHelpKey): void {
+  public static openWidgetToHelpKey(helpKey: string = BBHelp.currentHelpKey): void {
     BBHELP.HelpWidget.open(helpKey);
   }
 
