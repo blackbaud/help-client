@@ -99,7 +99,7 @@ describe('help-client', () => {
       });
   });
 
-  it('should return the defaultHelpKey is no currentHelpKey is defined', (done) => {
+  it('should return the defaultHelpKey if no currentHelpKey is defined', (done) => {
       const helpKey = BBHelpClient.getCurrentHelpKey();
       expect(helpKey).toEqual('default.html');
       done();
@@ -121,7 +121,7 @@ describe('help-client', () => {
       });
   });
 
-  it('should set the currentHelpKey to a helpKey passed as a parameter', (done) => {
+  it('should set the currentHelpKey to the helpKey passed as a parameter', (done) => {
     const newHelpKey = 'test-key.html';
     const initialHelpKey = BBHelpClient.getCurrentHelpKey();
     BBHelpClient.setCurrentHelpKey(newHelpKey);
@@ -132,14 +132,14 @@ describe('help-client', () => {
     done();
   });
 
-  it('should set the currentHelpKey to defaultHelpKey if no helpkey is passed as a parameter', (done) => {
+  it('should set the currentHelpKey to defaultHelpKey if no helpKey is passed as a parameter', (done) => {
     BBHelpClient.setCurrentHelpKey();
     const helpKey = BBHelpClient.getCurrentHelpKey();
     expect(helpKey).toEqual('default.html');
     done();
   });
 
-  it('should set the currentHelpKey back to defaultHelpKey', (done) => {
+  it('should set the currentHelpKey back to defaultHelpKey when setHelpKeyToDefault is called', (done) => {
     const newHelpKey = 'test-key.html';
     BBHelpClient.setCurrentHelpKey(newHelpKey);
     const helpKey = BBHelpClient.getCurrentHelpKey();
@@ -150,7 +150,7 @@ describe('help-client', () => {
     done();
   });
 
-  it('should open the widget to the current HelpKey if no helpKey is passed as a parameter', (done) => {
+  it('should open the widget to the currentHelpKey if no helpKey is passed as a parameter', (done) => {
     const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
     const newHelpKey = 'test-key.html';
     BBHelpClient
@@ -166,7 +166,7 @@ describe('help-client', () => {
       });
   });
 
-  it('should open the widget a specified helpKey if one is passed as a parameter', (done) => {
+  it('should open the widget to a specified helpKey if one is passed as a parameter', (done) => {
     const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
     const newHelpKey = 'test-key.html';
     BBHelpClient
