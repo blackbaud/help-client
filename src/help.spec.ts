@@ -1,6 +1,6 @@
 import { } from 'jasmine';
 
-import { BBHelp } from './help';
+import { BBHelpClient } from './help';
 import * as utils from './register-script';
 
 describe('help-client', () => {
@@ -22,6 +22,9 @@ describe('help-client', () => {
       HelpWidget: {
         load: (helpConfig: any) => {
           // help widget initialized...
+        },
+        open: (helpKey: string) => {
+          // help widget open...
         }
       }
     };
@@ -29,10 +32,12 @@ describe('help-client', () => {
 
   afterEach(() => {
     registerScriptSpy.calls.reset();
+    BBHelpClient['defaultHelpKey'] = 'default.html';
+    BBHelpClient['currentHelpKey'] = undefined;
   });
 
   it('should load the help widget library', (done) => {
-    BBHelp
+    BBHelpClient
       .load({})
       .then(() => {
         expect(registerScriptSpy.calls.argsFor(0)).toEqual(
@@ -51,7 +56,7 @@ describe('help-client', () => {
       productId: 'lo'
     };
 
-    BBHelp
+    BBHelpClient
       .load(config)
       .then(() => {
         expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(config);
@@ -63,12 +68,16 @@ describe('help-client', () => {
   });
 
   it('should handle undefined config', (done) => {
+    const defaultConfig = {
+      getCurrentHelpKey: BBHelpClient.getCurrentHelpKey
+    };
+
     const helpLoadSpy = spyOn(fakeHelp.HelpWidget, 'load').and.callThrough();
 
-    BBHelp
+    BBHelpClient
       .load()
       .then(() => {
-        expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith({});
+        expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(defaultConfig);
         done();
       })
       .catch(() => {
@@ -77,7 +86,7 @@ describe('help-client', () => {
   });
 
   it('should add the required help widget elements to the page', (done) => {
-    BBHelp
+    BBHelpClient
       .load({
         productId: 'lo'
       })
@@ -87,6 +96,89 @@ describe('help-client', () => {
       })
       .catch(() => {
         done.fail('The help widget elements were not created.');
+      });
+  });
+
+  it('should return the defaultHelpKey is no currentHelpKey is defined', (done) => {
+      const helpKey = BBHelpClient.getCurrentHelpKey();
+      expect(helpKey).toEqual('default.html');
+      done();
+  });
+
+  it('should set the defaultKey to the defaultHelpKey from the config', (done) => {
+    BBHelpClient
+      .load({
+        defaultHelpKey: 'new-default.html',
+        productId: 'lo'
+      })
+      .then(() => {
+        const helpKey = BBHelpClient['defaultHelpKey'];
+        expect(helpKey).toEqual('new-default.html');
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget elements were not created.');
+      });
+  });
+
+  it('should set the currentHelpKey to a helpKey passed as a parameter', (done) => {
+    const newHelpKey = 'test-key.html';
+    const initialHelpKey = BBHelpClient.getCurrentHelpKey();
+    BBHelpClient.setCurrentHelpKey(newHelpKey);
+    const helpKey = BBHelpClient.getCurrentHelpKey();
+    expect(initialHelpKey).toEqual('default.html');
+    expect(helpKey).not.toEqual(initialHelpKey);
+    expect(helpKey).toEqual(newHelpKey);
+    done();
+  });
+
+  it('should set the currentHelpKey to defaultHelpKey if no helpkey is passed as a parameter', (done) => {
+    BBHelpClient.setCurrentHelpKey();
+    const helpKey = BBHelpClient.getCurrentHelpKey();
+    expect(helpKey).toEqual('default.html');
+    done();
+  });
+
+  it('should set the currentHelpKey back to defaultHelpKey', (done) => {
+    const newHelpKey = 'test-key.html';
+    BBHelpClient.setCurrentHelpKey(newHelpKey);
+    const helpKey = BBHelpClient.getCurrentHelpKey();
+    BBHelpClient.setHelpKeyToDefault();
+    const currentHelpKey = BBHelpClient.getCurrentHelpKey();
+    expect(helpKey).toEqual(newHelpKey);
+    expect(currentHelpKey).toEqual('default.html');
+    done();
+  });
+
+  it('should open the widget to the current HelpKey if no helpKey is passed as a parameter', (done) => {
+    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
+    const newHelpKey = 'test-key.html';
+    BBHelpClient
+      .load()
+      .then(() => {
+        BBHelpClient.setCurrentHelpKey(newHelpKey);
+        BBHelpClient.openWidgetToHelpKey();
+        expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget was not configured.');
+      });
+  });
+
+  it('should open the widget a specified helpKey if one is passed as a parameter', (done) => {
+    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
+    const newHelpKey = 'test-key.html';
+    BBHelpClient
+      .load()
+      .then(() => {
+        BBHelpClient.setCurrentHelpKey(newHelpKey);
+        BBHelpClient.openWidgetToHelpKey('foo.html');
+        expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget was not configured.');
       });
   });
 });
