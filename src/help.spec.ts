@@ -6,6 +6,23 @@ import * as utils from './register-script';
 describe('help-client', () => {
   let registerScriptSpy: jasmine.Spy;
   let fakeHelp: any;
+  let documentStyles = '';
+
+  const mockCreateElement = (): any => {
+    return {
+      appendChild(cssStyles: any) { this.cssStyles = cssStyles; },
+      cssStyles: '',
+      type: undefined
+    };
+  };
+
+  const mockCreateTextNode = (css: any) => {
+    return 'test styles';
+  };
+
+  const mockAppendChild = (styleObject: any) => {
+    documentStyles = styleObject.cssStyles;
+  };
 
   beforeAll(() => {
     registerScriptSpy = spyOn(
@@ -28,12 +45,34 @@ describe('help-client', () => {
         }
       }
     };
+
+    spyOn(document, 'createElement').and.callFake(mockCreateElement);
+    spyOn(document, 'createTextNode').and.callFake(mockCreateTextNode);
+    spyOn(document.head, 'appendChild').and.callFake(mockAppendChild);
   });
 
   afterEach(() => {
     registerScriptSpy.calls.reset();
     BBHelpClient['defaultHelpKey'] = 'default.html';
     BBHelpClient['currentHelpKey'] = undefined;
+  });
+
+  it('should add styles to the document when load is called', (done) => {
+    expect(documentStyles).toEqual('');
+
+    BBHelpClient
+      .load({})
+      .then(() => {
+        expect(registerScriptSpy.calls.argsFor(0)).toEqual(
+          ['https://cdn.blackbaudcloud.com/bb-help/bb-help.js']
+        );
+        expect(document.createElement).toHaveBeenCalled();
+        expect(documentStyles).toEqual('test styles');
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget library was not loaded.');
+      });
   });
 
   it('should load the help widget library', (done) => {
