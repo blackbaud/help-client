@@ -6,7 +6,7 @@ import * as utils from './register-script';
 describe('help-client', () => {
   let registerScriptSpy: jasmine.Spy;
   let fakeHelp: any;
-  let documentStyles = '';
+  let headStyles = '';
 
   const mockCreateElement = (): any => {
     return {
@@ -20,8 +20,8 @@ describe('help-client', () => {
     return 'test styles';
   };
 
-  const mockAppendChild = (styleObject: any) => {
-    documentStyles = styleObject.cssStyles;
+  const mockHeadAppendChild = (styleObject: any) => {
+    headStyles = styleObject.cssStyles;
   };
 
   beforeAll(() => {
@@ -48,7 +48,7 @@ describe('help-client', () => {
 
     spyOn(document, 'createElement').and.callFake(mockCreateElement);
     spyOn(document, 'createTextNode').and.callFake(mockCreateTextNode);
-    spyOn(document.head, 'appendChild').and.callFake(mockAppendChild);
+    spyOn(document.head, 'appendChild').and.callFake(mockHeadAppendChild);
   });
 
   afterEach(() => {
@@ -58,7 +58,7 @@ describe('help-client', () => {
   });
 
   it('should add styles to the document when load is called', (done) => {
-    expect(documentStyles).toEqual('');
+    expect(headStyles).toEqual('');
 
     BBHelpClient
       .load({})
@@ -67,7 +67,7 @@ describe('help-client', () => {
           ['https://cdn.blackbaudcloud.com/bb-help/bb-help.js']
         );
         expect(document.createElement).toHaveBeenCalled();
-        expect(documentStyles).toEqual('test styles');
+        expect(headStyles).toEqual('test styles');
         done();
       })
       .catch(() => {
