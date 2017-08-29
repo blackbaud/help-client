@@ -4,6 +4,7 @@ import { BBHelpClient } from './help';
 import * as utils from './register-script';
 
 describe('help-client', () => {
+  const testCss: string = '{ background-color: red }';
   let registerScriptSpy: jasmine.Spy;
   let fakeHelp: any;
   let headStyles = '';
@@ -17,7 +18,7 @@ describe('help-client', () => {
   };
 
   const mockCreateTextNode = (css: any) => {
-    return 'test styles';
+    return testCss;
   };
 
   const mockHeadAppendChild = (styleObject: any) => {
@@ -57,22 +58,11 @@ describe('help-client', () => {
     BBHelpClient['currentHelpKey'] = undefined;
   });
 
-  it('should add styles to the document when load is called', (done) => {
+  it('should add styles to the document head', (done) => {
     expect(headStyles).toEqual('');
-
-    BBHelpClient
-      .load({})
-      .then(() => {
-        expect(registerScriptSpy.calls.argsFor(0)).toEqual(
-          ['https://cdn.blackbaudcloud.com/bb-help/bb-help.js']
-        );
-        expect(document.createElement).toHaveBeenCalled();
-        expect(headStyles).toEqual('test styles');
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget library was not loaded.');
-      });
+    BBHelpClient.addStyles();
+    expect(headStyles).toEqual(testCss);
+    done();
   });
 
   it('should load the help widget library', (done) => {
