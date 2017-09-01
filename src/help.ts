@@ -2,7 +2,7 @@ declare const BBHELP: any;
 
 import { registerScript } from './register-script';
 
-export class BBHelpClient {
+export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
   private static currentHelpKey: string;
 
