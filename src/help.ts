@@ -2,7 +2,10 @@ declare const BBHELP: any;
 
 import { registerScript } from './register-script';
 
-export class BBHelp {
+export abstract class BBHelpClient {
+  private static defaultHelpKey: string = 'default.html';
+  private static currentHelpKey: string;
+
   public static addStyles(): void {
     const css = `
       .bb-omnibar-bar.bar { padding-right: 50px !important; }
@@ -16,12 +19,33 @@ export class BBHelp {
   }
 
   public static load(config: any = {}): Promise<any> {
+    if (config.defaultHelpKey !== undefined) {
+      BBHelpClient.defaultHelpKey = config.defaultHelpKey;
+    }
+
+    config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
+
     return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
       .then(() => {
-        BBHelp.addStyles();
-
+        BBHelpClient.addStyles();
         // Initialize the widget.
         BBHELP.HelpWidget.load(config);
       });
+  }
+
+  public static setCurrentHelpKey(helpKey: string = BBHelpClient.defaultHelpKey): void {
+    BBHelpClient.currentHelpKey = helpKey;
+  }
+
+  public static setHelpKeyToDefault(): void {
+    BBHelpClient.setCurrentHelpKey(BBHelpClient.defaultHelpKey);
+  }
+
+  public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
+    BBHELP.HelpWidget.open(helpKey);
+  }
+
+  public static getCurrentHelpKey(): string {
+    return BBHelpClient.currentHelpKey || BBHelpClient.defaultHelpKey;
   }
 }
