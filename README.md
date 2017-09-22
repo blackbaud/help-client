@@ -17,3 +17,7 @@ Provides a client-side library for interacting with the Help Widget. This module
 ```
 
 Learn more about the Help Widget's [configuration options](https://github.com/blackbaud/bb-help).
+
+## Reporting an Issue
+For feature requests, bug reports, or other issues that you wish to report/request, please file an issue in the [Help Library Issuse](https://github.com/blackbaud/skyux-lib-help/issues) repo.
+
