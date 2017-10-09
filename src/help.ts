@@ -48,4 +48,8 @@ export abstract class BBHelpClient {
   public static getCurrentHelpKey(): string {
     return BBHelpClient.currentHelpKey || BBHelpClient.defaultHelpKey;
   }
+
+  public static toggleOpen(): void {
+    BBHELP.HelpWidget.toggleOpen();
+  }
 }
