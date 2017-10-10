@@ -38,11 +38,19 @@ describe('help-client', () => {
     registerScriptSpy.calls.reset();
     fakeHelp = {
       HelpWidget: {
-        load: (helpConfig: any) => {
+        opened: false,
+        close() {
+          this.opened = false;
+        },
+        load(helpConfig: any) {
           // help widget initialized...
         },
-        open: (helpKey: string) => {
+        open(helpKey?: string) {
           // help widget open...
+          this.opened = true;
+        },
+        toggleOpen() {
+          this.opened ? this.close() : this.open();
         }
       }
     };
@@ -204,6 +212,27 @@ describe('help-client', () => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
         BBHelpClient.openWidgetToHelpKey('foo.html');
         expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget was not configured.');
+      });
+  });
+
+  it('should toggle the widget between open and closed', (done) => {
+    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
+    const helpCloseSpy = spyOn(fakeHelp.HelpWidget, 'close').and.callThrough();
+    const helpToggleSpy = spyOn(fakeHelp.HelpWidget, 'toggleOpen').and.callThrough();
+
+    BBHelpClient.load()
+      .then(() => {
+        expect(helpOpenSpy).not.toHaveBeenCalled();
+        BBHelpClient.toggleOpen();
+        expect(helpOpenSpy).toHaveBeenCalled();
+        expect(helpCloseSpy).not.toHaveBeenCalled();
+        BBHelpClient.toggleOpen();
+        expect(helpCloseSpy).toHaveBeenCalled();
+        expect(helpToggleSpy).toHaveBeenCalledTimes(2);
         done();
       })
       .catch(() => {
