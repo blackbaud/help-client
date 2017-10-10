@@ -1,3 +1,7 @@
+# 1.1.0 (2017-10-10)
+
+- Added a method to expose the `toggleOpen` method from the widget.
+
 # 1.0.2 (2017-09-06)
 
 - Added more methods for handling the helpKey between the client and the help widget
