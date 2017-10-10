@@ -1,13 +1,13 @@
 # 1.1.0 (2017-10-10)
 
-- Added a method to expose the `toggleOpen` method from the widget.
+- Added a method to expose the `toggleOpen` method from the widget. [pull request #8](https://github.com/blackbaud/help-client/pull/8)
 
 # 1.0.2 (2017-09-06)
 
 - Added more methods for handling the helpKey between the client and the help widget
 - Added more tests for methods and style changes
 - Renamed the BBHelp to BBHelpClient for clarity and distinction between the client and the widget.
-- [#6](https://github.com/blackbaud/help-client/pull/6)
+- [pull request #6](https://github.com/blackbaud/help-client/pull/6)
 
 # 1.0.1 (2017-05-10)
 
