@@ -52,4 +52,20 @@ export abstract class BBHelpClient {
   public static toggleOpen(): void {
     BBHELP.HelpWidget.toggleOpen();
   }
+
+  public static openWidget(): void {
+    BBHELP.HelpWidget.open();
+  }
+
+  public static closeWidget(): void {
+    BBHELP.HelpWidget.close();
+  }
+
+  public static disableWidget(): void {
+    BBHELP.HelpWidget.disableWidget();
+  }
+
+  public static enableWidget(): void {
+    BBHELP.HelpWidget.enableWidget();
+  }
 }
