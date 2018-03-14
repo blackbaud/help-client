@@ -26,7 +26,7 @@ export abstract class BBHelpClient {
 
     config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
 
-    return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
+    return registerScript('https://cdn-dev.blackbaudcloud.com/bb-help/bb-help.js')
       .then(() => {
         BBHelpClient.addStyles();
         // Initialize the widget.
