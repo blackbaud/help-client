@@ -83,34 +83,36 @@ export abstract class BBHelpClient {
     });
   }
 
-  private static executeWhenReady(actionCallback: Function): void {
+  private static executeWhenReady(actionCallback: () => void): void {
     BBHelpClient.ready()
+      .then(() => {
+        return BBHELP.HelpWidget.ready();
+      })
       .then(() => {
         actionCallback();
       })
-      .catch(err => {
+      .catch((err: string) => {
         console.error(err);
       });
   }
 
   private static ready(): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       let readyAttempts: number = 0;
       const duration: number = 100;
       const maxIterations: number = 100;
 
-      const interval = setInterval(() => {
-        readyAttempts++;
+      const interval: any = setInterval(() => {
+          readyAttempts++;
+          if (BBHelpClient.widgetLoaded) {
+              clearInterval(interval);
+              resolve();
+          }
 
-        if (BBHelpClient.widgetLoaded) {
-          clearInterval(interval);
-          return resolve();
-        }
-
-        if (maxIterations >= 100) {
-          clearInterval(interval);
-          return reject('The Help Widget failed to load.');
-        }
+          if (readyAttempts >= maxIterations) {
+              clearInterval(interval);
+              reject('The Help Widget failed to load.');
+          }
       }, duration);
     });
   }
