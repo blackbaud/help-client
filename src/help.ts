@@ -44,8 +44,7 @@ export abstract class BBHelpClient {
   }
 
   public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
-    BBHelpClient.executeWhenReady(
-      () => {
+    BBHelpClient.executeWhenReady(() => {
         BBHELP.HelpWidget.open(helpKey);
       });
   }
@@ -55,26 +54,36 @@ export abstract class BBHelpClient {
   }
 
   public static toggleOpen(): void {
-    BBHelpClient.executeWhenReady(BBHELP.HelpWidget.toggleOpen);
+    BBHelpClient.executeWhenReady(() => {
+      BBHELP.HelpWidget.toggleOpen();
+    });
   }
 
   public static openWidget(): void {
-    BBHelpClient.executeWhenReady(BBHELP.HelpWidget.open);
+    BBHelpClient.executeWhenReady(() => {
+      BBHELP.HelpWidget.open();
+    });
   }
 
   public static closeWidget(): void {
-    BBHelpClient.executeWhenReady(BBHELP.HelpWidget.close);
+    BBHelpClient.executeWhenReady(() => {
+      BBHELP.HelpWidget.close();
+    });
   }
 
   public static disableWidget(): void {
-    BBHelpClient.executeWhenReady(BBHELP.HelpWidget.disableWidget);
+    BBHelpClient.executeWhenReady(() => {
+      BBHELP.HelpWidget.disableWidget();
+    });
   }
 
   public static enableWidget(): void {
-    BBHelpClient.executeWhenReady(BBHELP.HelpWidget.enableWidget);
+    BBHelpClient.executeWhenReady(() => {
+      BBHELP.HelpWidget.enableWidget();
+    });
   }
 
-  private static executeWhenReady(actionCallback: Function) {
+  private static executeWhenReady(actionCallback: Function): void {
     BBHelpClient.ready()
       .then(() => {
         actionCallback();
@@ -84,7 +93,7 @@ export abstract class BBHelpClient {
       });
   }
 
-  private static ready() {
+  private static ready(): Promise<any> {
     return new Promise((resolve, reject) => {
       let readyAttempts: number = 0;
       const duration: number = 100;
