@@ -5,7 +5,10 @@ import { registerScript } from './register-script';
 export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
   private static currentHelpKey: string;
+
   private static widgetLoaded: boolean = false;
+  private static DURATION: number = 100;
+  private static MAX_ITERATIONS: number = 100;
 
   public static addStyles(): void {
     const css = `
@@ -83,8 +86,8 @@ export abstract class BBHelpClient {
     });
   }
 
-  private static executeWhenReady(actionCallback: () => void): void {
-    BBHelpClient.ready()
+  public static executeWhenReady(actionCallback: () => void): Promise<any> {
+    return BBHelpClient.ready()
       .then(() => {
         return BBHELP.HelpWidget.ready();
       })
@@ -96,24 +99,22 @@ export abstract class BBHelpClient {
       });
   }
 
-  private static ready(): Promise<any> {
+  public static ready(): Promise<any> {
     return new Promise((resolve: any, reject: any) => {
       let readyAttempts: number = 0;
-      const duration: number = 100;
-      const maxIterations: number = 100;
 
       const interval: any = setInterval(() => {
-          readyAttempts++;
-          if (BBHelpClient.widgetLoaded) {
-              clearInterval(interval);
-              resolve();
-          }
+        readyAttempts++;
+        if (BBHelpClient.widgetLoaded) {
+          clearInterval(interval);
+          resolve();
+        }
 
-          if (readyAttempts >= maxIterations) {
-              clearInterval(interval);
-              reject('The Help Widget failed to load.');
-          }
-      }, duration);
+        if (readyAttempts >= BBHelpClient.MAX_ITERATIONS) {
+          clearInterval(interval);
+          reject('The Help Widget failed to load.');
+        }
+      }, BBHelpClient.DURATION);
     });
   }
 }
