@@ -30,7 +30,9 @@
     "url": "https://github.com/blackbaud/help-client/issues"
   },
   "homepage": "https://github.com/blackbaud/help-client#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@types/tapable": "^0.2.4"
+  },
   "devDependencies": {
     "@types/core-js": "0.9.41",
     "@types/jasmine": "2.5.47",
