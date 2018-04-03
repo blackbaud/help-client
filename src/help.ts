@@ -7,8 +7,6 @@ export abstract class BBHelpClient {
   private static currentHelpKey: string;
 
   private static widgetLoaded: boolean = false;
-  private static DURATION: number = 100;
-  private static MAX_ITERATIONS: number = 100;
 
   public static addStyles(): void {
     const css = `
@@ -47,7 +45,8 @@ export abstract class BBHelpClient {
   }
 
   public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
-    BBHelpClient.executeWhenReady(() => {
+    BBHelpClient.ready()
+      .then(() => {
         BBHELP.HelpWidget.open(helpKey);
       });
   }
@@ -57,49 +56,54 @@ export abstract class BBHelpClient {
   }
 
   public static toggleOpen(): void {
-    BBHelpClient.executeWhenReady(() => {
-      BBHELP.HelpWidget.toggleOpen();
-    });
+    BBHelpClient.ready()
+      .then(() => {
+        BBHELP.HelpWidget.toggleOpen();
+      });
   }
 
   public static openWidget(): void {
-    BBHelpClient.executeWhenReady(() => {
-      BBHELP.HelpWidget.open();
-    });
+    BBHelpClient.ready()
+      .then(() => {
+        BBHELP.HelpWidget.open();
+      });
   }
 
   public static closeWidget(): void {
-    BBHelpClient.executeWhenReady(() => {
-      BBHELP.HelpWidget.close();
-    });
+    BBHelpClient.ready()
+      .then(() => {
+        BBHELP.HelpWidget.close();
+      });
   }
 
   public static disableWidget(): void {
-    BBHelpClient.executeWhenReady(() => {
-      BBHELP.HelpWidget.disableWidget();
-    });
+    BBHelpClient.ready()
+      .then(() => {
+        BBHELP.HelpWidget.disableWidget();
+      });
   }
 
   public static enableWidget(): void {
-    BBHelpClient.executeWhenReady(() => {
-      BBHELP.HelpWidget.enableWidget();
-    });
+    BBHelpClient.ready()
+      .then(() => {
+        BBHELP.HelpWidget.enableWidget();
+      });
   }
 
-  public static executeWhenReady(actionCallback: () => void): Promise<any> {
-    return BBHelpClient.ready()
+  public static ready(): Promise<any> {
+    return BBHelpClient.clientReady()
       .then(() => {
         return BBHELP.HelpWidget.ready();
-      })
-      .then(() => {
-        actionCallback();
       })
       .catch((err: string) => {
         console.error(err);
       });
   }
 
-  public static ready(): Promise<any> {
+  private static clientReady(): Promise<any> {
+    const duration: number = 100;
+    const maxIterations: number = 50;
+
     return new Promise((resolve: any, reject: any) => {
       let readyAttempts: number = 0;
 
@@ -110,11 +114,11 @@ export abstract class BBHelpClient {
           resolve();
         }
 
-        if (readyAttempts >= BBHelpClient.MAX_ITERATIONS) {
+        if (readyAttempts >= maxIterations) {
           clearInterval(interval);
           reject('The Help Widget failed to load.');
         }
-      }, BBHelpClient.DURATION);
+      }, duration);
     });
   }
 }
