@@ -45,10 +45,7 @@ export abstract class BBHelpClient {
   }
 
   public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
-    BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.open(helpKey);
-      });
+    BBHELP.HelpWidget.open(helpKey);
   }
 
   public static getCurrentHelpKey(): string {
@@ -56,35 +53,26 @@ export abstract class BBHelpClient {
   }
 
   public static toggleOpen(): void {
-    BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.toggleOpen();
-      });
+    BBHELP.HelpWidget.toggleOpen();
   }
 
   public static openWidget(): void {
-    BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.open();
-      });
+    BBHELP.HelpWidget.open();
   }
 
   public static closeWidget(): void {
-    BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.close();
-      });
+    BBHELP.HelpWidget.close();
   }
 
-  public static disableWidget(): void {
-    BBHelpClient.ready()
+  public static disableWidget(): Promise<any> {
+    return BBHelpClient.ready()
       .then(() => {
         BBHELP.HelpWidget.disableWidget();
       });
   }
 
-  public static enableWidget(): void {
-    BBHelpClient.ready()
+  public static enableWidget(): Promise<any> {
+    return BBHelpClient.ready()
       .then(() => {
         BBHELP.HelpWidget.enableWidget();
       });
