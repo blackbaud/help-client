@@ -64,18 +64,12 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.close();
   }
 
-  public static disableWidget(): Promise<any> {
-    return BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.disableWidget();
-      });
+  public static disableWidget(): void {
+    BBHELP.HelpWidget.disableWidget();
   }
 
-  public static enableWidget(): Promise<any> {
-    return BBHelpClient.ready()
-      .then(() => {
-        BBHELP.HelpWidget.enableWidget();
-      });
+  public static enableWidget(): void {
+    BBHELP.HelpWidget.enableWidget();
   }
 
   public static ready(): Promise<any> {
