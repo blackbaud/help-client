@@ -1,3 +1,7 @@
+# 1.2.0 (2018-04-19)
+
+- Added methods Ready, Open, Close, Disable, and Enable for the widget. [pull request #11](https://github.com/blackbaud/help-client/pull/11)
+
 # 1.1.0 (2017-10-10)
 
 - Added a method to expose the `toggleOpen` method from the widget. [pull request #8](https://github.com/blackbaud/help-client/pull/8)
