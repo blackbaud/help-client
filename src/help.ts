@@ -6,6 +6,8 @@ export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
   private static currentHelpKey: string;
 
+  private static widgetLoaded: boolean = false;
+
   public static addStyles(): void {
     const css = `
       .bb-omnibar-bar.bar { padding-right: 50px !important; }
@@ -30,6 +32,7 @@ export abstract class BBHelpClient {
         BBHelpClient.addStyles();
         // Initialize the widget.
         BBHELP.HelpWidget.load(config);
+        BBHelpClient.widgetLoaded = true;
       });
   }
 
@@ -51,5 +54,53 @@ export abstract class BBHelpClient {
 
   public static toggleOpen(): void {
     BBHELP.HelpWidget.toggleOpen();
+  }
+
+  public static openWidget(): void {
+    BBHELP.HelpWidget.open();
+  }
+
+  public static closeWidget(): void {
+    BBHELP.HelpWidget.close();
+  }
+
+  public static disableWidget(): void {
+    BBHELP.HelpWidget.disableWidget();
+  }
+
+  public static enableWidget(): void {
+    BBHELP.HelpWidget.enableWidget();
+  }
+
+  public static ready(): Promise<any> {
+    return BBHelpClient.clientReady()
+      .then(() => {
+        return BBHELP.HelpWidget.ready();
+      })
+      .catch((err: string) => {
+        console.error(err);
+      });
+  }
+
+  private static clientReady(): Promise<any> {
+    const duration: number = 100;
+    const maxIterations: number = 50;
+
+    return new Promise((resolve: any, reject: any) => {
+      let readyAttempts: number = 0;
+
+      const interval: any = setInterval(() => {
+        readyAttempts++;
+        if (BBHelpClient.widgetLoaded) {
+          clearInterval(interval);
+          resolve();
+        }
+
+        if (readyAttempts >= maxIterations) {
+          clearInterval(interval);
+          reject('The Help Widget failed to load.');
+        }
+      }, duration);
+    });
   }
 }
