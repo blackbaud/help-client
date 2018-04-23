@@ -56,8 +56,8 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.toggleOpen();
   }
 
-  public static openWidget(): void {
-    BBHELP.HelpWidget.open();
+  public static openWidget(helpKey?: string): void {
+    BBHELP.HelpWidget.open(helpKey);
   }
 
   public static closeWidget(): void {

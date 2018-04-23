@@ -224,7 +224,7 @@ describe('help-client', () => {
       });
   });
 
-  it('should open the widget to a specified helpKey if one is passed as a parameter', (done) => {
+  it('should open the widget to a specified helpKey with openWidgetToHelpKey', (done) => {
     const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
     const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
       return Promise.resolve();
@@ -235,6 +235,25 @@ describe('help-client', () => {
       .then(() => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
         BBHelpClient.openWidgetToHelpKey('foo.html');
+        expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget was not configured.');
+      });
+  });
+
+  it('should open the widget to a specified helpKey with openWidget', (done) => {
+    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
+    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
+      return Promise.resolve();
+    });
+    const newHelpKey = 'test-key.html';
+    BBHelpClient
+      .load()
+      .then(() => {
+        BBHelpClient.setCurrentHelpKey(newHelpKey);
+        BBHelpClient.openWidget('foo.html');
         expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
         done();
       })

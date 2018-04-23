@@ -1,3 +1,7 @@
+# 1.3.0 (2018-04-23)
+
+- Added an optional param to the `openWidget` method to pass a helpKey to the widget. [pull request #13](https://github.com/blackbaud/help-client/pull/13)
+
 # 1.2.0 (2018-04-19)
 
 - Added methods Ready, Open, Close, Disable, and Enable for the widget. [pull request #11](https://github.com/blackbaud/help-client/pull/11)
