@@ -1,0 +1,114 @@
+@import './variables.scss';
+
+.bb-help-container {
+  z-index: 9999;
+}
+
+.bb-help-hidden {
+  display: none;
+}
+
+#bb-help-container.bb-help-closed {
+  right: -$panelWidth;
+  transition: right 250ms ease-out;
+
+  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
+    right: -100%;
+  }
+}
+
+#bb-help-container {
+  line-height: normal;
+  position: fixed;
+  top: 0;
+  right: 0;
+  transition: right 250ms ease-in;
+  height: $panelHeight;
+  width: $panelWidth;
+  box-sizing: border-box;
+
+  // Fullscreen help for mobile or small heights
+  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
+    height: 100%;
+    width: 100%;
+
+    &:not(.bb-help-closed) {
+      #bb-help-invoker {
+        display: none;
+      }
+    }
+  }
+
+  // Hide invoker for mobile
+  @media (max-width: $screenXsMax) {
+    &.bb-help-closed {
+      .hide-on-mobile {
+        display: none;
+      }
+    }
+  }
+
+  *, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+}
+
+.bb-omnibar-collapsed {
+  #bb-help-container.bb-help-closed {
+    #bb-help-invoker:not(:hover) {
+      height: $collapsedHeaderHeight;
+      border-bottom-left-radius: 24px;
+      border-top-left-radius: 24px;
+      width: 30px;
+      padding: 2px 10px 7px 6px;
+    }
+  }
+}
+
+#bb-help-invoker {
+  box-sizing: border-box;
+  border-bottom-left-radius: 24px;
+  border-top-left-radius: 24px;
+  background: #71bf44;
+  float: left;
+  padding: 12px 10px 7px 10px;
+  font-size: 17px;
+  color: #fff;
+  cursor: pointer;
+  position: absolute;
+  height: 48px;
+  width: 40px;
+  right: 100%;
+
+  @media (max-width: $screenXsMax) {
+     .hide-on-mobile {
+          display: none;
+      }
+  }
+}
+
+#bb-help-invoker::before {
+  content: '?';
+  display: inline-block;
+  font-family: sans-serif;
+  font-weight: 700;
+  text-align: center;
+  width: 2ex;
+  height: 2ex;
+  font-size: 14px;
+  line-height: 2ex;
+  border-radius: 1.4ex;
+  margin-right: 4px;
+  padding: 1px;
+  border: 2px solid;
+  text-decoration: none;
+  box-sizing: content-box!important;
+}
+
+#bb-help-iframe {
+  box-shadow: -1px 2px 9px 0 rgba(50,50,50,.41);
+  height: 100%;
+  width: 100%;
+}
