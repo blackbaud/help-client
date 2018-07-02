@@ -1,6 +1,7 @@
 declare const BBHELP: any;
 
 import { registerScript } from './register-script';
+import { HelpWidget } from './help-widget-wrapper';
 
 export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
@@ -8,19 +9,17 @@ export abstract class BBHelpClient {
 
   private static widgetLoaded: boolean = false;
 
-  public static load(config: any = {}): Promise<any> {
+  public static load(config: any = {}) {
     if (config.defaultHelpKey !== undefined) {
       BBHelpClient.defaultHelpKey = config.defaultHelpKey;
     }
 
     config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
-
-    return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
-      .then(() => {
-        // Initialize the widget.
-        BBHELP.HelpWidget.load(config);
-        BBHelpClient.widgetLoaded = true;
-      });
+    (window as any).BBHELP = {
+      HelpWidget: new HelpWidget()
+    };
+    BBHELP.HelpWidget.load(config);
+    BBHelpClient.widgetLoaded = true;
   }
 
   public static setCurrentHelpKey(helpKey: string = BBHelpClient.defaultHelpKey): void {

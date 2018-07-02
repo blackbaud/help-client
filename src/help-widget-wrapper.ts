@@ -15,7 +15,8 @@ export class HelpWidget {
     this.init();
   }
 
-  public load() {
+  public load(config: string) {
+    console.log(config);
     console.log('loading');
   }
 
@@ -58,6 +59,8 @@ export class HelpWidget {
                 hideHelpChat: true
               }
           });
+          case 'close-widget':
+          this.closeWidget();
           default:
             break;
         }
@@ -94,6 +97,10 @@ export class HelpWidget {
     // }
     this.appendElement(this.domElement);
   };
+
+  private closeWidget() {
+    this.domElement.classList.add('bb-help-closed');
+  }
 
   private createInvoker(config?: any) {
     this.invokerEl = document.createElement('div');
@@ -144,10 +151,3 @@ export class HelpWidget {
     this.setUpInvokerEvents();
   }
 }
-
-(function() {
-  'use strict';
-  (window as any).BBHELP = {
-    HelpWidget: new HelpWidget()
-  };
-}());

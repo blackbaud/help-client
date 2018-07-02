@@ -19,8 +19,8 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader?localIdentName=[hash:base64:10]', 'sass-loader'],
-        exclude: '/node_modules/'
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
+        exclude: '/node_modules/',
       },
     ]
   }
