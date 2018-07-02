@@ -1,4 +1,5 @@
 var path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './index.ts',
@@ -8,6 +9,7 @@ module.exports = {
     library: 'BBHelpClient',
     libraryTarget: 'umd'
   },
+  devtool: 'inline-source-map',
   resolve: {
     extensions: ['.ts', '.js']
   },
@@ -15,7 +17,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader',
+        loader: 'ts-loader'
       },
       {
         test: /\.scss$/,
@@ -23,5 +25,19 @@ module.exports = {
         exclude: '/node_modules/'
       },
     ]
-  }
+  },
+  devServer: {
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    contentBase: '/dist/bundles',
+    port: 9000
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'template.html',
+      filename: 'index.html',
+      devServer: 'http://localhost:9000'
+    })
+  ]
 };

@@ -1,5 +1,5 @@
 require('./styles/widget-styles.scss');
-
+require('./styles/omnibar-style-adjustments.scss');
 const IFrameClass: string = 'bb-help-iframe';
 const BB_GREEN: string = '#71bf43'
 
