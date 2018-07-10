@@ -1,26 +1,23 @@
 require('./styles/widget-styles.scss');
 require('./styles/omnibar-style-adjustments.scss');
+
 const IFrameClass: string = 'bb-help-iframe';
-const BB_GREEN: string = '#71bf43'
+const BB_HEADER_COLOR: string = '#71bf43'
+const BB_HEADER_TEXT_COLOR: string = '#fff';
+const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 
+import { HelpConfig } from './help-config';
+import { BBHelpCommunicationService } from './communication.service';
 
-const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
-
-export class HelpWidget {
+export class BBHelpHelpWidget {
   private domElement: HTMLElement;
   private invokerEl: HTMLElement;
   private iframeEl: HTMLIFrameElement;
+  private config : HelpConfig;
+  private communicationService: BBHelpCommunicationService;
 
-  public constructor() {
-    this.init();
-  }
-
-  public load(config: string) {
-    console.log(config);
-    console.log('loading');
-  }
-
-  private init() {
+  public load(config: HelpConfig = {}) {
+    this.config = config;
     this.renderElements();
     this.addStyles();
     this.setUpEvents();
@@ -34,52 +31,6 @@ export class HelpWidget {
       IFrameClass,
       'BB Help'
     );
-    window.addEventListener('message', this.messageHandler());
-  }
-
-  public messageHandler() {
-    return (event: any) => {
-      let fromWidget = this.isFromHelpWidget(event);
-      if (fromWidget) {
-        let message = event.data;
-        switch (message.messageType) {
-          case 'ready':
-            this.postMessage(this.iframeEl, { messageType: 'host-ready' });
-            break;
-          case 'request-config':
-            this.postMessage(this.iframeEl, {
-              messageType: 'user-config',
-              config: {
-                productId: 'this is way different',
-                customLocales: [],
-                communityUrl: 'https://community.blackbaud.com/products/blackbaudcrm',
-                caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
-                knowledgebaseUrl: 'https://kb.blackbaud.com/',
-                useFlareSearch: true,
-                hideHelpChat: true
-              }
-          });
-          case 'close-widget':
-          this.closeWidget();
-          default:
-            break;
-        }
-      }
-    }
-  }
-
-  public postMessage(iframeEl: HTMLIFrameElement, message: any, origin: string = HOST_ORIGIN) {
-    message.source = 'help-client';
-    iframeEl.contentWindow.postMessage(message, origin);
-  }
-
-  public isFromHelpWidget(event: { origin: string, data: any }): boolean {
-    if (event.origin === HOST_ORIGIN ) {
-      const message = event.data;
-      return !!message && message.source === 'skyux-spa-bb-help';
-    }
-
-    return false;
   }
 
   private addStyles() {
@@ -104,15 +55,13 @@ export class HelpWidget {
 
   private createInvoker(config?: any) {
     this.invokerEl = document.createElement('div');
-    this.invokerEl.id = 'bb-help-invoker';
+    this.invokerEl.id = BB_HELP_INVOKER_ID;
     this.appendElement(this.invokerEl, this.domElement)
   }
 
-  private addInvokerStyles(config?: any) {
-    let backgroundColor = BB_GREEN;
-    let textColor = '#fff';
-    this.invokerEl.style.backgroundColor = backgroundColor;
-    this.invokerEl.style.color = textColor;
+  private addInvokerStyles() {
+    this.invokerEl.style.backgroundColor = this.config.headerColor || BB_HEADER_COLOR;;
+    this.invokerEl.style.color = this.config.headerTextColor || BB_HEADER_TEXT_COLOR;;
     this.invokerEl.style.content = '?';
   }
 

@@ -1,5 +1,6 @@
 var path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fs = require('fs-extra')
 
 module.exports = {
   entry: './index.ts',
@@ -23,7 +24,7 @@ module.exports = {
         test: /\.scss$/,
         loaders: ['style-loader', 'css-loader', 'sass-loader'],
         exclude: '/node_modules/'
-      }
+      },
     ]
   },
   devServer: {
@@ -31,7 +32,11 @@ module.exports = {
       'Access-Control-Allow-Origin': '*'
     },
     contentBase: '/dist/bundles',
-    port: 9000
+    port: 9000,
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, '..', 'cert', 'server.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, '..', 'cert', 'server.crt'))
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

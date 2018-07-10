@@ -1,7 +1,7 @@
 declare const BBHELP: any;
 
 import { registerScript } from './register-script';
-import { HelpWidget } from './help-widget-wrapper';
+import { BBHelpHelpWidget } from './help-widget-wrapper';
 
 export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
@@ -16,7 +16,7 @@ export abstract class BBHelpClient {
 
     config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
     (window as any).BBHELP = {
-      HelpWidget: new HelpWidget()
+      HelpWidget: new BBHelpHelpWidget()
     };
     BBHELP.HelpWidget.load(config);
     BBHelpClient.widgetLoaded = true;
@@ -90,3 +90,7 @@ export abstract class BBHelpClient {
     });
   }
 }
+
+(function() {
+  BBHelpClient.load();
+}());
