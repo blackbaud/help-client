@@ -1,5 +1,5 @@
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
-import { Subject } from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 
 
 //TODO:  Create an Observable stream that allows the other classes to tap into events broadcast by this service.
@@ -7,11 +7,11 @@ import { Subject } from 'rxjs/Subject';
 
 export class BBHelpCommunicationService {
 
-  public communicationAction: Subject = new Subject();
+  public communicationAction: Subject<any> = new Subject();
 
-  private childWindow: any;
+  public childWindowReady: boolean = false;
 
-  constructor(childWindow: any) {
+  constructor(private childWindow: any) {
     window.addEventListener('message', this.messageHandler());
   }
 
@@ -23,23 +23,10 @@ export class BBHelpCommunicationService {
         switch (message.messageType) {
           case 'ready':
             this.postMessage(this.childWindow, { messageType: 'host-ready' });
+            this.childWindowReady = true;
             break;
-          case 'request-config':
-            this.postMessage(this.childWindow, {
-              messageType: 'user-config',
-              config: {
-                productId: 'bbHelpTesting',
-                customLocales: [],
-                communityUrl: 'https://community.blackbaud.com/products/blackbaudcrm',
-                caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
-                knowledgebaseUrl: 'https://kb.blackbaud.com/',
-                useFlareSearch: true,
-                hideHelpChat: true
-              }
-          });
-          break;
           case 'close-widget':
-            console.log('close widget comm');
+            this.communicationAction.next('Close Widget');
           default:
             break;
         }

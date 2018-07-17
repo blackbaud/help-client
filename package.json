@@ -33,7 +33,7 @@
   "homepage": "https://github.com/blackbaud/help-client#readme",
   "dependencies": {
     "@types/tapable": "0.2.4",
-    "rxjs": "^6.2.1"
+    "rxjs": "6.2.1"
   },
   "devDependencies": {
     "@types/core-js": "0.9.41",

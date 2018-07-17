@@ -18,8 +18,12 @@ export abstract class BBHelpClient {
     (window as any).BBHELP = {
       HelpWidget: new BBHelpHelpWidget()
     };
-    BBHELP.HelpWidget.load(config);
-    BBHelpClient.widgetLoaded = true;
+    BBHELP.HelpWidget.init();
+    BBHELP.HelpWidget.ready()
+      .then(() => {
+        BBHELP.HelpWidget.load(config);
+        BBHelpClient.widgetLoaded = true;
+      });
   }
 
   public static setCurrentHelpKey(helpKey: string = BBHelpClient.defaultHelpKey): void {

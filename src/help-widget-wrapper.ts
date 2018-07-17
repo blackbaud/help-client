@@ -18,9 +18,62 @@ export class BBHelpHelpWidget {
 
   public load(config: HelpConfig = {}) {
     this.config = config;
+    this.addInvokerStyles();
+    this.sendConfig();
+  }
+
+  public init() {
     this.renderElements();
-    this.addStyles();
     this.setUpEvents();
+    this.communicationService = new BBHelpCommunicationService(this.iframeEl);
+    this.communicationService.communicationAction.subscribe((action: string) => {
+      this.actionResponse(action);
+    });
+  }
+
+  public ready() {
+    return new Promise((resolve, reject) => {
+        let readyAttempts = 0;
+        const duration = 100;
+        const maxIterations = 100;
+
+        const interval = setInterval(() => {
+          readyAttempts++;
+          if (this.communicationService.childWindowReady) {
+              clearInterval(interval);
+              resolve();
+          }
+
+          if (readyAttempts >= maxIterations) {
+              clearInterval(interval);
+              reject('The Help Widget failed to load.');
+          }
+        }, duration);
+    });
+  }
+
+  public actionResponse(action: string) {
+    switch (action) {
+      case 'Close Widget':
+        this.closeWidget();
+        break;
+      default:
+    }
+  }
+
+  public sendConfig() {
+    this.communicationService.postMessage(this.iframeEl, {
+        messageType: 'user-config',
+        config: {
+          productId: 'bbHelpTesting',
+          customLocales: [],
+          communityUrl: 'https://community.blackbaud.com/products/blackbaudcrm',
+          caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
+          knowledgebaseUrl: 'https://kb.blackbaud.com/',
+          useFlareSearch: true,
+          hideHelpChat: true
+        }
+    });
   }
 
   private renderElements() {
@@ -31,11 +84,6 @@ export class BBHelpHelpWidget {
       IFrameClass,
       'BB Help'
     );
-  }
-
-  private addStyles() {
-    this.addInvokerStyles();
-    this.addIframeStyles();
   }
 
   private createContainer() {
@@ -84,6 +132,7 @@ export class BBHelpHelpWidget {
     this.appendElement(iframeEl, this.domElement);
 
     this.iframeEl = iframeEl;
+    this.addIframeStyles();
   }
 
   private addIframeStyles() {
