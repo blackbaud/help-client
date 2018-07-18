@@ -2,6 +2,7 @@ declare const BBHELP: any;
 
 import { registerScript } from './register-script';
 import { BBHelpHelpWidget } from './help-widget-wrapper';
+import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
 
 const demoConfig: HelpConfig = {
@@ -15,6 +16,7 @@ const demoConfig: HelpConfig = {
 };
 
 export abstract class BBHelpClient {
+  private static communicationService: BBHelpCommunicationService;
   private static defaultHelpKey: string = 'default.html';
   private static currentHelpKey: string;
 
@@ -33,6 +35,8 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.ready()
       .then(() => {
         BBHELP.HelpWidget.load(config);
+        BBHelpClient.setUpCommunication();
+        BBHelpClient.sendConfig(config);
         BBHelpClient.widgetLoaded = true;
       });
   }
@@ -102,6 +106,39 @@ export abstract class BBHelpClient {
           reject('The Help Widget failed to load.');
         }
       }, duration);
+    });
+  }
+
+  private static setUpCommunication() {
+    this.communicationService = new BBHelpCommunicationService(BBHELP.HelpWidget.iframeEl);
+    this.communicationService.communicationAction.subscribe((action: string) => {
+      BBHelpClient.actionResponse(action);
+    });
+  }
+
+  private static actionResponse(action: string) {
+    switch (action) {
+      case 'Close Widget':
+        BBHELP.HelpWidget.closeWidget();
+        break;
+      case 'getCurrentHelpKey':
+        BBHelpClient.sendCurrentHelpKey();
+        break;
+        default:
+    }
+  }
+
+  public static sendConfig(config: HelpConfig) {
+    BBHelpClient.communicationService.postMessage({
+        messageType: 'user-config',
+        config: config
+    });
+  }
+
+  public static sendCurrentHelpKey() {
+    BBHelpClient.communicationService.postMessage({
+      messageType: 'help-key',
+      helpKey: BBHelpClient.getCurrentHelpKey()
     });
   }
 }

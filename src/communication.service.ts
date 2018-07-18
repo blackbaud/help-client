@@ -1,10 +1,6 @@
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 import {Subject} from 'rxjs';
 
-
-//TODO:  Create an Observable stream that allows the other classes to tap into events broadcast by this service.
-// This will allow us to use the methods such as `close` based on a communication/action.
-
 export class BBHelpCommunicationService {
 
   public communicationAction: Subject<any> = new Subject();
@@ -22,7 +18,8 @@ export class BBHelpCommunicationService {
         let message = event.data;
         switch (message.messageType) {
           case 'ready':
-            this.postMessage(this.childWindow, { messageType: 'host-ready' });
+          console.log('???');
+            this.postMessage({ messageType: 'host-ready' });
             this.childWindowReady = true;
             break;
           case 'close-widget':
@@ -43,9 +40,9 @@ export class BBHelpCommunicationService {
     return false;
   }
 
-  public postMessage(childWindow: HTMLIFrameElement, message: any, origin: string = HOST_ORIGIN) {
-    console.log(childWindow);
+  public postMessage(message: any, origin: string = HOST_ORIGIN) {
+    console.log('posting', message, 'origin', origin);
     message.source = 'help-client';
-    childWindow.contentWindow.postMessage(message, origin);
+    this.childWindow.contentWindow.postMessage(message, origin);
   }
 }

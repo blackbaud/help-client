@@ -12,16 +12,16 @@ import { HelpConfig } from './help-config';
 import { BBHelpCommunicationService } from './communication.service';
 
 export class BBHelpHelpWidget {
+  public iframeEl: HTMLIFrameElement;
   private domElement: HTMLElement;
   private invokerEl: HTMLElement;
-  private iframeEl: HTMLIFrameElement;
   private config : HelpConfig;
-  private communicationService: BBHelpCommunicationService;
+  private elementsLoaded: boolean;
 
   constructor() {
     this.createElements();
     this.setUpInvokerEvents();
-    this.setUpCommunication();
+    this.elementsLoaded = true;
   }
 
   private createElements() {
@@ -33,28 +33,31 @@ export class BBHelpHelpWidget {
   public load(config: HelpConfig = {}) {
     this.config = config;
     this.addInvokerStyles();
-    this.sendConfig();
   }
 
   public ready() {
     return new Promise((resolve, reject) => {
-        let readyAttempts = 0;
-        const duration = 100;
-        const maxIterations = 100;
+      let readyAttempts = 0;
+      const duration = 100;
+      const maxIterations = 100;
 
-        const interval = setInterval(() => {
-          readyAttempts++;
-          if (this.communicationService.childWindowReady) {
-              clearInterval(interval);
-              resolve();
-          }
+      const interval = setInterval(() => {
+        readyAttempts++;
+        if (this.elementsLoaded) {
+          clearInterval(interval);
+          resolve();
+        }
 
-          if (readyAttempts >= maxIterations) {
-              clearInterval(interval);
-              reject('The Help Widget failed to load.');
-          }
-        }, duration);
+        if (readyAttempts >= maxIterations) {
+          clearInterval(interval);
+          reject('The Help Widget failed to load.');
+        }
+      }, duration);
     });
+  }
+
+  public closeWidget() {
+    this.domElement.classList.add('bb-help-closed');
   }
 
   private createContainer() {
@@ -92,36 +95,9 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private setUpCommunication() {
-    this.communicationService = new BBHelpCommunicationService(this.iframeEl);
-    this.communicationService.communicationAction.subscribe((action: string) => {
-      this.actionResponse(action);
-    });
-  }
-
-  private actionResponse(action: string) {
-    switch (action) {
-      case 'Close Widget':
-        this.closeWidget();
-        break;
-      default:
-    }
-  }
-
-  private closeWidget() {
-    this.domElement.classList.add('bb-help-closed');
-  }
-
   private addInvokerStyles() {
     this.invokerEl.style.backgroundColor = this.config.headerColor || BB_HEADER_COLOR;;
     this.invokerEl.style.color = this.config.headerTextColor || BB_HEADER_TEXT_COLOR;;
     this.invokerEl.style.content = '?';
-  }
-
-  public sendConfig() {
-    this.communicationService.postMessage(this.iframeEl, {
-        messageType: 'user-config',
-        config: this.config
-    });
   }
 }
