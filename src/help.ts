@@ -2,6 +2,17 @@ declare const BBHELP: any;
 
 import { registerScript } from './register-script';
 import { BBHelpHelpWidget } from './help-widget-wrapper';
+import { HelpConfig } from './help-config';
+
+const demoConfig: HelpConfig = {
+  productId: 'bbHelpTesting',
+  customLocales: [],
+  communityUrl: 'https://community.blackbaud.com/products/blackbaudcrm',
+  caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
+  knowledgebaseUrl: 'https://kb.blackbaud.com/',
+  useFlareSearch: true,
+  hideHelpChat: true
+};
 
 export abstract class BBHelpClient {
   private static defaultHelpKey: string = 'default.html';
@@ -14,11 +25,11 @@ export abstract class BBHelpClient {
       BBHelpClient.defaultHelpKey = config.defaultHelpKey;
     }
 
-    config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
-    (window as any).BBHELP = {
-      HelpWidget: new BBHelpHelpWidget()
-    };
-    BBHELP.HelpWidget.init();
+    /**
+     * Functions cannot be passed through the window postMessage method. This method can't be attached to the config, so it will need to be added to our communication events and return the value.
+     */
+    // config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
+
     BBHELP.HelpWidget.ready()
       .then(() => {
         BBHELP.HelpWidget.load(config);
@@ -96,5 +107,9 @@ export abstract class BBHelpClient {
 }
 
 (function() {
-  BBHelpClient.load();
+  (window as any).BBHELP = {
+    HelpWidget: new BBHelpHelpWidget()
+  };
+
+  BBHelpClient.load(demoConfig);
 }());

@@ -1,7 +1,9 @@
 require('./styles/widget-styles.scss');
 require('./styles/omnibar-style-adjustments.scss');
 
-const IFrameClass: string = 'bb-help-iframe';
+const IFRAME_ID: string = 'bb-help-iframe';
+const IFRAME_TITLE: string = 'BB Help';
+const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
 const BB_HEADER_COLOR: string = '#71bf43'
 const BB_HEADER_TEXT_COLOR: string = '#fff';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
@@ -16,19 +18,22 @@ export class BBHelpHelpWidget {
   private config : HelpConfig;
   private communicationService: BBHelpCommunicationService;
 
+  constructor() {
+    this.createElements();
+    this.setUpInvokerEvents();
+    this.setUpCommunication();
+  }
+
+  private createElements() {
+    this.createContainer();
+    this.createInvoker();
+    this.createIframe();
+  }
+
   public load(config: HelpConfig = {}) {
     this.config = config;
     this.addInvokerStyles();
     this.sendConfig();
-  }
-
-  public init() {
-    this.renderElements();
-    this.setUpEvents();
-    this.communicationService = new BBHelpCommunicationService(this.iframeEl);
-    this.communicationService.communicationAction.subscribe((action: string) => {
-      this.actionResponse(action);
-    });
   }
 
   public ready() {
@@ -52,40 +57,6 @@ export class BBHelpHelpWidget {
     });
   }
 
-  public actionResponse(action: string) {
-    switch (action) {
-      case 'Close Widget':
-        this.closeWidget();
-        break;
-      default:
-    }
-  }
-
-  public sendConfig() {
-    this.communicationService.postMessage(this.iframeEl, {
-        messageType: 'user-config',
-        config: {
-          productId: 'bbHelpTesting',
-          customLocales: [],
-          communityUrl: 'https://community.blackbaud.com/products/blackbaudcrm',
-          caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
-          knowledgebaseUrl: 'https://kb.blackbaud.com/',
-          useFlareSearch: true,
-          hideHelpChat: true
-        }
-    });
-  }
-
-  private renderElements() {
-    this.createContainer();
-    this.createInvoker();
-    this.addIframe(
-      'https://host.nxt.blackbaud.com/bb-help/',
-      IFrameClass,
-      'BB Help'
-    );
-  }
-
   private createContainer() {
     this.domElement = document.createElement('div');
     this.domElement.id = 'bb-help-container';
@@ -97,20 +68,22 @@ export class BBHelpHelpWidget {
     this.appendElement(this.domElement);
   };
 
-  private closeWidget() {
-    this.domElement.classList.add('bb-help-closed');
-  }
-
   private createInvoker(config?: any) {
     this.invokerEl = document.createElement('div');
     this.invokerEl.id = BB_HELP_INVOKER_ID;
     this.appendElement(this.invokerEl, this.domElement)
   }
 
-  private addInvokerStyles() {
-    this.invokerEl.style.backgroundColor = this.config.headerColor || BB_HEADER_COLOR;;
-    this.invokerEl.style.color = this.config.headerTextColor || BB_HEADER_TEXT_COLOR;;
-    this.invokerEl.style.content = '?';
+  private createIframe() {
+    this.iframeEl = document.createElement('iframe');
+    this.iframeEl.id = IFRAME_ID;
+    this.iframeEl.title = IFRAME_TITLE;
+    this.iframeEl.src = IFRAME_SRC;
+    this.appendElement(this.iframeEl, this.domElement);
+  }
+
+  private appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
+    parentEl.appendChild(el);
   }
 
   private setUpInvokerEvents() {
@@ -119,33 +92,36 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private addIframe(
-    src: string,
-    id: string,
-    title: string
-  ): void {
-    const iframeEl = document.createElement('iframe');
-    iframeEl.id = id;
-    iframeEl.title = title;
-    iframeEl.src = src;
-
-    this.appendElement(iframeEl, this.domElement);
-
-    this.iframeEl = iframeEl;
-    this.addIframeStyles();
+  private setUpCommunication() {
+    this.communicationService = new BBHelpCommunicationService(this.iframeEl);
+    this.communicationService.communicationAction.subscribe((action: string) => {
+      this.actionResponse(action);
+    });
   }
 
-  private addIframeStyles() {
-    this.iframeEl.style.height = '100%';
-    this.iframeEl.style.width = '100%';
-    this.iframeEl.style.border = 'none';
+  private actionResponse(action: string) {
+    switch (action) {
+      case 'Close Widget':
+        this.closeWidget();
+        break;
+      default:
+    }
   }
 
-  private appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
-    parentEl.appendChild(el);
+  private closeWidget() {
+    this.domElement.classList.add('bb-help-closed');
   }
 
-  private setUpEvents() {
-    this.setUpInvokerEvents();
+  private addInvokerStyles() {
+    this.invokerEl.style.backgroundColor = this.config.headerColor || BB_HEADER_COLOR;;
+    this.invokerEl.style.color = this.config.headerTextColor || BB_HEADER_TEXT_COLOR;;
+    this.invokerEl.style.content = '?';
+  }
+
+  public sendConfig() {
+    this.communicationService.postMessage(this.iframeEl, {
+        messageType: 'user-config',
+        config: this.config
+    });
   }
 }

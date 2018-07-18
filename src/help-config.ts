@@ -18,4 +18,5 @@ export interface HelpConfig {
   productId?: string,
   searchService?: string,
   trainingCentralUrl?: string,
+  useFlareSearch?: boolean
 }

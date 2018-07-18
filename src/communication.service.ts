@@ -44,6 +44,7 @@ export class BBHelpCommunicationService {
   }
 
   public postMessage(childWindow: HTMLIFrameElement, message: any, origin: string = HOST_ORIGIN) {
+    console.log(childWindow);
     message.source = 'help-client';
     childWindow.contentWindow.postMessage(message, origin);
   }
