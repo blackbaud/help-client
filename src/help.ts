@@ -1,6 +1,5 @@
 declare const BBHELP: any;
 
-import { registerScript } from './register-script';
 import { BBHelpHelpWidget } from './help-widget-wrapper';
 import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
@@ -27,16 +26,11 @@ export abstract class BBHelpClient {
       BBHelpClient.defaultHelpKey = config.defaultHelpKey;
     }
 
-    /**
-     * Functions cannot be passed through the window postMessage method. This method can't be attached to the config, so it will need to be added to our communication events and return the value.
-     */
-    // config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
-
-    BBHELP.HelpWidget.ready()
+    BBHelpClient.setUpCommunication();
+    this.communicationService.ready()
       .then(() => {
-        BBHELP.HelpWidget.load(config);
-        BBHelpClient.setUpCommunication();
         BBHelpClient.sendConfig(config);
+        BBHELP.HelpWidget.renderInvoker(config);
         BBHelpClient.widgetLoaded = true;
       });
   }
@@ -80,7 +74,7 @@ export abstract class BBHelpClient {
   public static ready(): Promise<any> {
     return BBHelpClient.clientReady()
       .then(() => {
-        return BBHELP.HelpWidget.ready();
+        return this.communicationService.ready();
       })
       .catch((err: string) => {
         console.error(err);
@@ -118,20 +112,26 @@ export abstract class BBHelpClient {
 
   private static actionResponse(action: string) {
     switch (action) {
+      case 'Render Invoker':
+        BBHELP.
+      break;
       case 'Close Widget':
         BBHELP.HelpWidget.closeWidget();
         break;
-      case 'getCurrentHelpKey':
+      case 'Get Help Key':
+        /**
+         * Methods can not be added to the config being passed to the SPA through the communicationService. The results of the Help Key need to be passed through when quereied.
+         */
         BBHelpClient.sendCurrentHelpKey();
         break;
-        default:
+      default:
     }
   }
 
   public static sendConfig(config: HelpConfig) {
     BBHelpClient.communicationService.postMessage({
-        messageType: 'user-config',
-        config: config
+      messageType: 'user-config',
+      config: config
     });
   }
 

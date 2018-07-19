@@ -9,19 +9,15 @@ const BB_HEADER_TEXT_COLOR: string = '#fff';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 
 import { HelpConfig } from './help-config';
-import { BBHelpCommunicationService } from './communication.service';
 
 export class BBHelpHelpWidget {
   public iframeEl: HTMLIFrameElement;
   private domElement: HTMLElement;
   private invokerEl: HTMLElement;
-  private config : HelpConfig;
-  private elementsLoaded: boolean;
 
   constructor() {
     this.createElements();
     this.setUpInvokerEvents();
-    this.elementsLoaded = true;
   }
 
   private createElements() {
@@ -30,30 +26,8 @@ export class BBHelpHelpWidget {
     this.createIframe();
   }
 
-  public load(config: HelpConfig = {}) {
-    this.config = config;
-    this.addInvokerStyles();
-  }
-
-  public ready() {
-    return new Promise((resolve, reject) => {
-      let readyAttempts = 0;
-      const duration = 100;
-      const maxIterations = 100;
-
-      const interval = setInterval(() => {
-        readyAttempts++;
-        if (this.elementsLoaded) {
-          clearInterval(interval);
-          resolve();
-        }
-
-        if (readyAttempts >= maxIterations) {
-          clearInterval(interval);
-          reject('The Help Widget failed to load.');
-        }
-      }, duration);
-    });
+  public renderInvoker(config: HelpConfig = {}) {
+    this.addInvokerStyles(config);
   }
 
   public closeWidget() {
@@ -71,7 +45,7 @@ export class BBHelpHelpWidget {
     this.appendElement(this.domElement);
   };
 
-  private createInvoker(config?: any) {
+  private createInvoker() {
     this.invokerEl = document.createElement('div');
     this.invokerEl.id = BB_HELP_INVOKER_ID;
     this.appendElement(this.invokerEl, this.domElement)
@@ -95,9 +69,9 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private addInvokerStyles() {
-    this.invokerEl.style.backgroundColor = this.config.headerColor || BB_HEADER_COLOR;;
-    this.invokerEl.style.color = this.config.headerTextColor || BB_HEADER_TEXT_COLOR;;
+  private addInvokerStyles(config: HelpConfig) {
+    this.invokerEl.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;;
+    this.invokerEl.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;;
     this.invokerEl.style.content = '?';
   }
 }

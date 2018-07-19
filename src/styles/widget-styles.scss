@@ -15,6 +15,10 @@
   @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
     right: -100%;
   }
+
+  #bb-help-iframe {
+    box-shadow: none;
+  }
 }
 
 #bb-help-container {

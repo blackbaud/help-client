@@ -11,6 +11,27 @@ export class BBHelpCommunicationService {
     window.addEventListener('message', this.messageHandler());
   }
 
+  public ready() {
+    return new Promise((resolve, reject) => {
+      let readyAttempts = 0;
+      const duration = 100;
+      const maxIterations = 100;
+
+      const interval = setInterval(() => {
+        readyAttempts++;
+        if (this.childWindowReady) {
+          clearInterval(interval);
+          resolve();
+        }
+
+        if (readyAttempts >= maxIterations) {
+          clearInterval(interval);
+          reject('The Help Widget failed to load.');
+        }
+      }, duration);
+    });
+  }
+
   public messageHandler() {
     return (event: any) => {
       let fromWidget = this.isFromHelpWidget(event);
@@ -18,7 +39,6 @@ export class BBHelpCommunicationService {
         let message = event.data;
         switch (message.messageType) {
           case 'ready':
-          console.log('???');
             this.postMessage({ messageType: 'host-ready' });
             this.childWindowReady = true;
             break;
@@ -41,7 +61,6 @@ export class BBHelpCommunicationService {
   }
 
   public postMessage(message: any, origin: string = HOST_ORIGIN) {
-    console.log('posting', message, 'origin', origin);
     message.source = 'help-client';
     this.childWindow.contentWindow.postMessage(message, origin);
   }
