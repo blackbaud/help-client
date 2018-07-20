@@ -1,7 +1,6 @@
 declare const BBHELP: any;
 
-import { BBHelpHelpWidget } from './help-widget-wrapper';
-import { BBHelpCommunicationService } from './communication.service';
+import { BBHelpHelpWidget } from './help-widget';
 import { HelpConfig } from './help-config';
 
 const demoConfig: HelpConfig = {
@@ -11,44 +10,34 @@ const demoConfig: HelpConfig = {
   caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
   knowledgebaseUrl: 'https://kb.blackbaud.com/',
   useFlareSearch: true,
-  hideHelpChat: true
+  hideHelpChat: true,
+  headerColor: '#dcdcdc'
 };
 
 export abstract class BBHelpClient {
-  private static communicationService: BBHelpCommunicationService;
-  private static defaultHelpKey: string = 'default.html';
-  private static currentHelpKey: string;
-
   private static widgetLoaded: boolean = false;
 
   public static load(config: any = {}) {
-    if (config.defaultHelpKey !== undefined) {
-      BBHelpClient.defaultHelpKey = config.defaultHelpKey;
-    }
-
-    BBHelpClient.setUpCommunication();
-    this.communicationService.ready()
+    BBHELP.HelpWidget.load(config)
       .then(() => {
-        BBHelpClient.sendConfig(config);
-        BBHELP.HelpWidget.renderInvoker(config);
-        BBHelpClient.widgetLoaded = true;
+        this.widgetLoaded = true;
       });
   }
 
-  public static setCurrentHelpKey(helpKey: string = BBHelpClient.defaultHelpKey): void {
-    BBHelpClient.currentHelpKey = helpKey;
+  public static setCurrentHelpKey(helpKey?: string): void {
+    BBHELP.HelpWidget.setCurrentHelpKey(helpKey);
   }
 
   public static setHelpKeyToDefault(): void {
-    BBHelpClient.setCurrentHelpKey(BBHelpClient.defaultHelpKey);
+    BBHELP.HelpWidget.setHelpKeyToDefault();
   }
 
-  public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
+  public static openWidgetToHelpKey(helpKey: string): void {
     BBHELP.HelpWidget.open(helpKey);
   }
 
   public static getCurrentHelpKey(): string {
-    return BBHelpClient.currentHelpKey || BBHelpClient.defaultHelpKey;
+    return BBHELP.HelpWidget.getCurrentHelpKey();
   }
 
   public static toggleOpen(): void {
@@ -74,7 +63,7 @@ export abstract class BBHelpClient {
   public static ready(): Promise<any> {
     return BBHelpClient.clientReady()
       .then(() => {
-        return this.communicationService.ready();
+        return BBHELP.HelpWidget.ready();
       })
       .catch((err: string) => {
         console.error(err);
@@ -100,45 +89,6 @@ export abstract class BBHelpClient {
           reject('The Help Widget failed to load.');
         }
       }, duration);
-    });
-  }
-
-  private static setUpCommunication() {
-    this.communicationService = new BBHelpCommunicationService(BBHELP.HelpWidget.iframeEl);
-    this.communicationService.communicationAction.subscribe((action: string) => {
-      BBHelpClient.actionResponse(action);
-    });
-  }
-
-  private static actionResponse(action: string) {
-    switch (action) {
-      case 'Render Invoker':
-        BBHELP.
-      break;
-      case 'Close Widget':
-        BBHELP.HelpWidget.closeWidget();
-        break;
-      case 'Get Help Key':
-        /**
-         * Methods can not be added to the config being passed to the SPA through the communicationService. The results of the Help Key need to be passed through when quereied.
-         */
-        BBHelpClient.sendCurrentHelpKey();
-        break;
-      default:
-    }
-  }
-
-  public static sendConfig(config: HelpConfig) {
-    BBHelpClient.communicationService.postMessage({
-      messageType: 'user-config',
-      config: config
-    });
-  }
-
-  public static sendCurrentHelpKey() {
-    BBHelpClient.communicationService.postMessage({
-      messageType: 'help-key',
-      helpKey: BBHelpClient.getCurrentHelpKey()
     });
   }
 }
