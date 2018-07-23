@@ -1,8 +1,8 @@
 require('./styles/widget-styles.scss');
 require('./styles/omnibar-style-adjustments.scss');
 
-import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpCommunicationService } from './communication.service';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { HelpConfig } from './help-config';
 
 export class BBHelpHelpWidget {
@@ -16,6 +16,8 @@ export class BBHelpHelpWidget {
 
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
+  private loadCalled: boolean = false;
+  private configRequested: boolean = false;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -36,20 +38,19 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-    return this.ready()
-      .then(() => {
-        this.config = config;
 
-        if (config.defaultHelpKey !== undefined) {
-          this.defaultHelpKey = config.defaultHelpKey;
-        }
+    if (this.loadCalled) {
+      return;
+    }
 
-        this.renderInvoker();
-        this.communicationService.postMessage({
-          messageType: 'user-config',
-          config
-        });
-      });
+    this.loadCalled = true;
+    this.config = config;
+    if (config.defaultHelpKey !== undefined) {
+      this.defaultHelpKey = config.defaultHelpKey;
+    }
+
+    this.renderInvoker();
+    this.sendConfig();
   }
 
   public close() {
@@ -57,7 +58,10 @@ export class BBHelpHelpWidget {
   }
 
   public open(helpKey?: string) {
-    // open the widget to this help key
+    this.communicationService.postMessage({
+      messageType: 'open-to-help-key',
+      helpKey
+    });
   }
 
   public toggleOpen() {
@@ -76,12 +80,11 @@ export class BBHelpHelpWidget {
     this.setCurrentHelpKey(this.defaultHelpKey);
   }
 
-
-  public static disableWidget(): void {
+  public disableWidget(): void {
     // BBHELP.HelpWidget.disableWidget(); disable widget
   }
 
-  public static enableWidget(): void {
+  public enableWidget(): void {
     // BBHELP.HelpWidget.enableWidget(); enable widget
   }
 
@@ -120,15 +123,28 @@ export class BBHelpHelpWidget {
         break;
       case 'Get Help Key':
         /**
-         * Methods can not be added to the config being passed to the SPA through the communicationService. The results of the Help Key need to be passed through when quereied.
+         * Methods can not be added to the config being passed to the SPA through the communicationService.
+         * The results of the Help Key need to be passed through when quereied.
          */
         this.communicationService.postMessage({
-          messageType: 'help-key',
-          helpKey: this.getCurrentHelpKey()
-        })
+          helpKey: this.getCurrentHelpKey(),
+          messageType: 'help-key'
+        });
         break;
-      default:
+        case 'Child Window Ready':
+          if (this.loadCalled) {
+            this.sendConfig();
+          }
+          break;
+        default:
     }
+  }
+
+  private sendConfig() {
+    this.communicationService.postMessage({
+      config: this.config,
+      messageType: 'user-config'
+    });
   }
 
   private renderInvoker() {

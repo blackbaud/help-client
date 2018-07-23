@@ -34,12 +34,12 @@ export class BBHelpCommunicationService {
 
   public messageHandler() {
     return (event: any) => {
-      let fromWidget = this.isFromHelpWidget(event);
-      if (fromWidget) {
-        let message = event.data;
+      if (this.isFromHelpWidget(event)) {
+        const message = event.data;
         switch (message.messageType) {
           case 'ready':
             this.postMessage({ messageType: 'host-ready' });
+            this.communicationAction.next('Child Window Ready');
             this.childWindowReady = true;
             break;
           case 'close-widget':
@@ -48,7 +48,7 @@ export class BBHelpCommunicationService {
             break;
         }
       }
-    }
+    };
   }
 
   public isFromHelpWidget(event: { origin: string, data: any }): boolean {
