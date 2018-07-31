@@ -9,14 +9,9 @@
 }
 
 #bb-help-container.bb-help-closed {
-  right: -$panelWidth;
-  transition: right 250ms ease-out;
-
-  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
-    right: -100%;
-  }
-
   #bb-help-iframe {
+    display: none;
+    overflow: hidden;  
     box-shadow: none;
   }
 }
@@ -26,25 +21,46 @@
   position: fixed;
   top: 0;
   right: 0;
-  transition: right 250ms ease-in;
-  height: $panelHeight;
-  width: $panelWidth;
   box-sizing: border-box;
+  max-width: 0;
+  transition: max-width 250ms ease-in-out;
+
+  &:not(.bb-help-closed) {
+    height: 100vh;
+    width: 100vw;
+
+    #bb-help-invoker {
+      display: none;
+    }
+
+    #bb-help-iframe {
+      height: 100%;
+      width: 100%;
+    }
+
+    @media (min-width: $screen-sm) {
+      height: auto;
+      width: auto;
+  
+      #bb-help-iframe {
+        height: $panelHeight;
+        width: $panelWidth;
+      }
+    }
+  }
 
   // Fullscreen help for mobile or small heights
-  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
-    height: 100%;
-    width: 100%;
-
+  @media (min-width: $screen-sm) {
     &:not(.bb-help-closed) {
+
       #bb-help-invoker {
-        display: none;
+        display: inline-block;
       }
     }
   }
 
   // Hide invoker for mobile
-  @media (max-width: $screenXsMax) {
+  @media (max-width: $screen-sm) {
     &.bb-help-closed {
       .hide-on-mobile {
         display: none;
@@ -84,7 +100,7 @@
   right: 100%;
   border-right: none;
 
-  @media (max-width: $screenXsMax) {
+  @media (max-width: $screen-sm) {
      .hide-on-mobile {
           display: none;
       }

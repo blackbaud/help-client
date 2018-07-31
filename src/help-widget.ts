@@ -56,6 +56,7 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
+    this.container.style.maxWidth = '0';
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
@@ -68,6 +69,7 @@ export class BBHelpHelpWidget {
     });
 
     this.container.classList.remove(HELP_CLOSED_CLASS);
+    this.container.style.maxWidth = '100%';
     this.invoker.setAttribute('aria-pressed', 'true');
     this.invoker.setAttribute('aria-expanded', 'true');
   }
