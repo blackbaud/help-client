@@ -5,6 +5,8 @@ import { BBHelpCommunicationService } from './communication.service';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { HelpConfig } from './help-config';
 
+const HELP_CLOSED_CLASS: string = 'bb-help-closed';
+
 export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
   public config: HelpConfig;
@@ -54,7 +56,9 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
-    this.container.classList.add('bb-help-closed');
+    this.container.classList.add(HELP_CLOSED_CLASS);
+    this.invoker.setAttribute('aria-pressed', 'false');
+    this.invoker.setAttribute('aria-expanded', 'false');
   }
 
   public open(helpKey?: string) {
@@ -62,10 +66,18 @@ export class BBHelpHelpWidget {
       messageType: 'open-to-help-key',
       helpKey
     });
+
+    this.container.classList.remove(HELP_CLOSED_CLASS);
+    this.invoker.setAttribute('aria-pressed', 'true');
+    this.invoker.setAttribute('aria-expanded', 'true');
   }
 
-  public toggleOpen() {
-    this.container.classList.toggle('bb-help-closed');
+  public toggleOpen(helpKey?: string) {
+    if (this.isCollapsed()) {
+      this.open(helpKey);
+    } else {
+      this.close();
+    }
   }
 
   public getCurrentHelpKey(): string {
@@ -169,4 +181,8 @@ export class BBHelpHelpWidget {
       this.toggleOpen();
     });
   }
+
+  private isCollapsed() {
+    return this.container.classList.contains(HELP_CLOSED_CLASS);
+  } 
 }

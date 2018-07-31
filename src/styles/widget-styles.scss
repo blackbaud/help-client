@@ -76,15 +76,13 @@
   border-bottom-left-radius: 24px;
   border-top-left-radius: 24px;
   background: #71bf44;
-  float: left;
-  padding: 12px 10px 7px 10px;
-  font-size: 17px;
   color: #fff;
-  cursor: pointer;
   position: absolute;
-  height: 48px;
+  cursor: pointer;
+  height: 49px;
   width: 40px;
   right: 100%;
+  border-right: none;
 
   @media (max-width: $screenXsMax) {
      .hide-on-mobile {
@@ -104,7 +102,6 @@
   font-size: 14px;
   line-height: 2ex;
   border-radius: 1.4ex;
-  margin-right: 4px;
   padding: 1px;
   border: 2px solid;
   text-decoration: none;

@@ -32,7 +32,10 @@ export class BBHelpHelpWidgetRenderer {
 
   public createInvoker(): HTMLElement {
     let invoker: HTMLElement;
-    invoker = document.createElement('div');
+    invoker = document.createElement('button');
+    invoker.setAttribute('aria-title', 'Toggle Help Widget');
+    invoker.setAttribute('aria-controls', 'bb-help-container');
+    invoker.setAttribute('aria-pressed', 'false');
     invoker.id = BB_HELP_INVOKER_ID;
     return invoker;
   }

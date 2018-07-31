@@ -5,6 +5,7 @@ import { HelpConfig } from './help-config';
 
 const demoConfig: HelpConfig = {
   customLocales: [],
+  defaultHelpKey: 'bb-role-based-best-practices.html',
   extends: 'renxt',
   headerColor: '#dcdcdc'
 };

@@ -20,4 +20,5 @@ export interface HelpConfig {
   trainingCentralUrl?: string;
   useFlareSearch?: boolean;
   defaultHelpKey?: string;
+  whatsNewRevisions?: any;
 }
