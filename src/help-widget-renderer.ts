@@ -24,9 +24,6 @@ export class BBHelpHelpWidgetRenderer {
     domElement.id = 'bb-help-container';
     domElement.classList.add('bb-help-container');
     domElement.classList.add('bb-help-closed');
-    // if (this.hideWidgetOnMobile) {
-    //     this.domElement.classList.add('hide-on-mobile');
-    // }
     return domElement;
   }
 

@@ -1,5 +1,3 @@
-import { } from 'jasmine';
-
 import { BBHelpClient } from './help';
 import * as utils from './register-script';
 
@@ -80,13 +78,6 @@ describe('help-client', () => {
     registerScriptSpy.calls.reset();
     BBHelpClient['defaultHelpKey'] = 'default.html';
     BBHelpClient['currentHelpKey'] = undefined;
-  });
-
-  it('should add styles to the document head', (done) => {
-    expect(headStyles).toEqual('');
-    BBHelpClient.addStyles();
-    expect(headStyles).toEqual(testCss);
-    done();
   });
 
   it('should load the help widget library', (done) => {
@@ -215,7 +206,7 @@ describe('help-client', () => {
       .then()
       .then(() => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
-        BBHelpClient.openWidgetToHelpKey();
+        BBHelpClient.openWidgetToHelpKey('');
         expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
         done();
       })

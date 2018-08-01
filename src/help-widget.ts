@@ -15,7 +15,7 @@ export class BBHelpHelpWidget {
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
-
+  private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
@@ -62,14 +62,16 @@ export class BBHelpHelpWidget {
   }
 
   public open(helpKey?: string) {
-    this.communicationService.postMessage({
-      messageType: 'open-to-help-key',
-      helpKey
-    });
+    if (!this.widgetDisabled) {
+      this.communicationService.postMessage({
+        messageType: 'open-to-help-key',
+        helpKey
+      });
 
-    this.container.classList.remove(HELP_CLOSED_CLASS);
-    this.invoker.setAttribute('aria-pressed', 'true');
-    this.invoker.setAttribute('aria-expanded', 'true');
+      this.container.classList.remove(HELP_CLOSED_CLASS);
+      this.invoker.setAttribute('aria-pressed', 'true');
+      this.invoker.setAttribute('aria-expanded', 'true');
+    }
   }
 
   public toggleOpen(helpKey?: string) {
@@ -93,11 +95,16 @@ export class BBHelpHelpWidget {
   }
 
   public disableWidget(): void {
-    // BBHELP.HelpWidget.disableWidget(); disable widget
+    this.widgetDisabled = true;
+    this.close();
+    this.invoker.classList.add('bb-help-hidden');
+    this.container.classList.add('bb-help-hidden');
   }
 
   public enableWidget(): void {
-    // BBHELP.HelpWidget.enableWidget(); enable widget
+    this.widgetDisabled = false;
+    this.invoker.classList.remove('bb-help-hidden');
+    this.container.classList.remove('bb-help-hidden');
   }
 
   private widgetReady() {
@@ -184,5 +191,5 @@ export class BBHelpHelpWidget {
 
   private isCollapsed() {
     return this.container.classList.contains(HELP_CLOSED_CLASS);
-  } 
+  }
 }
