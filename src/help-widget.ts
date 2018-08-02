@@ -51,6 +51,10 @@ export class BBHelpHelpWidget {
       this.defaultHelpKey = config.defaultHelpKey;
     }
 
+    if (this.config.hideWidgetOnMobile) {
+      this.container.classList.add('hide-on-mobile');
+    }
+
     this.renderInvoker();
     this.sendConfig();
   }
