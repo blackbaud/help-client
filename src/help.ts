@@ -1,7 +1,7 @@
 declare const BBHELP: any;
 
-import { BBHelpHelpWidget } from './help-widget';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidget } from './help-widget';
 
 const demoConfig: HelpConfig = {
   customLocales: [],
@@ -53,6 +53,10 @@ export abstract class BBHelpClient {
 
   public static enableWidget(): void {
     BBHELP.HelpWidget.enableWidget();
+  }
+
+  public static getWhatsNewRevision(): void {
+    BBHELP.HelpWidget.getWhatsNewRevision();
   }
 
   public static ready(): Promise<any> {

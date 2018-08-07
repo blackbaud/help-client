@@ -107,6 +107,19 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
+  public getWhatsNewRevision() {
+    if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
+      const revisions = this.config.whatsNewRevisions.split(';');
+      const foundRevision = revisions.find((revision: any) => {
+        return revision.includes(`${this.config.productId}=`);
+      });
+      if (foundRevision) {
+        return parseInt(foundRevision.substring(this.config.productId.length + 1), 10);
+      }
+    }
+    return 0;
+  }
+
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
