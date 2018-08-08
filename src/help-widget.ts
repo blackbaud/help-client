@@ -1,9 +1,9 @@
-require('./styles/widget-styles.scss');
-require('./styles/omnibar-style-adjustments.scss');
+import './styles/omnibar-style-adjustments.scss';
+import './styles/widget-styles.scss';
 
 import { BBHelpCommunicationService } from './communication.service';
-import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 

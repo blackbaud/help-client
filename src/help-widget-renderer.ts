@@ -1,5 +1,5 @@
-require('./styles/widget-styles.scss');
-require('./styles/omnibar-style-adjustments.scss');
+import './styles/omnibar-style-adjustments.scss';
+import './styles/widget-styles.scss';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';

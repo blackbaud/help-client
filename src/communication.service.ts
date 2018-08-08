@@ -1,5 +1,5 @@
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
-import {Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 
 export class BBHelpCommunicationService {
 
@@ -52,7 +52,7 @@ export class BBHelpCommunicationService {
   }
 
   public isFromHelpWidget(event: { origin: string, data: any }): boolean {
-    if (event.origin === HOST_ORIGIN ) {
+    if (event.origin === HOST_ORIGIN) {
       const message = event.data;
       return !!message && message.source === 'skyux-spa-bb-help';
     }
