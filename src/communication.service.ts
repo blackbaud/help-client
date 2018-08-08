@@ -44,6 +44,7 @@ export class BBHelpCommunicationService {
             break;
           case 'close-widget':
             this.communicationAction.next('Close Widget');
+            break;
           default:
             break;
         }

@@ -1,12 +1,10 @@
 import { BBHelpClient } from './help';
-import * as utils from './register-script';
 
 describe('help-client', () => {
   const testCss: string = '{ background-color: red }';
   let originalTimeout: number;
   let registerScriptSpy: jasmine.Spy;
   let fakeHelp: any;
-  let headStyles = '';
 
   const mockCreateElement = (): any => {
     return {
@@ -20,17 +18,7 @@ describe('help-client', () => {
     return testCss;
   };
 
-  const mockHeadAppendChild = (styleObject: any) => {
-    headStyles = styleObject.cssStyles;
-  };
-
   beforeAll(() => {
-    registerScriptSpy = spyOn(
-      utils, 'registerScript'
-    ).and.callFake(() => {
-      (window as any).BBHELP = fakeHelp;
-      return Promise.resolve();
-    });
   });
 
   beforeEach(() => {
@@ -70,14 +58,11 @@ describe('help-client', () => {
 
     spyOn(document, 'createElement').and.callFake(mockCreateElement);
     spyOn(document, 'createTextNode').and.callFake(mockCreateTextNode);
-    spyOn(document.head, 'appendChild').and.callFake(mockHeadAppendChild);
   });
 
   afterEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     registerScriptSpy.calls.reset();
-    BBHelpClient['defaultHelpKey'] = 'default.html';
-    BBHelpClient['currentHelpKey'] = undefined;
   });
 
   it('should load the help widget library', (done) => {
@@ -104,6 +89,7 @@ describe('help-client', () => {
       .load(config)
       .then(() => {
         expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(config);
+        expect(helpLoadSpy).toHaveBeenCalled();
         done();
       })
       .catch(() => {
@@ -122,6 +108,7 @@ describe('help-client', () => {
       .load()
       .then(() => {
         expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(defaultConfig);
+        expect(helpLoadSpy).toHaveBeenCalled();
         done();
       })
       .catch(() => {
@@ -156,7 +143,7 @@ describe('help-client', () => {
         productId: 'lo'
       })
       .then(() => {
-        const helpKey = BBHelpClient['defaultHelpKey'];
+        const helpKey = BBHelpClient.getCurrentHelpKey();
         expect(helpKey).toEqual('new-default.html');
         done();
       })
@@ -208,6 +195,7 @@ describe('help-client', () => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
         BBHelpClient.openWidgetToHelpKey('');
         expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+        expect(ready).toHaveBeenCalled();
         done();
       })
       .catch(() => {
@@ -220,6 +208,7 @@ describe('help-client', () => {
     const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
       return Promise.resolve();
     });
+
     const newHelpKey = 'test-key.html';
     BBHelpClient
       .load()
@@ -227,6 +216,7 @@ describe('help-client', () => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
         BBHelpClient.openWidgetToHelpKey('foo.html');
         expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
+        expect(readySpy).toHaveBeenCalled();
         done();
       })
       .catch(() => {
@@ -246,6 +236,7 @@ describe('help-client', () => {
         BBHelpClient.setCurrentHelpKey(newHelpKey);
         BBHelpClient.openWidget('foo.html');
         expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
+        expect(readySpy).toHaveBeenCalled();
         done();
       })
       .catch(() => {
@@ -262,6 +253,7 @@ describe('help-client', () => {
 
     BBHelpClient.load()
       .then(() => {
+        expect(readySpy).toHaveBeenCalled();
         expect(helpOpenSpy).not.toHaveBeenCalled();
         BBHelpClient.openWidget();
         expect(helpOpenSpy).toHaveBeenCalled();
@@ -288,6 +280,7 @@ describe('help-client', () => {
     BBHelpClient.load()
       .then(() => {
         expect(helpOpenSpy).not.toHaveBeenCalled();
+        expect(readySpy).toHaveBeenCalled();
         return BBHelpClient.toggleOpen();
       })
       .then(() => {
@@ -316,9 +309,11 @@ describe('help-client', () => {
     BBHelpClient.load()
       .then(() => {
         expect(helpDisableSpy).not.toHaveBeenCalled();
+        expect(readySpy).toHaveBeenCalled();
         return BBHelpClient.openWidget();
       })
       .then(() => {
+        expect(helpOpenSpy).toHaveBeenCalled();
         expect(fakeHelp.HelpWidget.opened).toBe(true);
         return BBHelpClient.disableWidget();
       })
@@ -338,7 +333,6 @@ describe('help-client', () => {
 
   it('should close the widget on disabled', (done) => {
     const helpDisableSpy = spyOn(fakeHelp.HelpWidget, 'disableWidget').and.callThrough();
-    const helpEnableSpy = spyOn(fakeHelp.HelpWidget, 'enableWidget').and.callThrough();
     const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
     const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
       return Promise.resolve();
@@ -347,10 +341,12 @@ describe('help-client', () => {
     BBHelpClient.load()
       .then(() => {
         expect(helpDisableSpy).not.toHaveBeenCalled();
+        expect(readySpy).toHaveBeenCalled();
         return BBHelpClient.openWidget();
       })
       .then(() => {
         expect(fakeHelp.HelpWidget.opened).toBe(true);
+        expect(helpOpenSpy).toHaveBeenCalled();
         return BBHelpClient.disableWidget();
       })
       .then(() => {
@@ -397,9 +393,12 @@ describe('help-client', () => {
   it('should err if the widget doesn\'t load before maxIterations are reached', (done) => {
     const errMessage = 'The Help Widget failed to load.';
     const consoleSpy = spyOn(console, 'error').and.callThrough();
-    BBHelpClient['widgetLoaded'] = false;
+    const widgetSpy = spyOn(fakeHelp.HelpWidget, 'ready').and.callFake(() => {
+      return Promise.reject(errMessage);
+    });
     BBHelpClient.ready()
       .then(() => {
+        expect(widgetSpy).toHaveBeenCalled();
         expect(consoleSpy).toHaveBeenCalledWith('The Help Widget failed to load.');
         done();
       });

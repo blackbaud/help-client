@@ -19,7 +19,6 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
-  private configRequested: boolean = false;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
