@@ -3,7 +3,6 @@ import { BBHelpClient } from './help';
 describe('help-client', () => {
   const testCss: string = '{ background-color: red }';
   let originalTimeout: number;
-  let registerScriptSpy: jasmine.Spy;
   let fakeHelp: any;
 
   const mockCreateElement = (): any => {
@@ -18,14 +17,10 @@ describe('help-client', () => {
     return testCss;
   };
 
-  beforeAll(() => {
-  });
-
   beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-    registerScriptSpy.calls.reset();
     fakeHelp = {
       HelpWidget: {
         disabled: false,
@@ -62,21 +57,6 @@ describe('help-client', () => {
 
   afterEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
-    registerScriptSpy.calls.reset();
-  });
-
-  it('should load the help widget library', (done) => {
-    BBHelpClient
-      .load({})
-      .then(() => {
-        expect(registerScriptSpy.calls.argsFor(0)).toEqual(
-          ['https://cdn.blackbaudcloud.com/bb-help/bb-help.js']
-        );
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget library was not loaded.');
-      });
   });
 
   it('should initialize the help widget with config', (done) => {

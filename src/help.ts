@@ -1,7 +1,7 @@
-declare const BBHELP: any;
 
-import { BBHelpHelpWidget } from './help-widget';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidget } from './help-widget';
+declare const BBHELP: any;
 
 const demoConfig: HelpConfig = {
   customLocales: [],
