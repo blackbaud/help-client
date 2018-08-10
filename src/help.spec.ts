@@ -1,6 +1,6 @@
 import { BBHelpClient } from './help';
 
-describe('help-client', () => {
+describe('BBHelpClient', () => {
   let mockHelpWidget: any;
 
   class MockHelpWidget {

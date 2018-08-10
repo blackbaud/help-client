@@ -84,28 +84,27 @@
   right: 100%;
   border-right: none;
 
-  @media (max-width: $screenXsMax) {
-     .hide-on-mobile {
-          display: none;
-      }
+  span {
+    display: inline-block;
+    font-family: sans-serif;
+    font-weight: 700;
+    text-align: center;
+    width: 2ex;
+    height: 2ex;
+    font-size: 14px;
+    line-height: 2ex;
+    border-radius: 1.4ex;
+    padding: 1px;
+    border: 2px solid;
+    text-decoration: none;
+    box-sizing: content-box!important;
   }
-}
 
-#bb-help-invoker::before {
-  content: '?';
-  display: inline-block;
-  font-family: sans-serif;
-  font-weight: 700;
-  text-align: center;
-  width: 2ex;
-  height: 2ex;
-  font-size: 14px;
-  line-height: 2ex;
-  border-radius: 1.4ex;
-  padding: 1px;
-  border: 2px solid;
-  text-decoration: none;
-  box-sizing: content-box!important;
+  @media (max-width: $screenXsMax) {
+    .hide-on-mobile {
+      display: none;
+    }
+  }
 }
 
 #bb-help-iframe {
