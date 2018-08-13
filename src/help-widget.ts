@@ -1,9 +1,10 @@
-require('./styles/widget-styles.scss');
-require('./styles/omnibar-style-adjustments.scss');
+import './styles/omnibar-style-adjustments.scss';
+import './styles/widget-styles.scss';
 
-import { BBHelpCommunicationService } from './communication.service';
-import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { AnalyticsService } from './service/analytics.service';
+import { BBHelpCommunicationService } from './service/communication.service';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 
@@ -12,6 +13,7 @@ export class BBHelpHelpWidget {
   public config: HelpConfig;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
+  private analyticsService: AnalyticsService;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
@@ -27,6 +29,7 @@ export class BBHelpHelpWidget {
     this.setUpInvokerEvents();
     this.renderElements();
     this.setUpCommunication();
+    this.setUpAnalytics();
   }
 
   public ready() {
@@ -45,6 +48,8 @@ export class BBHelpHelpWidget {
       return;
     }
 
+    this.analyticsService.setupMixpanel();
+
     this.loadCalled = true;
     this.config = config;
     if (config.defaultHelpKey !== undefined) {
@@ -56,6 +61,10 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
+    this.analyticsService.trackEvent('Help Widget', {
+      Action: 'Closed From Invoker'
+    });
+
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
@@ -66,6 +75,10 @@ export class BBHelpHelpWidget {
       this.communicationService.postMessage({
         messageType: 'open-to-help-key',
         helpKey
+      });
+
+      this.analyticsService.trackEvent('Help Widget', {
+        Action: 'Opened From Invoker'
       });
 
       this.container.classList.remove(HELP_CLOSED_CLASS);
@@ -133,6 +146,10 @@ export class BBHelpHelpWidget {
     this.communicationService.communicationAction.subscribe((action: string) => {
       this.actionResponse(action);
     });
+  }
+
+  private setUpAnalytics() {
+    this.analyticsService = new AnalyticsService();
   }
 
   private actionResponse(action: string) {
