@@ -1,14 +1,20 @@
 import { BBHelpHelpWidget } from './help-widget';
 
+import { Subject } from 'rxjs';
+
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
+  let commReadyStatus: any;
 
   beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
     helpWidget = new BBHelpHelpWidget();
+    spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
+    spyOn(helpWidget['communicationService'], 'ready').and.callFake((message: any) => commReadyStatus);
+    spyOn(helpWidget['communicationService'], 'communicationAction').and.callFake(() => new Subject());
   });
 
   afterEach(() => {
@@ -58,7 +64,7 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should return ready when the communication service is ready', (done) => {
-    spyOn(helpWidget['communicationService'], 'ready').and.returnValue(Promise.resolve());
+    commReadyStatus = Promise.resolve();
     helpWidget['elementsLoaded'] = true;
     helpWidget.ready()
       .then(() => {
@@ -72,7 +78,7 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should return ready when the communication service is ready', (done) => {
-    spyOn(helpWidget['communicationService'], 'ready').and.returnValue(Promise.resolve());
+    commReadyStatus = Promise.resolve();
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     helpWidget['elementsLoaded'] = false;
     helpWidget.ready()
@@ -92,7 +98,6 @@ describe('BBHelpHelpWidget', () => {
       extends: 'test-config'
     };
 
-    spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
 
     helpWidget.load(fakeConfig);
@@ -111,7 +116,6 @@ describe('BBHelpHelpWidget', () => {
       extends: 'test-config'
     };
 
-    spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
     helpWidget['loadCalled'] = true;
     helpWidget.load(fakeConfig);
@@ -127,7 +131,6 @@ describe('BBHelpHelpWidget', () => {
       extends: 'test-config'
     };
 
-    spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
     helpWidget['loadCalled'] = false;
     expect(helpWidget['defaultHelpKey']).toBe('default.html');
@@ -135,4 +138,93 @@ describe('BBHelpHelpWidget', () => {
     expect(helpWidget['defaultHelpKey']).toBe('new-default.html');
     done();
   });
+
+  it('should open the help widget', (done) => {
+    helpWidget.load({});
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+    helpWidget.open();
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
+    done();
+  });
+
+  it('should open the help widget with a helpKey', (done) => {
+    const testHelpKey = 'test-key.html';
+
+    helpWidget.load({});
+
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+
+    helpWidget.open(testHelpKey);
+
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      helpKey: testHelpKey,
+      messageType: 'open-to-help-key'
+    });
+
+    done();
+  });
+
+  it('should not open the help widget if the widget is disbaled', (done) => {
+    helpWidget.load({});
+    helpWidget['widgetDisabled'] = true;
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+    helpWidget.open();
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+    done();
+  });
+
+  it('should close the help widget', (done) => {
+    helpWidget.load({});
+    helpWidget.open();
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
+    helpWidget.close();
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+    done();
+  });
+
+  it ('should add an event to the invoker, triggering toggleOpen on click', (done) => {
+    const fakeConfig = {
+      extends: 'test-config'
+    };
+    spyOn(helpWidget, 'toggleOpen').and.callThrough();
+    helpWidget.load(fakeConfig);
+    helpWidget['invoker'].click();
+    expect(helpWidget.toggleOpen).toHaveBeenCalled();
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
+    done();
+  });
+
+  it ('should close the widget with toggleOpen if the widget is already open', (done) => {
+    const fakeConfig = {
+      extends: 'test-config'
+    };
+    helpWidget.load(fakeConfig);
+    helpWidget.open();
+    spyOn(helpWidget, 'toggleOpen').and.callThrough();
+    helpWidget['invoker'].click();
+    expect(helpWidget['container'].classList).toContain('bb-help-closed');
+    expect(helpWidget.toggleOpen).toHaveBeenCalled();
+    done();
+  });
+
+  it ('should pass a helpKey to the open method from toggleOpen', (done) => {
+    const testHelpKey = 'test-key.html';
+    const fakeConfig = {
+      extends: 'test-config'
+    };
+
+    helpWidget.load(fakeConfig);
+
+    spyOn(helpWidget, 'toggleOpen').and.callThrough();
+    helpWidget.toggleOpen(testHelpKey);
+
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      helpKey: testHelpKey,
+      messageType: 'open-to-help-key'
+    });
+
+    done();
+  });
+
 });
