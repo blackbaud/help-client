@@ -119,7 +119,7 @@ describe('BBHelpClient', () => {
 
   it('should log an error if the Widget is never ready', (done) => {
     const helpReady = spyOn(mockHelpWidget, 'ready').and.returnValue(Promise.reject('error message'));
-    const consoleSpy = spyOn(window.console, 'log').and.callThrough();
+    const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     BBHelpClient
       .ready()
       .then(() => {

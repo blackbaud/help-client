@@ -109,8 +109,8 @@ export class BBHelpHelpWidget {
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
-      const duration = 100;
-      const maxIterations = 100;
+      const duration: number = 100;
+      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
