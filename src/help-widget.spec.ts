@@ -1,7 +1,5 @@
 import { BBHelpHelpWidget } from './help-widget';
 
-import { Subject } from 'rxjs';
-
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
@@ -14,7 +12,7 @@ describe('BBHelpHelpWidget', () => {
     helpWidget = new BBHelpHelpWidget();
     spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['communicationService'], 'ready').and.callFake((message: any) => commReadyStatus);
-    spyOn(helpWidget['communicationService'], 'communicationAction').and.callFake(() => new Subject());
+    spyOn(helpWidget['communicationService'], 'communicationAction').and.callThrough();
   });
 
   afterEach(() => {
@@ -227,4 +225,136 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
+  it ('should return the currentHelpKey with getCurrentHelpKey', (done) => {
+    const testHelpKey = 'test-key.html';
+    expect(helpWidget['currentHelpKey']).toBe(undefined);
+
+    helpWidget['currentHelpKey'] = testHelpKey;
+
+    const testKey = helpWidget.getCurrentHelpKey();
+    expect(testKey).toEqual(testHelpKey);
+    done();
+  });
+
+  it ('should return the defaultHelpKey with getCurrentHelpKey when no helpKey is defined', (done) => {
+    const fakeConfig = {
+      defaultHelpKey: 'test-default.html'
+    };
+
+    helpWidget.load(fakeConfig);
+
+    expect(helpWidget['currentHelpKey']).toBe(undefined);
+    const testKey = helpWidget.getCurrentHelpKey();
+    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    done();
+  });
+
+  it ('should set the currentHelpKey to a specified help key with setCurrentHelpKey', (done) => {
+    const testHelpKey = 'test-key.html';
+    expect(helpWidget['currentHelpKey']).toBe(undefined);
+
+    helpWidget.setCurrentHelpKey(testHelpKey);
+
+    const testKey = helpWidget.getCurrentHelpKey();
+    expect(testKey).toEqual(testHelpKey);
+    done();
+  });
+
+  it ('should set the currentHelpKey to the defaultHelpKey with setCurrentHelpKey when no key is specified', (done) => {
+    const fakeConfig = {
+      defaultHelpKey: 'test-default.html'
+    };
+
+    helpWidget.load(fakeConfig);
+    expect(helpWidget['currentHelpKey']).toBe(undefined);
+
+    helpWidget.setCurrentHelpKey();
+
+    const testKey = helpWidget.getCurrentHelpKey();
+    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    done();
+  });
+
+  it ('should set the currentHelpKey to the defaultHelpKey with setHelpKeyToDefault', (done) => {
+    const fakeConfig = {
+      defaultHelpKey: 'test-default.html'
+    };
+
+    helpWidget.load(fakeConfig);
+    expect(helpWidget['currentHelpKey']).toBe(undefined);
+    helpWidget.setHelpKeyToDefault();
+    const testKey = helpWidget.getCurrentHelpKey();
+    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    done();
+  });
+
+  it ('should disable the help widget', (done) => {
+    expect(helpWidget['widgetDisabled']).toBe(false);
+    helpWidget.disableWidget();
+    expect(helpWidget['widgetDisabled']).toBe(true);
+    expect(helpWidget['invoker'].classList).toContain('bb-help-hidden');
+    expect(helpWidget['container'].classList).toContain('bb-help-hidden');
+    done();
+  });
+
+  it ('should re-enable the help widget', (done) => {
+    expect(helpWidget['widgetDisabled']).toBe(false);
+    helpWidget.disableWidget();
+    expect(helpWidget['widgetDisabled']).toBe(true);
+    expect(helpWidget['invoker'].classList).toContain('bb-help-hidden');
+    expect(helpWidget['container'].classList).toContain('bb-help-hidden');
+
+    helpWidget.enableWidget();
+    expect(helpWidget['widgetDisabled']).toBe(false);
+    expect(helpWidget['invoker'].classList).not.toContain('bb-help-hidden');
+    expect(helpWidget['container'].classList).not.toContain('bb-help-hidden');
+    done();
+  });
+
+  it ('should respond to action responses, Close Widget', (done) => {
+    spyOn(helpWidget, 'close').and.callThrough();
+    helpWidget['communicationService'].communicationAction.next('Close Widget');
+    expect(helpWidget.close).toHaveBeenCalled();
+    done();
+  });
+
+  it ('should respond to action responses, Get Help Key', (done) => {
+    helpWidget['communicationService'].communicationAction.next('Get Help Key');
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      helpKey: helpWidget.getCurrentHelpKey(),
+      messageType: 'help-key'
+    });
+    done();
+  });
+
+  it ('should respond to action responses, Child Window Ready (loadCalled false) by not sending the config', (done) => {
+    helpWidget['communicationService'].communicationAction.next('Child Window Ready');
+    expect(helpWidget['communicationService'].postMessage).not.toHaveBeenCalled();
+    done();
+  });
+
+  it ('should respond to action responses, Child Window Ready (loadCalled true) by sending the config', (done) => {
+
+    const fakeConfig = {
+      defaultHelpKey: 'test-default.html'
+    };
+
+    helpWidget.load(fakeConfig);
+    helpWidget['communicationService'].communicationAction.next('Child Window Ready');
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      config: helpWidget.config,
+      messageType: 'user-config'
+    });
+    done();
+  });
+
+  it ('should log a console error if no matching action exists', (done) => {
+    const testAction = 'Test Action No Response';
+    spyOn(window.console, 'error').and.callFake(() => {
+      return;
+    });
+    helpWidget['communicationService'].communicationAction.next(testAction);
+    expect(window.console.error).toHaveBeenCalledWith(`No matching response for action: ${testAction}`);
+    done();
+  });
 });

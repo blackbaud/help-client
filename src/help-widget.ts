@@ -155,6 +155,7 @@ export class BBHelpHelpWidget {
           }
           break;
         default:
+          console.error(`No matching response for action: ${action}`);
     }
   }
 
