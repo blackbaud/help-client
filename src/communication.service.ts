@@ -51,8 +51,9 @@ export class BBHelpCommunicationService {
             console.error(`No matching response for message type: ${message.messageType}`);
             break;
         }
+      } else {
+        console.error(`Event origin not supported.`);
       }
-      console.error(`Event origin not supported.`);
     };
   }
 

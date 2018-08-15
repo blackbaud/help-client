@@ -17,7 +17,7 @@ const mockChildWindow = {
     }
 };
 
-fdescribe('BBHelpCommunicationService', () => {
+describe('BBHelpCommunicationService', () => {
   let commService: BBHelpCommunicationService;
   let originalTimeout: number;
 
