@@ -1,22 +1,17 @@
+import { HelpConfig } from './help-config';
+
 import './styles/omnibar-style-adjustments.scss';
 import './styles/widget-styles.scss';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
-const BB_HEADER_COLOR: string = '#71bf43';
-const BB_HEADER_TEXT_COLOR: string = '#fff';
+// Some browsers return the hexdecimal values are rgb and vice versa when the style is set with javascript.
+const BB_HEADER_COLOR: string = '#71bf43'; // 'rgb(113, 191, 67)';
+const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 
-import { HelpConfig } from './help-config';
-
 export class BBHelpHelpWidgetRenderer {
-
-  public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
-    invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
-    invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
-    invoker.style.content = '?';
-  }
 
   public createContainer(): HTMLElement {
     let domElement: HTMLElement;
@@ -27,8 +22,8 @@ export class BBHelpHelpWidgetRenderer {
     return domElement;
   }
 
-  public createInvoker(): HTMLElement {
-    let invoker: HTMLElement;
+  public createInvoker(): HTMLButtonElement {
+    let invoker: HTMLButtonElement;
     invoker = document.createElement('button');
     invoker.setAttribute('aria-title', 'Toggle Help Widget');
     invoker.setAttribute('aria-controls', 'bb-help-container');
@@ -44,6 +39,12 @@ export class BBHelpHelpWidgetRenderer {
     iframe.title = IFRAME_TITLE;
     iframe.src = IFRAME_SRC;
     return iframe;
+  }
+
+  public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
+    invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
+    invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
+    invoker.innerHTML = '<span>?</span>';
   }
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {

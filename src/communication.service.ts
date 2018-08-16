@@ -15,18 +15,18 @@ export class BBHelpCommunicationService {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
       const duration = 100;
-      const maxIterations = 100;
+      const maxIterations = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
         if (this.childWindowReady) {
           clearInterval(interval);
-          resolve();
+          return resolve('Communication Service Ready');
         }
 
         if (readyAttempts >= maxIterations) {
           clearInterval(interval);
-          reject('The Help Widget failed to load.');
+          return reject('The Help Widget failed to load.');
         }
       }, duration);
     });
@@ -44,9 +44,13 @@ export class BBHelpCommunicationService {
             break;
           case 'close-widget':
             this.communicationAction.next('Close Widget');
+            break;
           default:
+            console.error(`No matching response for message type: ${message.messageType}`);
             break;
         }
+      } else {
+        console.error(`Event origin not supported.`);
       }
     };
   }

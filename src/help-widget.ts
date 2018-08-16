@@ -19,7 +19,6 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
-  private configRequested: boolean = false;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -123,8 +122,8 @@ export class BBHelpHelpWidget {
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
-      const duration = 100;
-      const maxIterations = 100;
+      const duration: number = 100;
+      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
@@ -169,6 +168,7 @@ export class BBHelpHelpWidget {
           }
           break;
         default:
+          console.error(`No matching response for action: ${action}`);
     }
   }
 
