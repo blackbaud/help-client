@@ -43,6 +43,10 @@ describe('BBHelpClient', () => {
     public getCurrentHelpKey() {
       return;
     }
+
+    public getWhatsNewRevision() {
+      return;
+    }
   }
 
   beforeEach(() => {
@@ -211,6 +215,13 @@ describe('BBHelpClient', () => {
 
     BBHelpClient.enableWidget();
     expect(helpEnableSpy).toHaveBeenCalled();
+    done();
+  });
+
+  it('should resolve what\'s new revisions', (done) => {
+    const helpWhatsNewSpy = spyOn(mockHelpWidget, 'getWhatsNewRevision').and.callThrough();
+    BBHelpClient.getWhatsNewRevision();
+    expect(helpWhatsNewSpy).toHaveBeenCalled();
     done();
   });
 });
