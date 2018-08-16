@@ -4,6 +4,7 @@ import './styles/widget-styles.scss';
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
+// Some browsers return the hexdecimal values are rgb and vice versa when the style is set with javascript.
 const BB_HEADER_COLOR: string = '#71bf43'; // 'rgb(113, 191, 67)';
 const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
