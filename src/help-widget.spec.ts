@@ -70,7 +70,7 @@ describe('BBHelpHelpWidget', () => {
         done();
       })
       .catch((err) => {
-        console.log(err, 'error 69');
+        console.log('[ERROR]: ', err);
         done();
       });
   });
@@ -86,7 +86,7 @@ describe('BBHelpHelpWidget', () => {
         done();
       })
       .catch((err) => {
-        console.log(err, 'error 69');
+        console.log('[ERROR]: ', err);
         done();
       });
   });
@@ -221,7 +221,6 @@ describe('BBHelpHelpWidget', () => {
       helpKey: testHelpKey,
       messageType: 'open-to-help-key'
     });
-
     done();
   });
 
