@@ -106,7 +106,7 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
-  public getWhatsNewRevision() {
+  public getWhatsNewRevision(): number {
     if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
       const revisions = this.config.whatsNewRevisions.split(';');
       const foundRevision = revisions.find((revision: any) => {

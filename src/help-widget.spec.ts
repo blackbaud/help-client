@@ -355,4 +355,30 @@ describe('BBHelpHelpWidget', () => {
     expect(window.console.error).toHaveBeenCalledWith(`No matching response for action: ${testAction}`);
     done();
   });
+
+  it('should assess what\'s new revision and return revision number', () => {
+    const fakeConfig = {
+      productId: 'rex',
+      whatsNewRevisions: 'rex=30;'
+    };
+    helpWidget.load(fakeConfig);
+    expect(helpWidget.getWhatsNewRevision()).toEqual(30);
+  });
+
+  it('should assess what\'s new revision with no found revision and return 0', () => {
+    const fakeConfig = {
+      productId: 'fe',
+      whatsNewRevisions: 'rex=30;'
+    };
+    helpWidget.load(fakeConfig);
+    expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+  });
+
+  it('should assess what\'s new revision with undefined whatsNewRevisions property and return 0', () => {
+    const fakeConfig = {
+      productId: 'rex'
+    };
+    helpWidget.load(fakeConfig);
+    expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+  });
 });
