@@ -7,8 +7,6 @@ export class BBHelpCommunicationService {
 
   public childWindowReady: boolean = false;
 
-  public clientReady: boolean = false;
-
   constructor(private childWindow: any) {
     window.addEventListener('message', this.messageHandler());
   }

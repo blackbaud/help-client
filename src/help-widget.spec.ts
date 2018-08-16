@@ -334,7 +334,6 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it ('should respond to action responses, Child Window Ready (loadCalled true) by sending the config', (done) => {
-
     const fakeConfig = {
       defaultHelpKey: 'test-default.html'
     };

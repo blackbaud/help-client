@@ -1,3 +1,5 @@
+import { HelpConfig } from './help-config';
+
 import './styles/omnibar-style-adjustments.scss';
 import './styles/widget-styles.scss';
 
@@ -8,8 +10,6 @@ const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
 const BB_HEADER_COLOR: string = '#71bf43'; // 'rgb(113, 191, 67)';
 const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
-
-import { HelpConfig } from './help-config';
 
 export class BBHelpHelpWidgetRenderer {
 

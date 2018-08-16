@@ -35,7 +35,6 @@ describe('BBHelpCommunicationService', () => {
   });
 
   it('should return ready when the childWindowReady is true', (done) => {
-    expect(commService.clientReady).toEqual(false);
     commService.childWindowReady = true;
     commService.ready()
       .then((response) => {
