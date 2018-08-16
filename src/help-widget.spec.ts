@@ -365,6 +365,15 @@ describe('BBHelpHelpWidget', () => {
     expect(helpWidget.getWhatsNewRevision()).toEqual(30);
   });
 
+  it('should assess what\'s new revision and return revision number from several revisions', () => {
+    const fakeConfig = {
+      productId: 'fe',
+      whatsNewRevisions: 'rex=30;fe=10;lo=15'
+    };
+    helpWidget.load(fakeConfig);
+    expect(helpWidget.getWhatsNewRevision()).toEqual(10);
+  });
+
   it('should assess what\'s new revision with no found revision and return 0', () => {
     const fakeConfig = {
       productId: 'fe',
