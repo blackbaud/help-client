@@ -1,5 +1,5 @@
-require('./styles/widget-styles.scss');
-require('./styles/omnibar-style-adjustments.scss');
+import './styles/omnibar-style-adjustments.scss';
+import './styles/widget-styles.scss';
 
 import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
