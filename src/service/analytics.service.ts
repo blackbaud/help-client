@@ -36,7 +36,6 @@ export class AnalyticsService {
   }
 
   public trackEvent(eventName: string, payload: any) {
-    console.log(eventName);
     Object.keys(payload)
       .forEach((property) => {
         const titleCasePropertyName = this.camelToTitleCase(property);
@@ -46,7 +45,6 @@ export class AnalyticsService {
         }
       });
 
-    console.log('client', this.getAnalyticsClient().bb_help_widget);
     this.getAnalyticsClient().bb_help_widget.track(eventName, payload);
   }
 

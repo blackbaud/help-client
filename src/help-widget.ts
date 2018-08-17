@@ -21,7 +21,6 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
-  private configRequested: boolean = false;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -120,11 +119,24 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
+  public getWhatsNewRevision(): number {
+    if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
+      const revisions = this.config.whatsNewRevisions.split(';');
+      const foundRevision = revisions.find((revision: any) => {
+        return revision.includes(`${this.config.productId}=`);
+      });
+      if (foundRevision) {
+        return parseInt(foundRevision.substring(this.config.productId.length + 1), 10);
+      }
+    }
+    return 0;
+  }
+
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
-      const duration = 100;
-      const maxIterations = 100;
+      const duration: number = 100;
+      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
@@ -173,6 +185,7 @@ export class BBHelpHelpWidget {
           }
           break;
         default:
+          console.error(`No matching response for action: ${action}`);
     }
   }
 
