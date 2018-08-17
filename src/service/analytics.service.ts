@@ -107,7 +107,7 @@ export class AnalyticsService {
   }
 
   private setupAnalyticsClient() {
-    if (this.configService.getAuthEnabled()) {
+    if (this.configService.getConfigAttribute('authEnabled')) {
       this.registerPropertiesWithToken();
     } else {
       this.registerSuperProperties();
