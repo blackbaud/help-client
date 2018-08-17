@@ -7,8 +7,7 @@ declare const BBHELP: any;
 const demoConfig: HelpConfig = {
   customLocales: [],
   defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt',
-  headerColor: '#dcdcdc'
+  extends: 'renxt'
 };
 
 export abstract class BBHelpClient {
