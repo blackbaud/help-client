@@ -10,6 +10,7 @@ describe('BBHelpHelpWidget', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
     helpWidget = new BBHelpHelpWidget();
+    spyOn(helpWidget['analyticsService'], 'trackEvent');
     spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['communicationService'], 'ready').and.callFake((message: any) => commReadyStatus);
     spyOn(helpWidget['communicationService'], 'communicationAction').and.callThrough();

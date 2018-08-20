@@ -3,7 +3,7 @@ import './styles/widget-styles.scss';
 
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
-import { AnalyticsService } from './service/analytics.service';
+import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
@@ -13,7 +13,7 @@ export class BBHelpHelpWidget {
   public config: HelpConfig;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
-  private analyticsService: AnalyticsService;
+  private analyticsService: BBHelpAnalyticsService;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
@@ -24,11 +24,11 @@ export class BBHelpHelpWidget {
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
+    this.analyticsService = new BBHelpAnalyticsService();
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
     this.setUpCommunication();
-    this.setUpAnalytics();
   }
 
   public ready() {
@@ -42,11 +42,11 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-
     if (this.loadCalled) {
       return;
     }
 
+    this.analyticsService.config = config;
     this.analyticsService.setupMixpanel();
 
     this.loadCalled = true;
@@ -158,10 +158,6 @@ export class BBHelpHelpWidget {
     this.communicationService.communicationAction.subscribe((action: string) => {
       this.actionResponse(action);
     });
-  }
-
-  private setUpAnalytics() {
-    this.analyticsService = new AnalyticsService();
   }
 
   private actionResponse(action: string) {

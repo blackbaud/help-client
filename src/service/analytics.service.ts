@@ -1,5 +1,5 @@
 import { BBAuth } from '@blackbaud/auth-client';
-import { ConfigService } from './config.service';
+import { HelpConfig } from '../help-config';
 
 const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
 
@@ -13,25 +13,25 @@ const DEFAULT_CONFIG = {
   protocol: 'https'
 };
 
-export class AnalyticsService {
-  public jwtDecoder: any;
+export class BBHelpAnalyticsService {
+  public config: HelpConfig;
+
+  private jwtDecoder: any;
   private superProperties: any;
   private analyticsClient: any;
   private decodedToken: any;
-  private configService: ConfigService;
 
   constructor() {
     this.decodedToken = {};
-    this.configService = new ConfigService();
-    this.setSuperProperties({
-      'Referring Service Name': this.configService.getConfigAttribute('productId')
-    });
   }
 
   public setupMixpanel() {
     this.setAnalyticsClient(this.getMixpanel());
     this.jwtDecoder = this.getJwtDecoder();
     this.initMixpanel();
+    this.setSuperProperties({
+      'Referring Service Name': this.config.productId
+    });
     this.setupAnalyticsClient();
   }
 
@@ -42,6 +42,7 @@ export class AnalyticsService {
         if (titleCasePropertyName !== property) {
           payload[titleCasePropertyName] = payload[property];
           delete payload[property];
+          console.log(payload);
         }
       });
 
@@ -107,7 +108,7 @@ export class AnalyticsService {
   }
 
   private setupAnalyticsClient() {
-    if (this.configService.getConfigAttribute('authEnabled')) {
+    if (this.config.authEnabled) {
       this.registerPropertiesWithToken();
     } else {
       this.registerSuperProperties();

@@ -5,9 +5,11 @@ import { BBHelpHelpWidget } from './help-widget';
 declare const BBHELP: any;
 
 const demoConfig: HelpConfig = {
+  authEnabled: true,
   customLocales: [],
   defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt'
+  extends: 'renxt',
+  productId: 'bbHelpTesting'
 };
 
 export abstract class BBHelpClient {
