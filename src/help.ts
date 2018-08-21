@@ -7,9 +7,8 @@ declare const BBHELP: any;
 const demoConfig: HelpConfig = {
   authEnabled: true,
   customLocales: [],
-  defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt',
-  productId: 'bbHelpTesting'
+  defaultHelpKey: 'default.html',
+  extends: 'bbHelpTesting'
 };
 
 export abstract class BBHelpClient {
