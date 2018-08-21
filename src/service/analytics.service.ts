@@ -42,7 +42,6 @@ export class BBHelpAnalyticsService {
         if (titleCasePropertyName !== property) {
           payload[titleCasePropertyName] = payload[property];
           delete payload[property];
-          console.log(payload);
         }
       });
 
