@@ -82,7 +82,9 @@
   height: 49px;
   width: 40px;
   right: 100%;
-  border-right: none;
+  padding-left: 10px;
+  border: none;
+  outline: none;
 
   @media (max-width: $screenXsMax) {
      .hide-on-mobile {
