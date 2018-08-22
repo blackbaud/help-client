@@ -390,4 +390,59 @@ describe('BBHelpHelpWidget', () => {
     helpWidget.load(fakeConfig);
     expect(helpWidget.getWhatsNewRevision()).toEqual(0);
   });
+
+  it('should hide invoker when mobile view', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['invoker'].style.display).toEqual('none');
+    done();
+  });
+
+  it('should size the closed content container when mobile view', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].style.height).toEqual('100%');
+    done();
+  });
+
+  it('should size the open content container when mobile view', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget.open();
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].style.width).toEqual('100%');
+    expect(helpWidget['container'].style.height).toEqual('100%');
+    done();
+  });
+
+  it('should show invoker when standard view', (done) => {
+    (window as any).innerWidth = 1000;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['invoker'].style.display).toEqual('flex');
+    done();
+  });
+
+  it('should size the open content container when standard view', (done) => {
+    (window as any).innerWidth = 1000;
+    helpWidget.open();
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].style.width).toEqual('');
+    expect(helpWidget['container'].style.height).toEqual('');
+    done();
+  });
+
+  it('should resize the content container when window resizes', (done) => {
+    spyOn<any>(helpWidget, 'resizeContainer').and.callThrough();
+
+    helpWidget['watchWindowWidth']();
+    window.dispatchEvent(new Event('resize'));
+
+    // Note: resize event gets called twice
+    expect(helpWidget['resizeContainer']).toHaveBeenCalledTimes(2);
+    done();
+  });
 });

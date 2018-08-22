@@ -19,6 +19,8 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
+  private containerInitialWidth: string;
+  private containerInitialHeight: string;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -26,6 +28,8 @@ export class BBHelpHelpWidget {
     this.setUpInvokerEvents();
     this.renderElements();
     this.setUpCommunication();
+    this.resizeContainer();
+    this.watchWindowWidth();
   }
 
   public ready() {
@@ -58,6 +62,7 @@ export class BBHelpHelpWidget {
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
+    this.resizeContainer();
   }
 
   public open(helpKey?: string) {
@@ -186,6 +191,8 @@ export class BBHelpHelpWidget {
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
+    this.containerInitialWidth = this.container.style.width;
+    this.containerInitialHeight = this.container.style.height;
     this.invoker = this.widgetRenderer.createInvoker();
     this.iframe = this.widgetRenderer.createIframe();
     this.elementsLoaded = true;
@@ -204,5 +211,31 @@ export class BBHelpHelpWidget {
 
   private isCollapsed() {
     return this.container.classList.contains(HELP_CLOSED_CLASS);
+  }
+
+  private watchWindowWidth() {
+    window.addEventListener('resize', () => {
+      this.resizeContainer();
+    });
+  }
+
+  private resizeContainer() {
+    // width pulled from $screenXsMax scss variable
+    if (window.innerWidth < 479) {
+      if (!this.container.classList.contains('bb-help-closed')) {
+        this.setElementDimensions(this.container, '100%', '100%');
+      } else {
+        this.setElementDimensions(this.container, this.containerInitialWidth, '100%');
+      }
+      this.invoker.style.display = 'none';
+    } else {
+      this.setElementDimensions(this.container, this.containerInitialWidth, this.containerInitialHeight);
+      this.invoker.style.display = 'flex';
+    }
+  }
+
+  private setElementDimensions(container: HTMLElement, width: string, height: string) {
+    container.style.width = width;
+    container.style.height = height;
   }
 }
