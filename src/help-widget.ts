@@ -56,6 +56,10 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
+    console.log(close);
+    this.communicationService.postMessage({
+      messageType: 'close-help-widget'
+    });
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
