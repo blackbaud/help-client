@@ -5,7 +5,6 @@ import { BBHelpHelpWidget } from './help-widget';
 declare const BBHELP: any;
 
 const demoConfig: HelpConfig = {
-  authEnabled: true,
   customLocales: [],
   defaultHelpKey: 'default.html',
   extends: 'bbHelpTesting'

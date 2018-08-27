@@ -2,7 +2,6 @@ import { HelpConfig } from '../help-config';
 import { BBHelpAnalyticsService } from './analytics.service';
 
 const demoConfig: HelpConfig = {
-  authEnabled: true,
   productId: 'bbHelpTesting'
 };
 
@@ -35,78 +34,25 @@ describe('BBHelpAnalyticsService', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  it('should set up the mixpanel user logged in', (done) => {
-    spyOn<any>(analyticsService, 'registerPropertiesWithToken').and.callThrough();
+  it('should set up the mixpanel', (done) => {
     spyOn<any>(analyticsService, 'registerSuperProperties').and.callThrough();
-    spyOn<any>(analyticsService, 'getToken').and.returnValue({
-      then: (cb: any) => {
-        return {
-          catch: (callback: any) => callback({
-            code: 1
-          }),
-          data: cb('resolve')
-        };
-      }
-    });
-
-    spyOn<any>(analyticsService, 'getJwtDecoder').and.returnValue((object: any) => {
-      return {
-        sub: 123
-      };
-     });
 
     analyticsService.setupMixpanel();
 
     expect(analyticsService['superProperties']).toEqual({
-      'Referring Service Name': 'bbHelpTesting',
-      'User ID': 123
+      'Referring Service Name': 'bbHelpTesting'
     });
     expect(analyticsService['analyticsClient']).toBeDefined();
-    expect(analyticsService['jwtDecoder']()).toEqual({sub: 123});
-    expect(analyticsService['registerPropertiesWithToken']).toHaveBeenCalled();
     expect(analyticsService['registerSuperProperties']).toHaveBeenCalled();
     done();
   });
 
   it('should set up the mixpanel with unsupported error code', (done) => {
     spyOn<any>(analyticsService, 'registerSuperProperties').and.callThrough();
-    spyOn<any>(analyticsService, 'getToken').and.returnValue({
-      then: (cb: any) => {
-        return {
-          catch: (callback: any) => callback({
-            code: 0
-          }),
-          data: cb('resolve')
-        };
-      }
-    });
-
-    spyOn<any>(analyticsService, 'getJwtDecoder').and.returnValue((object: any) => {
-      return {
-        sub: 123
-      };
-     });
 
     analyticsService.setupMixpanel();
 
     expect(analyticsService['registerSuperProperties']).toHaveBeenCalledTimes(1);
-    done();
-  });
-
-  it('should set up the mixpanel with auth disabled', (done) => {
-    spyOn<any>(analyticsService, 'registerPropertiesWithToken').and.callThrough();
-    spyOn<any>(analyticsService, 'registerSuperProperties').and.callThrough();
-
-    demoConfig.authEnabled = false;
-
-    analyticsService.setupMixpanel();
-
-    expect(analyticsService['superProperties']).toEqual({'Referring Service Name': demoConfig.productId });
-    expect(analyticsService['analyticsClient']).toBeDefined();
-    expect(analyticsService['jwtDecoder']).toBeDefined();
-    expect(analyticsService['registerPropertiesWithToken']).not.toHaveBeenCalled();
-    expect(analyticsService['registerSuperProperties']).toHaveBeenCalled();
-    demoConfig.authEnabled = true;
     done();
   });
 
@@ -117,8 +63,6 @@ describe('BBHelpAnalyticsService', () => {
 
     expect(analyticsService['superProperties']).toEqual({'Referring Service Name': demoConfig.productId });
     expect(analyticsService['analyticsClient']).toBeDefined();
-    expect(analyticsService['jwtDecoder']).toBeDefined();
-    demoConfig.authEnabled = true;
     done();
   });
 
@@ -156,16 +100,6 @@ describe('BBHelpAnalyticsService', () => {
   it('should get mixpanel', (done) => {
     mixpanelSpy.and.callThrough();
     expect(analyticsService['getMixpanel']()).toBeDefined();
-    done();
-  });
-
-  it('should get jwt decoder', (done) => {
-    expect(analyticsService['getJwtDecoder']()).toBeDefined();
-    done();
-  });
-
-  it('should get token', (done) => {
-    expect(analyticsService['getToken']()).toBeDefined();
     done();
   });
 });

@@ -1,5 +1,4 @@
 export interface HelpConfig {
-  authEnabled?: boolean | string;
   caseCentralUrl?: string;
   communityUrl?: string;
   customLocales?: string[];

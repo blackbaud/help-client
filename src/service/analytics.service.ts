@@ -1,4 +1,3 @@
-import { BBAuth } from '@blackbaud/auth-client';
 import { HelpConfig } from '../help-config';
 
 const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
@@ -16,18 +15,11 @@ const DEFAULT_CONFIG = {
 export class BBHelpAnalyticsService {
   public config: HelpConfig;
 
-  private jwtDecoder: any;
   private superProperties: any;
   private analyticsClient: any;
-  private decodedToken: any;
-
-  constructor() {
-    this.decodedToken = {};
-  }
 
   public setupMixpanel() {
     this.setAnalyticsClient(this.getMixpanel());
-    this.jwtDecoder = this.getJwtDecoder();
     this.initMixpanel();
     this.setSuperProperties({
       'Referring Service Name': this.config.productId
@@ -64,14 +56,6 @@ export class BBHelpAnalyticsService {
     this.analyticsClient = client;
   }
 
-  private getDecodedToken() {
-    return this.decodedToken;
-  }
-
-  private setDecodedToken(token: any) {
-    this.decodedToken = token;
-  }
-
   // Converts 'pageName' to 'Page Name', and doesn't mangle properties like 'Duration (s)'.
   private camelToTitleCase(oldString: string) {
     return oldString.replace(/ /g, '')
@@ -83,10 +67,6 @@ export class BBHelpAnalyticsService {
 
   private getMixpanel() {
     return require('mixpanel-browser');
-  }
-
-  private getJwtDecoder() {
-    return require('jwt-decode');
   }
 
   private initMixpanel() {
@@ -107,46 +87,10 @@ export class BBHelpAnalyticsService {
   }
 
   private setupAnalyticsClient() {
-    if (this.config.authEnabled) {
-      this.registerPropertiesWithToken();
-    } else {
-      this.registerSuperProperties();
-    }
-  }
-
-  private registerPropertiesWithToken() {
-    this.getToken()
-      .then((token) => {
-        this.setDecodedToken(this.jwtDecoder(token));
-        this.getAnalyticsClient().bb_help_widget.identify(this.getDecodedToken().sub);
-        this.registerSuperProperties();
-        this.registerUser();
-      })
-      .catch((err) => {
-        // Consuming products that do not require BBAuth will have no token,
-        // calling getToken returns an error.code 1 if there is BBAuth user logged in.
-        if (err.code === 1) {
-          this.registerSuperProperties();
-        }
-      });
-  }
-
-  private getToken() {
-    return BBAuth.getToken({ disableRedirect: true });
+    this.registerSuperProperties();
   }
 
   private registerSuperProperties() {
-    if (this.getDecodedToken().sub) {
-      this.getSuperProperties()['User ID'] = this.getDecodedToken().sub;
-    }
     this.getAnalyticsClient().bb_help_widget.register(this.getSuperProperties());
-  }
-
-  private registerUser() {
-    this.getAnalyticsClient().bb_help_widget.people.set({
-      '$email': this.getDecodedToken().email,
-      '$name': this.getDecodedToken().email,
-      'User ID': this.getDecodedToken().sub
-    });
   }
 }
