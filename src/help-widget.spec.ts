@@ -391,7 +391,7 @@ describe('BBHelpHelpWidget', () => {
     expect(helpWidget.getWhatsNewRevision()).toEqual(0);
   });
 
-  it('should hide invoker when mobile view', (done) => {
+  it('should hide invoker when the window is a mobile size', (done) => {
     (window as any).innerWidth = 400;
     helpWidget['resizeContainer']();
 
@@ -399,7 +399,7 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should size the closed content container when mobile view', (done) => {
+  it('should update the container sizes when hidden from view and the window is a mobile size', (done) => {
     (window as any).innerWidth = 400;
     helpWidget['resizeContainer']();
 
@@ -408,7 +408,7 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should size the open content container when mobile view', (done) => {
+  it('should update the container to display mobile style classes when the window is a mobile size', (done) => {
     (window as any).innerWidth = 400;
     helpWidget.open();
     helpWidget['resizeContainer']();
@@ -418,7 +418,7 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should show invoker when standard view', (done) => {
+  it('should show invoker when the window is a standard size', (done) => {
     (window as any).innerWidth = 1000;
     helpWidget['resizeContainer']();
 
@@ -426,17 +426,16 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should size the open content container when standard view', (done) => {
+  it('should update the container to display non-mobile style classes when the window is a standard size', (done) => {
     (window as any).innerWidth = 1000;
     helpWidget.open();
     helpWidget['resizeContainer']();
 
-    expect(helpWidget['container'].style.width).toEqual('');
-    expect(helpWidget['container'].style.height).toEqual('');
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
     done();
   });
 
-  it('should resize the content container when window resizes', (done) => {
+  it('should update content styles when the content container when window is resized', (done) => {
     spyOn<any>(helpWidget, 'resizeContainer').and.callThrough();
 
     helpWidget['watchWindowWidth']();
