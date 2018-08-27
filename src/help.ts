@@ -1,13 +1,13 @@
-declare const BBHELP: any;
 
-import { BBHelpHelpWidget } from './help-widget';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidget } from './help-widget';
+
+declare const BBHELP: any;
 
 const demoConfig: HelpConfig = {
   customLocales: [],
   defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt',
-  headerColor: '#dcdcdc'
+  extends: 'renxt'
 };
 
 export abstract class BBHelpClient {
@@ -53,6 +53,10 @@ export abstract class BBHelpClient {
 
   public static enableWidget(): void {
     BBHELP.HelpWidget.enableWidget();
+  }
+
+  public static getWhatsNewRevision(): void {
+    BBHELP.HelpWidget.getWhatsNewRevision();
   }
 
   public static ready(): Promise<any> {

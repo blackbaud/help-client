@@ -3,6 +3,7 @@ export interface HelpConfig {
   caseCentralUrl?: string;
   communityUrl?: string;
   customLocales?: string[];
+  defaultHelpKey?: string;
   extends?: string;
   getChatData?: any;
   getCurrentHelpKey?: any;
@@ -19,6 +20,6 @@ export interface HelpConfig {
   searchService?: string;
   trainingCentralUrl?: string;
   useFlareSearch?: boolean;
-  defaultHelpKey?: string;
   whatsNewRevisions?: any;
+  hostQueryParams?: string;
 }

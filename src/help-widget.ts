@@ -1,9 +1,9 @@
-require('./styles/widget-styles.scss');
-require('./styles/omnibar-style-adjustments.scss');
+import './styles/omnibar-style-adjustments.scss';
+import './styles/widget-styles.scss';
 
 import { BBHelpCommunicationService } from './communication.service';
-import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { HelpConfig } from './help-config';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 
@@ -19,7 +19,6 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
-  private configRequested: boolean = false;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -50,6 +49,8 @@ export class BBHelpHelpWidget {
     if (config.defaultHelpKey !== undefined) {
       this.defaultHelpKey = config.defaultHelpKey;
     }
+
+    config.hostQueryParams = this.getQueryParams();
 
     this.renderInvoker();
     this.sendConfig();
@@ -111,11 +112,24 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
+  public getWhatsNewRevision(): number {
+    if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
+      const revisions = this.config.whatsNewRevisions.split(';');
+      const foundRevision = revisions.find((revision: any) => {
+        return revision.includes(`${this.config.productId}=`);
+      });
+      if (foundRevision) {
+        return parseInt(foundRevision.substring(this.config.productId.length + 1), 10);
+      }
+    }
+    return 0;
+  }
+
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
-      const duration = 100;
-      const maxIterations = 100;
+      const duration: number = 100;
+      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
@@ -160,7 +174,14 @@ export class BBHelpHelpWidget {
           }
           break;
         default:
+          console.error(`No matching response for action: ${action}`);
     }
+  }
+
+  private getQueryParams(): string {
+      //  Gets the value of a query string parameter in the current url.
+      const results = window.location.search;
+      return results;
   }
 
   private sendConfig() {
