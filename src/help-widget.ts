@@ -223,19 +223,17 @@ export class BBHelpHelpWidget {
     // width pulled from $screenXsMax scss variable
     if (window.innerWidth < 479) {
       if (!this.container.classList.contains('bb-help-closed')) {
-        this.setElementDimensions(this.container, '100%', '100%');
+        this.container.classList.remove('bb-help-closed-mobile');
+        this.container.classList.add('bb-help-container-mobile');
       } else {
-        this.setElementDimensions(this.container, this.containerInitialWidth, '100%');
+        this.container.classList.remove('bb-help-container-mobile');
+        this.container.classList.add('bb-help-closed-mobile');
       }
-      this.invoker.style.display = 'none';
+      this.invoker.classList.add('bb-help-invoker-hidden');
     } else {
-      this.setElementDimensions(this.container, this.containerInitialWidth, this.containerInitialHeight);
-      this.invoker.style.display = 'flex';
+      this.container.classList.remove('bb-help-container-mobile');
+      this.container.classList.remove('bb-help-closed-mobile');
+      this.invoker.classList.remove('bb-help-invoker-hidden');
     }
-  }
-
-  private setElementDimensions(container: HTMLElement, width: string, height: string) {
-    container.style.width = width;
-    container.style.height = height;
   }
 }

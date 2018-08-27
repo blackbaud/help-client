@@ -13,6 +13,10 @@
   }
 }
 
+#bb-help-container.bb-help-closed-mobile {
+  height: 100%;
+}
+
 #bb-help-container {
   z-index: 9999;
   line-height: normal;
@@ -29,6 +33,11 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
   }
+}
+
+#bb-help-container.bb-help-container-mobile {
+  width: 100%;
+  height: 100%;
 }
 
 .bb-omnibar-collapsed {
@@ -74,6 +83,10 @@
     border: 2px solid;
     box-sizing: content-box;
   }
+}
+
+#bb-help-invoker.bb-help-invoker-hidden {
+  display: none;
 }
 
 #bb-help-iframe {

@@ -395,7 +395,7 @@ describe('BBHelpHelpWidget', () => {
     (window as any).innerWidth = 400;
     helpWidget['resizeContainer']();
 
-    expect(helpWidget['invoker'].style.display).toEqual('none');
+    expect(helpWidget['invoker'].classList).toContain('bb-help-invoker-hidden');
     done();
   });
 
@@ -403,7 +403,8 @@ describe('BBHelpHelpWidget', () => {
     (window as any).innerWidth = 400;
     helpWidget['resizeContainer']();
 
-    expect(helpWidget['container'].style.height).toEqual('100%');
+    expect(helpWidget['container'].classList).toContain('bb-help-closed-mobile');
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
     done();
   });
 
@@ -412,8 +413,8 @@ describe('BBHelpHelpWidget', () => {
     helpWidget.open();
     helpWidget['resizeContainer']();
 
-    expect(helpWidget['container'].style.width).toEqual('100%');
-    expect(helpWidget['container'].style.height).toEqual('100%');
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed-mobile');
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
     done();
   });
 
@@ -421,7 +422,7 @@ describe('BBHelpHelpWidget', () => {
     (window as any).innerWidth = 1000;
     helpWidget['resizeContainer']();
 
-    expect(helpWidget['invoker'].style.display).toEqual('flex');
+    expect(helpWidget['invoker'].classList).not.toContain('bb-help-invoker-hidden');
     done();
   });
 
