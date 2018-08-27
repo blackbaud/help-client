@@ -20,9 +20,6 @@ describe('BBHelpAnalyticsService', () => {
     mixpanelSpy = spyOn<any>(analyticsService, 'getMixpanel').and.returnValue({
       bb_help_widget: {
         identify: () => { return; },
-        people: {
-          set: (object: any) => { return; }
-        },
         register: (object: any) => { return; },
         track: (eventName: any, payload: any) => { return; }
       },
