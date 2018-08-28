@@ -57,7 +57,6 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
-    console.log(close);
     this.communicationService.postMessage({
       messageType: 'close-help-widget'
     });
