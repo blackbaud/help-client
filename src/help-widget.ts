@@ -6,6 +6,7 @@ import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
+const SCREEN_XS_MAX = 767;
 
 export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
@@ -19,8 +20,6 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private currentHelpKey: string;
   private loadCalled: boolean = false;
-  private containerInitialWidth: string;
-  private containerInitialHeight: string;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -191,8 +190,6 @@ export class BBHelpHelpWidget {
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
-    this.containerInitialWidth = this.container.style.width;
-    this.containerInitialHeight = this.container.style.height;
     this.invoker = this.widgetRenderer.createInvoker();
     this.iframe = this.widgetRenderer.createIframe();
     this.elementsLoaded = true;
@@ -220,8 +217,7 @@ export class BBHelpHelpWidget {
   }
 
   private resizeContainer() {
-    // width pulled from $screenXsMax scss variable
-    if (window.innerWidth < 479) {
+    if (window.innerWidth < SCREEN_XS_MAX) {
       if (!this.container.classList.contains('bb-help-closed')) {
         this.container.classList.remove('bb-help-closed-mobile');
         this.container.classList.add('bb-help-container-mobile');
