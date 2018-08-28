@@ -406,4 +406,59 @@ describe('BBHelpHelpWidget', () => {
     helpWidget.load(fakeConfig);
     expect(helpWidget.getWhatsNewRevision()).toEqual(0);
   });
+
+  it('should hide invoker when the window is a mobile size', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['invoker'].classList).toContain('bb-help-invoker-hidden');
+    done();
+  });
+
+  it('should update the container sizes when hidden from view and the window is a mobile size', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].classList).toContain('bb-help-closed-mobile');
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should update the container to display mobile style classes when the window is a mobile size', (done) => {
+    (window as any).innerWidth = 400;
+    helpWidget.open();
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].classList).not.toContain('bb-help-closed-mobile');
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should show invoker when the window is a standard size', (done) => {
+    (window as any).innerWidth = 1000;
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['invoker'].classList).not.toContain('bb-help-invoker-hidden');
+    done();
+  });
+
+  it('should update the container to display non-mobile style classes when the window is a standard size', (done) => {
+    (window as any).innerWidth = 1000;
+    helpWidget.open();
+    helpWidget['resizeContainer']();
+
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should update content styles when the content container when window is resized', (done) => {
+    spyOn<any>(helpWidget, 'resizeContainer').and.callThrough();
+
+    helpWidget['watchWindowWidth']();
+    window.dispatchEvent(new Event('resize'));
+
+    // Note: resize event gets called twice
+    expect(helpWidget['resizeContainer']).toHaveBeenCalledTimes(2);
+    done();
+  });
 });

@@ -6,6 +6,7 @@ import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
+const SCREEN_XS_MAX = 767;
 
 export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
@@ -26,6 +27,8 @@ export class BBHelpHelpWidget {
     this.setUpInvokerEvents();
     this.renderElements();
     this.setUpCommunication();
+    this.resizeContainer();
+    this.watchWindowWidth();
   }
 
   public ready() {
@@ -63,6 +66,7 @@ export class BBHelpHelpWidget {
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
+    this.resizeContainer();
   }
 
   public open(helpKey?: string) {
@@ -215,5 +219,28 @@ export class BBHelpHelpWidget {
 
   private isCollapsed() {
     return this.container.classList.contains(HELP_CLOSED_CLASS);
+  }
+
+  private watchWindowWidth() {
+    window.addEventListener('resize', () => {
+      this.resizeContainer();
+    });
+  }
+
+  private resizeContainer() {
+    if (window.innerWidth < SCREEN_XS_MAX) {
+      if (!this.container.classList.contains('bb-help-closed')) {
+        this.container.classList.remove('bb-help-closed-mobile');
+        this.container.classList.add('bb-help-container-mobile');
+      } else {
+        this.container.classList.remove('bb-help-container-mobile');
+        this.container.classList.add('bb-help-closed-mobile');
+      }
+      this.invoker.classList.add('bb-help-invoker-hidden');
+    } else {
+      this.container.classList.remove('bb-help-container-mobile');
+      this.container.classList.remove('bb-help-closed-mobile');
+      this.invoker.classList.remove('bb-help-invoker-hidden');
+    }
   }
 }

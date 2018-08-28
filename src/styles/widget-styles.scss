@@ -1,9 +1,5 @@
 @import './variables.scss';
 
-.bb-help-container {
-  z-index: 9999;
-}
-
 .bb-help-hidden {
   display: none;
 }
@@ -12,16 +8,17 @@
   right: -$panelWidth;
   transition: right 250ms ease-out;
 
-  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
-    right: -100%;
-  }
-
   #bb-help-iframe {
     box-shadow: none;
   }
 }
 
+#bb-help-container.bb-help-closed-mobile {
+  height: 100%;
+}
+
 #bb-help-container {
+  z-index: 9999;
   line-height: normal;
   position: fixed;
   top: 0;
@@ -31,32 +28,16 @@
   width: $panelWidth;
   box-sizing: border-box;
 
-  // Fullscreen help for mobile or small heights
-  @media (max-width: $screenXsMax) and (max-height: $panelHeight) {
-    height: 100%;
-    width: 100%;
-
-    &:not(.bb-help-closed) {
-      #bb-help-invoker {
-        display: none;
-      }
-    }
-  }
-
-  // Hide invoker for mobile
-  @media (max-width: $screenXsMax) {
-    &.bb-help-closed {
-      .hide-on-mobile {
-        display: none;
-      }
-    }
-  }
-
   *, *:before, *:after {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
   }
+}
+
+#bb-help-container.bb-help-container-mobile {
+  width: 100%;
+  height: 100%;
 }
 
 .bb-omnibar-collapsed {
@@ -102,12 +83,10 @@
     border: 2px solid;
     box-sizing: content-box;
   }
+}
 
-  @media (max-width: $screenXsMax) {
-    .hide-on-mobile {
-      display: none;
-    }
-  }
+#bb-help-invoker.bb-help-invoker-hidden {
+  display: none;
 }
 
 #bb-help-iframe {
