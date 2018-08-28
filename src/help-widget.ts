@@ -55,6 +55,8 @@ export class BBHelpHelpWidget {
       this.defaultHelpKey = config.defaultHelpKey;
     }
 
+    config.hostQueryParams = this.getQueryParams();
+
     this.renderInvoker();
     this.sendConfig();
   }
@@ -63,7 +65,9 @@ export class BBHelpHelpWidget {
     this.analyticsService.trackEvent('Help Widget', {
       Action: 'Closed From Invoker'
     });
-
+    this.communicationService.postMessage({
+      messageType: 'close-help-widget'
+    });
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
@@ -183,6 +187,12 @@ export class BBHelpHelpWidget {
         default:
           console.error(`No matching response for action: ${action}`);
     }
+  }
+
+  private getQueryParams(): string {
+      //  Gets the value of a query string parameter in the current url.
+      const results = window.location.search;
+      return results;
   }
 
   private sendConfig() {
