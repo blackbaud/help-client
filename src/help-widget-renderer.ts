@@ -49,5 +49,6 @@ export class BBHelpHelpWidgetRenderer {
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
     parentEl.appendChild(el);
+    console.log('parent', parentEl);
   }
 }

@@ -1,20 +1,21 @@
 
-import { HelpConfig } from './help-config';
+// import { HelpConfig } from './help-config';
 import { BBHelpHelpWidget } from './help-widget';
 
 declare const BBHELP: any;
 
-const demoConfig: HelpConfig = {
-  customLocales: [],
-  defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt'
-};
+// const demoConfig: HelpConfig = {
+//   customLocales: [],
+//   defaultHelpKey: 'bb-role-based-best-practices.html',
+//   extends: 'renxt'
+// };
 
 export abstract class BBHelpClient {
 
   public static load(config: any = {}) {
     return BBHELP.HelpWidget.ready()
       .then(() => {
+        console.log('config', config);
         BBHELP.HelpWidget.load(config);
       });
   }
@@ -29,10 +30,6 @@ export abstract class BBHelpClient {
 
   public static openWidgetToHelpKey(helpKey: string): void {
     BBHELP.HelpWidget.open(helpKey);
-  }
-
-  public static getCurrentHelpKey(): string {
-    return BBHELP.HelpWidget.getCurrentHelpKey();
   }
 
   public static toggleOpen(): void {
@@ -72,5 +69,5 @@ export abstract class BBHelpClient {
     HelpWidget: new BBHelpHelpWidget()
   };
 
-  BBHelpClient.load(demoConfig);
+  // BBHelpClient.load({});
 })();
