@@ -53,7 +53,6 @@ const widgetCss = `
     right: 100%;
     padding-left: 10px;
     border: none;
-    outline: none;
   }
 
   #bb-help-invoker > span {
