@@ -1,5 +1,5 @@
 import { HelpConfig } from './help-config';
-
+import { BBHelpStyleUtility } from './help-widget-style-utility';
 import './styles/omnibar-style-adjustments.scss';
 import './styles/widget-styles.scss';
 
@@ -12,6 +12,13 @@ const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 
 export class BBHelpHelpWidgetRenderer {
+
+  private styleUtility: BBHelpStyleUtility;
+
+  constructor() {
+    this.styleUtility = new BBHelpStyleUtility();
+    this.styleUtility.addAllStyles();
+  }
 
   public createContainer(): HTMLElement {
     let domElement: HTMLElement;
