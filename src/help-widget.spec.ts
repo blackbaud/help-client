@@ -93,7 +93,8 @@ describe('BBHelpHelpWidget', () => {
 
   it('should load from a config', (done) => {
     const fakeConfig = {
-      extends: 'test-config'
+      extends: 'test-config',
+      hostQueryParams: ''
     };
 
     spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
@@ -137,6 +138,31 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
+  it('should set the hostQueryParams on the config to the queryParams from the window', (done) => {
+    const fakeConfig = {
+      defaultHelpKey: 'new-default.html',
+      extends: 'test-config'
+    };
+
+    helpWidget['loadCalled'] = false;
+    helpWidget['getQueryParams'] = jasmine.createSpy('getQueryParams').and.callFake(() => {
+      return '?host-params=true&helplocale=en-us';
+    });
+
+    helpWidget.load(fakeConfig);
+
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      config: {
+        defaultHelpKey: 'new-default.html',
+        extends: 'test-config',
+        hostQueryParams: '?host-params=true&helplocale=en-us'
+      },
+      messageType: 'user-config'
+    });
+
+    done();
+  });
+
   it('should open the help widget', (done) => {
     helpWidget.load({});
     expect(helpWidget['container'].classList).toContain('bb-help-closed');
@@ -148,13 +174,8 @@ describe('BBHelpHelpWidget', () => {
   it('should open the help widget with a helpKey', (done) => {
     const testHelpKey = 'test-key.html';
 
-    helpWidget.load({});
-
-    expect(helpWidget['container'].classList).toContain('bb-help-closed');
-
     helpWidget.open(testHelpKey);
 
-    expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
     expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
       helpKey: testHelpKey,
       messageType: 'open-to-help-key'
@@ -208,11 +229,6 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should pass a helpKey to the open method from toggleOpen', (done) => {
     const testHelpKey = 'test-key.html';
-    const fakeConfig = {
-      extends: 'test-config'
-    };
-
-    helpWidget.load(fakeConfig);
 
     spyOn(helpWidget, 'toggleOpen').and.callThrough();
     helpWidget.toggleOpen(testHelpKey);

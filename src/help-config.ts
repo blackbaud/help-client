@@ -21,4 +21,5 @@ export interface HelpConfig {
   trainingCentralUrl?: string;
   useFlareSearch?: boolean;
   whatsNewRevisions?: any;
+  hostQueryParams?: string;
 }
