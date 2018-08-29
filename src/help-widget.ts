@@ -46,8 +46,7 @@ export class BBHelpHelpWidget {
       return;
     }
 
-    this.analyticsService.config = config;
-    this.analyticsService.setupMixpanel();
+    this.analyticsService.setupMixpanel(config.productId);
 
     this.loadCalled = true;
     this.config = config;

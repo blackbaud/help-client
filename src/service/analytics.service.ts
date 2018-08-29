@@ -1,5 +1,3 @@
-import { HelpConfig } from '../help-config';
-
 const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
 
 // Default values for initializing the analytics client.
@@ -13,16 +11,14 @@ const DEFAULT_CONFIG = {
 };
 
 export class BBHelpAnalyticsService {
-  public config: HelpConfig;
-
   private superProperties: any;
   private analyticsClient: any;
 
-  public setupMixpanel() {
+  public setupMixpanel(productId: string) {
     this.setAnalyticsClient(this.getMixpanel());
     this.initMixpanel();
     this.setSuperProperties({
-      'Referring Service Name': this.config.productId
+      'Referring Service Name': productId
     });
     this.setupAnalyticsClient();
   }
