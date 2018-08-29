@@ -5,10 +5,6 @@ const screenXsMax = '767px';
 const containerZIndex = 9999;
 
 const widgetCss = `
-  .bb-help-container {
-    z-index: ${containerZIndex};
-  }
-
   .bb-help-hidden {
     display: none;
   }
@@ -19,6 +15,7 @@ const widgetCss = `
   }
 
   #bb-help-container {
+    z-index: ${containerZIndex};
     line-height: normal;
     position: fixed;
     top: 0;
@@ -103,7 +100,6 @@ const mediaQueryCss = `
       display: none;
     }
   }
-
   /* Fullscreen help for mobile or small heights */
   @media screen and (max-width: ${screenXsMax}), screen and (max-height: ${panelHeight}) {
     #bb-help-container {
@@ -112,10 +108,10 @@ const mediaQueryCss = `
     }
 
     #bb-help-container.bb-help-closed {
-      right: -100%;
+      display: none;
     }
 
-    #bb-help-container:not(.bb-help-closed) #bb-help-invoker {
+    #bb-help-invoker {
       display: none;
     }
   }
