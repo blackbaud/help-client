@@ -43,15 +43,6 @@ describe('BBHelpAnalyticsService', () => {
     done();
   });
 
-  it('should set up the mixpanel with unsupported error code', (done) => {
-    spyOn<any>(analyticsService, 'registerSuperProperties').and.callThrough();
-
-    analyticsService.setupMixpanel(demoConfig.productId);
-
-    expect(analyticsService['registerSuperProperties']).toHaveBeenCalledTimes(1);
-    done();
-  });
-
   it('should set up the mixpanel with production key', (done) => {
     spyOn<any>(analyticsService, 'isDevelopment').and.returnValue(false);
 
