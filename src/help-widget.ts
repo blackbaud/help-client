@@ -1,6 +1,3 @@
-import './styles/omnibar-style-adjustments.scss';
-import './styles/widget-styles.scss';
-
 import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
