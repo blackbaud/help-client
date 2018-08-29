@@ -1,7 +1,5 @@
 import { HelpConfig } from './help-config';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
-import './styles/omnibar-style-adjustments.scss';
-import './styles/widget-styles.scss';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
