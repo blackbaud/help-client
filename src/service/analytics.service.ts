@@ -78,7 +78,7 @@ export class BBHelpAnalyticsService {
   }
 
   private isDevelopment() {
-    // Converts the returned value to a boolean. If the hostname matches localhost, return true.
+    // Converts the returned value to a boolean. If the hostname matches localhost or if SKY_PAGES_DEV_INFO exists, return true.
     return (!!window.location.hostname.match(HOST_NAME_REGEX) || !!(window as any).SKY_PAGES_DEV_INFO);
   }
 
