@@ -1,5 +1,4 @@
 
-// import { HelpConfig } from './help-config';
 import { BBHelpHelpWidget } from './help-widget';
 
 declare const BBHELP: any;
