@@ -407,58 +407,37 @@ describe('BBHelpHelpWidget', () => {
     expect(helpWidget.getWhatsNewRevision()).toEqual(0);
   });
 
-  it('should hide invoker when the window is a mobile size', (done) => {
-    (window as any).innerWidth = 400;
-    helpWidget['resizeContainer']();
-
-    expect(helpWidget['invoker'].classList).toContain('bb-help-invoker-hidden');
-    done();
-  });
-
-  it('should update the container sizes when hidden from view and the window is a mobile size', (done) => {
-    (window as any).innerWidth = 400;
-    helpWidget['resizeContainer']();
-
-    expect(helpWidget['container'].classList).toContain('bb-help-closed-mobile');
-    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
-    done();
-  });
-
-  it('should update the container to display mobile style classes when the window is a mobile size', (done) => {
-    (window as any).innerWidth = 400;
-    helpWidget.open();
-    helpWidget['resizeContainer']();
-
-    expect(helpWidget['container'].classList).not.toContain('bb-help-closed-mobile');
+  it('should add the mobile container class when the window screen width is SCREEN_XS_MAX and below ', (done) => {
+    (window as any).innerWidth = 767;
+    window.dispatchEvent(new Event('resize'));
     expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
     done();
   });
 
-  it('should show invoker when the window is a standard size', (done) => {
+  it('should add the mobile container class when the window screen height is the panel height and below ', (done) => {
     (window as any).innerWidth = 1000;
-    helpWidget['resizeContainer']();
-
-    expect(helpWidget['invoker'].classList).not.toContain('bb-help-invoker-hidden');
+    (window as any).innerHeight = 400;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
     done();
   });
 
-  it('should update the container to display non-mobile style classes when the window is a standard size', (done) => {
+  it('should not add the mobile container class when window dimentions are greater than specified values', (done) => {
     (window as any).innerWidth = 1000;
-    helpWidget.open();
-    helpWidget['resizeContainer']();
-
+    (window as any).innerHeight = 1000;
+    window.dispatchEvent(new Event('resize'));
     expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
     done();
   });
 
-  it('should update content styles when the content container when window is resized', (done) => {
-    spyOn<any>(helpWidget, 'resizeContainer').and.callThrough();
-
-    helpWidget['watchWindowWidth']();
+  it('should update the container classes on window resize', (done) => {
+    (window as any).innerWidth = 1000;
+    (window as any).innerHeight = 1000;
     window.dispatchEvent(new Event('resize'));
-
-    // Note: resize event gets called twice
-    expect(helpWidget['resizeContainer']).toHaveBeenCalledTimes(2);
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
+    (window as any).innerHeight = 400;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
     done();
   });
 });
