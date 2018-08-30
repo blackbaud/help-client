@@ -240,67 +240,16 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it ('should return the currentHelpKey with getCurrentHelpKey', (done) => {
-    const testHelpKey = 'test-key.html';
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget['currentHelpKey'] = testHelpKey;
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(testHelpKey);
-    done();
+  it('should send widget currentHelpKey to help SPA on load', () => {
+    spyOn(helpWidget, 'setCurrentHelpKey');
+    helpWidget.setCurrentHelpKey('help.html');
+    helpWidget.load({});
+    expect(helpWidget.setCurrentHelpKey).toHaveBeenCalledWith('help.html');
   });
 
-  it ('should return the defaultHelpKey with getCurrentHelpKey when no helpKey is defined', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
-    };
-
-    helpWidget.load(fakeConfig);
-
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
-    done();
-  });
-
-  it ('should set the currentHelpKey to a specified help key with setCurrentHelpKey', (done) => {
-    const testHelpKey = 'test-key.html';
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget.setCurrentHelpKey(testHelpKey);
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(testHelpKey);
-    done();
-  });
-
-  it ('should set the currentHelpKey to the defaultHelpKey with setCurrentHelpKey when no key is specified', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
-    };
-
-    helpWidget.load(fakeConfig);
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget.setCurrentHelpKey();
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
-    done();
-  });
-
-  it ('should set the currentHelpKey to the defaultHelpKey with setHelpKeyToDefault', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
-    };
-
-    helpWidget.load(fakeConfig);
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-    helpWidget.setHelpKeyToDefault();
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
-    done();
+  it('should store currentHelpKey if help SPA has not loaded', () => {
+    helpWidget.setCurrentHelpKey('help.html');
+    expect(helpWidget['currentHelpKey']).toEqual('help.html');
   });
 
   it ('should disable the help widget', (done) => {
@@ -330,15 +279,6 @@ describe('BBHelpHelpWidget', () => {
     spyOn(helpWidget, 'close').and.callThrough();
     helpWidget['communicationService'].communicationAction.next('Close Widget');
     expect(helpWidget.close).toHaveBeenCalled();
-    done();
-  });
-
-  it ('should respond to action responses, Get Help Key', (done) => {
-    helpWidget['communicationService'].communicationAction.next('Get Help Key');
-    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
-      helpKey: helpWidget.getCurrentHelpKey(),
-      messageType: 'help-key'
-    });
     done();
   });
 
@@ -405,5 +345,22 @@ describe('BBHelpHelpWidget', () => {
     };
     helpWidget.load(fakeConfig);
     expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+  });
+
+  it('should set the help key to the default help key', () => {
+    helpWidget.setHelpKeyToDefault();
+    expect(helpWidget['defaultHelpKey']).toEqual('default.html');
+  });
+
+  it('should load demo help client for testing purposes', () => {
+    const config: any = {
+      customLocales: [],
+      defaultHelpKey: 'bb-role-based-best-practices.html',
+      extends: 'renxt',
+      hostQueryParams: ''
+    };
+    spyOn(helpWidget, 'load').and.callThrough();
+    helpWidget.loadDemo();
+    expect(helpWidget.load).toHaveBeenCalledWith(config);
   });
 });

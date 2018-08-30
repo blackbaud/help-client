@@ -15,6 +15,7 @@ export class BBHelpHelpWidget {
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
+  private currentHelpKey: string;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -35,7 +36,6 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-
     if (this.loadCalled) {
       return;
     }
@@ -50,6 +50,17 @@ export class BBHelpHelpWidget {
 
     this.renderInvoker();
     this.sendConfig();
+    this.setCurrentHelpKey(this.currentHelpKey);
+  }
+
+  // FOR TESTING PURPOSES ONLY
+  public loadDemo() {
+    const config: any = {
+      customLocales: [],
+      defaultHelpKey: 'bb-role-based-best-practices.html',
+      extends: 'renxt'
+    };
+    this.load(config);
   }
 
   public close() {
@@ -83,10 +94,14 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-    this.communicationService.postMessage({
-      messageType: 'update-current-help-key',
-      helpKey
-    });
+    if (this.loadCalled) {
+      this.communicationService.postMessage({
+        messageType: 'update-current-help-key',
+        helpKey
+      });
+    } else {
+      this.currentHelpKey = helpKey;
+    }
   }
 
   public setHelpKeyToDefault(): void {

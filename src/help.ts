@@ -4,18 +4,11 @@ import { BBHelpHelpWidget } from './help-widget';
 
 declare const BBHELP: any;
 
-// const demoConfig: HelpConfig = {
-//   customLocales: [],
-//   defaultHelpKey: 'bb-role-based-best-practices.html',
-//   extends: 'renxt'
-// };
-
 export abstract class BBHelpClient {
 
   public static load(config: any = {}) {
     return BBHELP.HelpWidget.ready()
       .then(() => {
-        console.log('config', config);
         BBHELP.HelpWidget.load(config);
       });
   }
@@ -68,6 +61,4 @@ export abstract class BBHelpClient {
   (window as any).BBHELP = {
     HelpWidget: new BBHelpHelpWidget()
   };
-
-  // BBHelpClient.load({});
 })();
