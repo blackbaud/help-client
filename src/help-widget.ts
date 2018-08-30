@@ -239,11 +239,12 @@ export class BBHelpHelpWidget {
     /**
      * This is to trigger a reflow, and flush the CSS changes with the class switch cached by the browser.
      * http://gent.ilcore.com/2011/03/how-not-to-trigger-layout-in-webkit.html
-     * https://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
+     * https://stackoverflow.com/q/11131875/10070672
      */
+    // tslint:disable-next-line
     this.container.offsetWidth;
     this.container.classList.remove(DISABLE_TRANSITION);
-  };
+  }
 
   private isMobileView(): boolean {
     return (window.innerWidth <= SCREEN_XS_MAX || window.innerHeight <= PANEL_HEIGHT);
