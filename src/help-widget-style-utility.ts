@@ -1,17 +1,22 @@
 const panelHeight = '591px';
 const panelWidth = '450px';
 const collapsedHeaderHeight = '30px';
-const screenXsMax = '767px';
 const containerZIndex = 9999;
 
 const widgetCss = `
+  #bb-help-container.bb-help-disable-transition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+  }
+
   .bb-help-hidden {
     display: none;
   }
 
   #bb-help-container.bb-help-closed {
     right: -${panelWidth};
-    transition: right 250ms ease-out;
   }
 
   #bb-help-container {
@@ -89,31 +94,18 @@ const omnibarCss = `
   }
 `;
 
-const mediaQueryCss = `
-  @media screen and (max-width: ${screenXsMax}) {
-    #bb-help-invoker .hide-on-mobile {
-      display: none;
-    }
-
-    /* Hide invoker for mobile */
-    #bb-help-container.bb-help-closed .hide-on-mobile {
-      display: none;
-    }
+const mobileCss = `
+  .bb-help-container-mobile#bb-help-container {
+    height: 100%;
+    width: 100%;
   }
-  /* Fullscreen help for mobile or small heights */
-  @media screen and (max-width: ${screenXsMax}), screen and (max-height: ${panelHeight}) {
-    #bb-help-container {
-      height: 100%;
-      width: 100%;
-    }
 
-    #bb-help-container.bb-help-closed {
-      display: none;
-    }
+  .bb-help-container-mobile#bb-help-container.bb-help-closed {
+    right: -100%;
+  }
 
-    #bb-help-invoker {
-      display: none;
-    }
+  .bb-help-container-mobile#bb-help-container #bb-help-invoker.bb-help-hide-on-mobile {
+    display: none;
   }
 `;
 
@@ -127,7 +119,7 @@ export class BBHelpStyleUtility {
     }
     this.addCssToHead(widgetCss);
     this.addCssToHead(omnibarCss);
-    this.addCssToHead(mediaQueryCss);
+    this.addCssToHead(mobileCss);
     this.stylesLoaded = true;
   }
 
