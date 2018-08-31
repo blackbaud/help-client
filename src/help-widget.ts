@@ -24,10 +24,6 @@ export class BBHelpHelpWidget {
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
 
-  private getCurrentHelpKey: any = () => {
-    return this.currentHelpKey || this.defaultHelpKey;
-  };
-
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
     this.analyticsService = new BBHelpAnalyticsService();
@@ -67,6 +63,7 @@ export class BBHelpHelpWidget {
 
     if (config.getCurrentHelpKey !== undefined) {
       this.getCurrentHelpKey = config.getCurrentHelpKey;
+      delete config.getCurrentHelpKey;
     }
 
     this.renderInvoker();
@@ -267,5 +264,9 @@ export class BBHelpHelpWidget {
     }
 
     return this.getCurrentHelpKey;
+  }
+
+  private getCurrentHelpKey: any = () => {
+    return this.currentHelpKey || this.defaultHelpKey;
   }
 }
