@@ -1,7 +1,5 @@
 import { HelpConfig } from './help-config';
-
-import './styles/omnibar-style-adjustments.scss';
-import './styles/widget-styles.scss';
+import { BBHelpStyleUtility } from './help-widget-style-utility';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
@@ -12,6 +10,13 @@ const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 
 export class BBHelpHelpWidgetRenderer {
+
+  private styleUtility: BBHelpStyleUtility;
+
+  constructor() {
+    this.styleUtility = new BBHelpStyleUtility();
+    this.styleUtility.addAllStyles();
+  }
 
   public createContainer(): HTMLElement {
     let domElement: HTMLElement;
@@ -45,6 +50,9 @@ export class BBHelpHelpWidgetRenderer {
     invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
     invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
     invoker.innerHTML = '<span>?</span>';
+    if (config.hideWidgetOnMobile !== false) {
+      invoker.classList.add('bb-help-hide-on-mobile');
+    }
   }
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
