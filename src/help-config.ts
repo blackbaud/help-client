@@ -6,7 +6,6 @@ export interface HelpConfig {
   defaultHelpKey?: string;
   extends?: string;
   getChatData?: any;
-  getCurrentHelpKey?: any;
   headerColor?: string;
   headerTextColor?: string;
   helpBaseUrl?: string;

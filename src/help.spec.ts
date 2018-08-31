@@ -171,13 +171,6 @@ describe('BBHelpClient', () => {
     done();
   });
 
-  it('should call getCurrentHelpKey on the Widget  with getCurrentHelpKey', (done) => {
-    const helpGetCurrentHelpKeySpy = spyOn(mockHelpWidget, 'getCurrentHelpKey').and.callThrough();
-    BBHelpClient.getCurrentHelpKey();
-    expect(helpGetCurrentHelpKeySpy).toHaveBeenCalled();
-    done();
-  });
-
   it('should open the widget to a without a helpKey with openWidget', (done) => {
     const helpOpenSpy = spyOn(mockHelpWidget, 'open').and.callThrough();
 

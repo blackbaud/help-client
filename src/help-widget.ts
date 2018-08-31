@@ -18,7 +18,6 @@ export class BBHelpHelpWidget {
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
-  private currentHelpKey: string;
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
 
@@ -44,7 +43,6 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-
     if (this.loadCalled) {
       return;
     }
@@ -91,12 +89,11 @@ export class BBHelpHelpWidget {
     }
   }
 
-  public getCurrentHelpKey(): string {
-    return this.currentHelpKey || this.defaultHelpKey;
-  }
-
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-    this.currentHelpKey = helpKey;
+    this.communicationService.postMessage({
+      messageType: 'update-current-help-key',
+      helpKey
+    });
   }
 
   public setHelpKeyToDefault(): void {
@@ -162,23 +159,13 @@ export class BBHelpHelpWidget {
       case 'Close Widget':
         this.close();
         break;
-      case 'Get Help Key':
-        /**
-         * Methods can not be added to the config being passed to the SPA through the communicationService.
-         * The results of the Help Key need to be passed through when quereied.
-         */
-        this.communicationService.postMessage({
-          helpKey: this.getCurrentHelpKey(),
-          messageType: 'help-key'
-        });
+      case 'Child Window Ready':
+        if (this.loadCalled) {
+          this.sendConfig();
+        }
         break;
-        case 'Child Window Ready':
-          if (this.loadCalled) {
-            this.sendConfig();
-          }
-          break;
-        default:
-          console.error(`No matching response for action: ${action}`);
+      default:
+        console.error(`No matching response for action: ${action}`);
     }
   }
 

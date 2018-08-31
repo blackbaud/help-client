@@ -4,5 +4,20 @@
     <title>BB Help Client</title>
   </head>
   <body>
+    Demo:
+    <button id="demo-button">Load Help Client</button>
+    <script>
+      let button = document.getElementById('demo-button');
+      button.addEventListener('click', loadDemo);
+
+      function loadDemo() {
+        const config = {
+          customLocales: [],
+          defaultHelpKey: 'bb-role-based-best-practices.html',
+          extends: 'renxt'
+        };
+        BBHELP.HelpWidget.load(config);
+      }
+    </script>
   </body>
 </html>

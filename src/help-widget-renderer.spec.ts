@@ -1,4 +1,5 @@
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
 
 describe('BBHelpHelpWidgetRenderer', () => {
   let widgetRenderer: BBHelpHelpWidgetRenderer;
@@ -41,6 +42,31 @@ describe('BBHelpHelpWidgetRenderer', () => {
     expect(invokerEl.style.backgroundColor).toEqual(headerConfig.headerColor);
     expect(invokerEl.style.color).toEqual(headerConfig.headerTextColor);
     expect(invokerEl.innerHTML).toEqual('<span>?</span>');
+    done();
+  });
+
+  it('should add class bb-help-hide-on-mobile if hideWidgetOnMobile is not false', (done) => {
+    const invokerEl: HTMLButtonElement = widgetRenderer.createInvoker();
+    const headerConfig = {
+      headerColor: 'red',
+      headerTextColor: 'blue'
+    };
+
+    widgetRenderer.addInvokerStyles(invokerEl, headerConfig);
+    expect(invokerEl.classList).toContain(BB_HELP_HIDE_ON_MOBILE_CLASS);
+    done();
+  });
+
+  it('should not add class bb-help-hide-on-mobile if hideWidgetOnMobile is false', (done) => {
+    const invokerEl: HTMLButtonElement = widgetRenderer.createInvoker();
+    const headerConfig = {
+      headerColor: 'red',
+      headerTextColor: 'blue',
+      hideWidgetOnMobile: false
+    };
+
+    widgetRenderer.addInvokerStyles(invokerEl, headerConfig);
+    expect(invokerEl.classList).not.toContain(BB_HELP_HIDE_ON_MOBILE_CLASS);
     done();
   });
 

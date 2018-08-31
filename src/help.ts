@@ -1,15 +1,7 @@
 
-import { HelpConfig } from './help-config';
 import { BBHelpHelpWidget } from './help-widget';
 
 declare const BBHELP: any;
-
-const demoConfig: HelpConfig = {
-  customLocales: [],
-  defaultHelpKey: 'bb-role-based-best-practices.html',
-  extends: 'renxt',
-  hideWidgetOnMobile: false
-};
 
 export abstract class BBHelpClient {
 
@@ -30,10 +22,6 @@ export abstract class BBHelpClient {
 
   public static openWidgetToHelpKey(helpKey: string): void {
     BBHELP.HelpWidget.open(helpKey);
-  }
-
-  public static getCurrentHelpKey(): string {
-    return BBHELP.HelpWidget.getCurrentHelpKey();
   }
 
   public static toggleOpen(): void {
@@ -72,6 +60,4 @@ export abstract class BBHelpClient {
   (window as any).BBHELP = {
     HelpWidget: new BBHelpHelpWidget()
   };
-
-  BBHelpClient.load(demoConfig);
 })();
