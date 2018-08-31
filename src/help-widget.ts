@@ -23,7 +23,10 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
-  private getCurrentHelpKey: any;
+
+  private getCurrentHelpKey: any = () => {
+    return this.currentHelpKey || this.defaultHelpKey;
+  };
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -259,14 +262,10 @@ export class BBHelpHelpWidget {
   }
 
   private getHelpKey() {
-      if (this.getCurrentHelpKey !== undefined) {
-        if ((typeof (this.getCurrentHelpKey) === 'function')) {
-          return this.getCurrentHelpKey();
-        }
+    if ((typeof (this.getCurrentHelpKey) === 'function')) {
+      return this.getCurrentHelpKey();
+    }
 
-        return this.getCurrentHelpKey;
-      }
-
-      return this.currentHelpKey || this.defaultHelpKey;
+    return this.getCurrentHelpKey;
   }
 }
