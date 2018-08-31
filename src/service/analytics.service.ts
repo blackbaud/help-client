@@ -10,10 +10,14 @@ const DEFAULT_CONFIG = {
   protocol: 'https'
 };
 
+function getWindow(): any {
+  return window;
+}
+
 export class BBHelpAnalyticsService {
   private superProperties: any;
   private analyticsClient: any;
-
+  private windowRef: any =  getWindow();
   public setupMixpanel(productId: string) {
     this.setAnalyticsClient(this.getMixpanel());
     this.initMixpanel();
@@ -78,8 +82,8 @@ export class BBHelpAnalyticsService {
   }
 
   private isDevelopment() {
-    // Converts the returned value to a boolean. If the hostname matches localhost, return true.
-    return !!window.location.hostname.match(HOST_NAME_REGEX);
+    // Converts the returned value to a boolean. Returns true if localhost or SKY_PAGES_DEV_INFO exists.
+    return (!!this.windowRef.location.hostname.match(HOST_NAME_REGEX) || !!this.windowRef.SKY_PAGES_DEV_INFO);
   }
 
   private setupAnalyticsClient() {

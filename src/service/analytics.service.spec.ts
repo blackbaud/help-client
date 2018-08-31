@@ -4,6 +4,8 @@ import { BBHelpAnalyticsService } from './analytics.service';
 const demoConfig: HelpConfig = {
   productId: 'bbHelpTesting'
 };
+const DEVELOPMENT_KEY = '0e26030f769c1e630c59e1b3dec37957';
+const PRODUCTION_KEY = '13c1581286213207b29bc7fc47e787e7';
 
 describe('BBHelpAnalyticsService', () => {
   let analyticsService: BBHelpAnalyticsService;
@@ -43,13 +45,41 @@ describe('BBHelpAnalyticsService', () => {
     done();
   });
 
-  it('should set up the mixpanel with production key', (done) => {
-    spyOn<any>(analyticsService, 'isDevelopment').and.returnValue(false);
+  it('should return the production key if in production mode', (done) => {
+    analyticsService['windowRef'] = {
+      location: {
+        hostname: 'https://production-url.com'
+      }
+    };
+    analyticsService.setupMixpanel(demoConfig.productId);
+    const returnedKey = analyticsService['getMixpanelKey']();
+    expect(returnedKey).toEqual(PRODUCTION_KEY);
+    done();
+  });
+
+  it('should return the development key if window.location.hostname contains localhost', (done) => {
+    analyticsService['windowRef'] = {
+      location: {
+        hostname: 'https://localhost'
+      }
+    };
+    analyticsService.setupMixpanel(demoConfig.productId);
+    const returnedKey = analyticsService['getMixpanelKey']();
+    expect(returnedKey).toEqual(DEVELOPMENT_KEY);
+    done();
+  });
+
+  it('should return the development key if SKY_PAGES_DEV_INFO exists on the window', (done) => {
+    analyticsService['windowRef'] = {
+      SKY_PAGES_DEV_INFO: {},
+      location: {
+        hostname: 'https://production-url'
+      }
+    };
 
     analyticsService.setupMixpanel(demoConfig.productId);
-
-    expect(analyticsService['superProperties']).toEqual({'Referring Service Name': demoConfig.productId });
-    expect(analyticsService['analyticsClient']).toBeDefined();
+    const returnedKey = analyticsService['getMixpanelKey']();
+    expect(returnedKey).toEqual(DEVELOPMENT_KEY);
     done();
   });
 
