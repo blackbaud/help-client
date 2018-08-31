@@ -240,16 +240,16 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should send widget currentHelpKey to help SPA on load', () => {
+  it('should send widget currentHelpKey to help SPA on ready', () => {
     spyOn(helpWidget, 'setCurrentHelpKey');
+    spyOn(helpWidget, 'ready').and.callFake(() => {
+      return {
+        then: () => { return; }
+      };
+    });
     helpWidget.setCurrentHelpKey('help.html');
-    helpWidget.load({});
+    helpWidget.ready();
     expect(helpWidget.setCurrentHelpKey).toHaveBeenCalledWith('help.html');
-  });
-
-  it('should store currentHelpKey if help SPA has not loaded', () => {
-    helpWidget.setCurrentHelpKey('help.html');
-    expect(helpWidget['currentHelpKey']).toEqual('help.html');
   });
 
   it ('should disable the help widget', (done) => {

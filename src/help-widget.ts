@@ -15,7 +15,6 @@ export class BBHelpHelpWidget {
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
-  private currentHelpKey: string;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
@@ -50,7 +49,6 @@ export class BBHelpHelpWidget {
 
     this.renderInvoker();
     this.sendConfig();
-    this.setCurrentHelpKey(this.currentHelpKey);
   }
 
   // FOR TESTING PURPOSES ONLY
@@ -94,14 +92,13 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-    if (this.loadCalled) {
-      this.communicationService.postMessage({
-        messageType: 'update-current-help-key',
-        helpKey
+    this.ready()
+      .then(() => {
+        this.communicationService.postMessage({
+          messageType: 'update-current-help-key',
+          helpKey
+        });
       });
-    } else {
-      this.currentHelpKey = helpKey;
-    }
   }
 
   public setHelpKeyToDefault(): void {
