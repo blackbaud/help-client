@@ -240,14 +240,12 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should send widget currentHelpKey to help SPA on ready', () => {
-    commReadyStatus = Promise.resolve();
-    helpWidget.setCurrentHelpKey('help.html');
-    helpWidget.ready().then(() => {
-      expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
-        helpKey: 'help.html',
-        messageType: 'update-current-help-key'
-      });
+  it('should send widget currentHelpKey to help SPA', () => {
+    const helpKey = 'help.html';
+    helpWidget.setCurrentHelpKey(helpKey);
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+      helpKey,
+      messageType: 'update-current-help-key'
     });
   });
 

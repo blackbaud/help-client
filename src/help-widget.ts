@@ -92,13 +92,10 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-    this.ready()
-      .then(() => {
-        this.communicationService.postMessage({
-          messageType: 'update-current-help-key',
-          helpKey
-        });
-      });
+    this.communicationService.postMessage({
+      messageType: 'update-current-help-key',
+      helpKey
+    });
   }
 
   public setHelpKeyToDefault(): void {
