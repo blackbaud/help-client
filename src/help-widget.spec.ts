@@ -241,15 +241,14 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should send widget currentHelpKey to help SPA on ready', () => {
-    spyOn(helpWidget, 'setCurrentHelpKey');
-    spyOn(helpWidget, 'ready').and.callFake(() => {
-      return {
-        then: () => { return; }
-      };
-    });
+    commReadyStatus = Promise.resolve();
     helpWidget.setCurrentHelpKey('help.html');
-    helpWidget.ready();
-    expect(helpWidget.setCurrentHelpKey).toHaveBeenCalledWith('help.html');
+    helpWidget.ready().then(() => {
+      expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
+        helpKey: 'help.html',
+        messageType: 'update-current-help-key'
+      });
+    });
   });
 
   it ('should disable the help widget', (done) => {
