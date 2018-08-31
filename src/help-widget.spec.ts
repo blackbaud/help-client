@@ -241,7 +241,7 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should set and send widget currentHelpKey to help SPA.', (done) => {
+  it('should set and send widget currentHelpKey to help SPA', (done) => {
     const testKey = 'help.html';
     const expectedCall = {
       helpKey: testKey,
