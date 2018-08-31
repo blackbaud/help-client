@@ -69,9 +69,12 @@ export class BBHelpHelpWidget {
     this.analyticsService.trackEvent('Help Widget', {
       Action: 'Closed From Invoker'
     });
-    this.communicationService.postMessage({
-      messageType: 'close-help-widget'
-    });
+    // Wait for client close transition to finish to send close message to SPA
+    setTimeout(() => {
+      this.communicationService.postMessage({
+        messageType: 'help-widget-closed'
+      });
+    }, 300);
     this.container.classList.add(HELP_CLOSED_CLASS);
     this.invoker.setAttribute('aria-pressed', 'false');
     this.invoker.setAttribute('aria-expanded', 'false');
