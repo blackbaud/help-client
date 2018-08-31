@@ -1,6 +1,7 @@
-import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { BBHelpAnalyticsService } from './service/analytics.service';
+import { BBHelpCommunicationService } from './service/communication.service';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
@@ -13,6 +14,7 @@ export class BBHelpHelpWidget {
   public config: HelpConfig;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
+  private analyticsService: BBHelpAnalyticsService;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
@@ -24,6 +26,7 @@ export class BBHelpHelpWidget {
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
+    this.analyticsService = new BBHelpAnalyticsService();
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
@@ -44,10 +47,11 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-
     if (this.loadCalled) {
       return;
     }
+
+    this.analyticsService.setupMixpanel(config.productId);
 
     this.loadCalled = true;
     this.config = config;
@@ -62,6 +66,9 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
+    this.analyticsService.trackEvent('Help Widget', {
+      Action: 'Closed From Invoker'
+    });
     this.communicationService.postMessage({
       messageType: 'close-help-widget'
     });
@@ -75,6 +82,10 @@ export class BBHelpHelpWidget {
       this.communicationService.postMessage({
         messageType: 'open-to-help-key',
         helpKey
+      });
+
+      this.analyticsService.trackEvent('Help Widget', {
+        Action: 'Opened From Invoker'
       });
 
       this.container.classList.remove(HELP_CLOSED_CLASS);
