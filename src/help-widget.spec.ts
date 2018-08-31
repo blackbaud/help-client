@@ -1,6 +1,6 @@
 import { BBHelpHelpWidget } from './help-widget';
 
-fdescribe('BBHelpHelpWidget', () => {
+describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
   let commReadyStatus: any;
