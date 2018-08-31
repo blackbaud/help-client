@@ -50,6 +50,9 @@ export class BBHelpHelpWidgetRenderer {
     invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
     invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
     invoker.innerHTML = '<span>?</span>';
+    if (config.hideWidgetOnMobile !== false) {
+      invoker.classList.add('bb-help-hide-on-mobile');
+    }
   }
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {

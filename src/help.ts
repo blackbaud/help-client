@@ -3,6 +3,12 @@ import { BBHelpHelpWidget } from './help-widget';
 
 declare const BBHELP: any;
 
+const demoConfig: HelpConfig = {
+  customLocales: [],
+  defaultHelpKey: 'default.html',
+  extends: 'bbHelpTesting'
+};
+
 export abstract class BBHelpClient {
 
   public static load(config: any = {}) {

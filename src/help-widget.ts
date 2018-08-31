@@ -1,27 +1,38 @@
-import { BBHelpCommunicationService } from './communication.service';
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { BBHelpAnalyticsService } from './service/analytics.service';
+import { BBHelpCommunicationService } from './service/communication.service';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
+const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
+const DISABLE_TRANSITION: string = 'bb-help-disable-transition';
+const SCREEN_XS_MAX: number = 767;
+const PANEL_HEIGHT: number = 591;
 
 export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
   public config: HelpConfig;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
+  private analyticsService: BBHelpAnalyticsService;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
+  private isSetForMobile: boolean;
 
   constructor() {
     this.widgetRenderer = new BBHelpHelpWidgetRenderer();
+    this.analyticsService = new BBHelpAnalyticsService();
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
     this.setUpCommunication();
+    window.addEventListener('resize', () => {
+      this.setClassesForWindowSize();
+    });
   }
 
   public ready() {
@@ -38,6 +49,8 @@ export class BBHelpHelpWidget {
     if (this.loadCalled) {
       return;
     }
+
+    this.analyticsService.setupMixpanel(config.productId);
 
     this.loadCalled = true;
     this.config = config;
@@ -62,6 +75,9 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
+    this.analyticsService.trackEvent('Help Widget', {
+      Action: 'Closed From Invoker'
+    });
     this.communicationService.postMessage({
       messageType: 'close-help-widget'
     });
@@ -75,6 +91,10 @@ export class BBHelpHelpWidget {
       this.communicationService.postMessage({
         messageType: 'open-to-help-key',
         helpKey
+      });
+
+      this.analyticsService.trackEvent('Help Widget', {
+        Action: 'Opened From Invoker'
       });
 
       this.container.classList.remove(HELP_CLOSED_CLASS);
@@ -200,6 +220,7 @@ export class BBHelpHelpWidget {
   }
 
   private renderElements() {
+    this.setClassesForWindowSize();
     this.widgetRenderer.appendElement(this.container);
     this.widgetRenderer.appendElement(this.iframe, this.container);
   }
@@ -212,5 +233,32 @@ export class BBHelpHelpWidget {
 
   private isCollapsed() {
     return this.container.classList.contains(HELP_CLOSED_CLASS);
+  }
+
+  private setClassesForWindowSize() {
+    this.container.classList.add(DISABLE_TRANSITION);
+
+    if (this.isMobileView() && this.isSetForMobile !== true) {
+      this.isSetForMobile = true;
+      this.container.classList.add(MOBILE_CONTAINER_CLASS);
+    }
+
+    if (!this.isMobileView() && this.isSetForMobile !== false) {
+      this.isSetForMobile = false;
+      this.container.classList.remove(MOBILE_CONTAINER_CLASS);
+    }
+
+    /**
+     * This is to trigger a reflow, and flush the CSS changes with the class switch cached by the browser.
+     * http://gent.ilcore.com/2011/03/how-not-to-trigger-layout-in-webkit.html
+     * https://stackoverflow.com/q/11131875/10070672
+     */
+    // tslint:disable-next-line
+    this.container.offsetWidth;
+    this.container.classList.remove(DISABLE_TRANSITION);
+  }
+
+  private isMobileView(): boolean {
+    return (window.innerWidth <= SCREEN_XS_MAX || window.innerHeight <= PANEL_HEIGHT);
   }
 }

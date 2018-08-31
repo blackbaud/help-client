@@ -10,6 +10,7 @@ describe('BBHelpHelpWidget', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
     helpWidget = new BBHelpHelpWidget();
+    spyOn(helpWidget['analyticsService'], 'trackEvent');
     spyOn(helpWidget['communicationService'], 'postMessage').and.callFake((message: any) => { return; });
     spyOn(helpWidget['communicationService'], 'ready').and.callFake((message: any) => commReadyStatus);
     spyOn(helpWidget['communicationService'], 'communicationAction').and.callThrough();
@@ -361,5 +362,38 @@ describe('BBHelpHelpWidget', () => {
     spyOn(helpWidget, 'load').and.callThrough();
     helpWidget.loadDemo();
     expect(helpWidget.load).toHaveBeenCalledWith(config);
+
+  it('should add the mobile container class when the window screen width is SCREEN_XS_MAX and below ', (done) => {
+    (window as any).innerWidth = 767;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should add the mobile container class when the window screen height is the panel height and below ', (done) => {
+    (window as any).innerWidth = 1000;
+    (window as any).innerHeight = 400;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should not add the mobile container class when window dimentions are greater than specified values', (done) => {
+    (window as any).innerWidth = 1000;
+    (window as any).innerHeight = 1000;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
+    done();
+  });
+
+  it('should update the container classes on window resize', (done) => {
+    (window as any).innerWidth = 1000;
+    (window as any).innerHeight = 1000;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).not.toContain('bb-help-container-mobile');
+    (window as any).innerHeight = 400;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
+    done();
   });
 });

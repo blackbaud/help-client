@@ -1,5 +1,4 @@
 export interface HelpConfig {
-  authEnabled?: boolean | string;
   caseCentralUrl?: string;
   communityUrl?: string;
   customLocales?: string[];
@@ -12,7 +11,7 @@ export interface HelpConfig {
   helpCenterUrl?: string;
   hideHelpChat?: boolean | string;
   hideUndock?: boolean | string;
-  hideWidgetOnMobile?: string;
+  hideWidgetOnMobile?: boolean;
   knowledgebaseUrl?: string;
   locale?: string;
   productId?: string;
