@@ -8,7 +8,7 @@ const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
 const BB_HEADER_COLOR: string = '#71bf43'; // 'rgb(113, 191, 67)';
 const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
-
+const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
 export class BBHelpHelpWidgetRenderer {
 
   private styleUtility: BBHelpStyleUtility;
@@ -51,7 +51,7 @@ export class BBHelpHelpWidgetRenderer {
     invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
     invoker.innerHTML = '<span>?</span>';
     if (config.hideWidgetOnMobile !== false) {
-      invoker.classList.add('bb-help-hide-on-mobile');
+      invoker.classList.add(BB_HELP_HIDE_ON_MOBILE_CLASS);
     }
   }
 

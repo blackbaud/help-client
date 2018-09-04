@@ -241,66 +241,81 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it ('should return the currentHelpKey with getCurrentHelpKey', (done) => {
-    const testHelpKey = 'test-key.html';
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget['currentHelpKey'] = testHelpKey;
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(testHelpKey);
-    done();
-  });
-
-  it ('should return the defaultHelpKey with getCurrentHelpKey when no helpKey is defined', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
+  it('should set and send widget currentHelpKey to help SPA', (done) => {
+    const testKey = 'help.html';
+    const expectedCall = {
+      helpKey: testKey,
+      messageType: 'update-current-help-key'
     };
-
-    helpWidget.load(fakeConfig);
-
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    helpWidget['elementsLoaded'] = true;
+    helpWidget.setCurrentHelpKey(testKey);
+    expect(helpWidget.currentHelpKey).toEqual(testKey);
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith(expectedCall);
     done();
   });
 
-  it ('should set the currentHelpKey to a specified help key with setCurrentHelpKey', (done) => {
-    const testHelpKey = 'test-key.html';
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget.setCurrentHelpKey(testHelpKey);
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(testHelpKey);
-    done();
-  });
-
-  it ('should set the currentHelpKey to the defaultHelpKey with setCurrentHelpKey when no key is specified', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
+  it('should set the helpKey to the defaultHelpKey if no helpKey is passed to setCurrentHelpKey', (done) => {
+    const expectedCall = {
+      helpKey: helpWidget['defaultHelpKey'],
+      messageType: 'update-current-help-key'
     };
-
-    helpWidget.load(fakeConfig);
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
-
-    helpWidget.setCurrentHelpKey();
-
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    helpWidget.setCurrentHelpKey(undefined);
+    expect(helpWidget.currentHelpKey).toEqual(helpWidget['defaultHelpKey']);
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith(expectedCall);
     done();
   });
 
-  it ('should set the currentHelpKey to the defaultHelpKey with setHelpKeyToDefault', (done) => {
-    const fakeConfig = {
-      defaultHelpKey: 'test-default.html'
+  it('should set the help key to the default help key', (done) => {
+    const expectedCall = {
+      helpKey: helpWidget['defaultHelpKey'],
+      messageType: 'update-current-help-key'
     };
-
-    helpWidget.load(fakeConfig);
-    expect(helpWidget['currentHelpKey']).toBe(undefined);
     helpWidget.setHelpKeyToDefault();
-    const testKey = helpWidget.getCurrentHelpKey();
-    expect(testKey).toEqual(fakeConfig.defaultHelpKey);
+    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith(expectedCall);
+    done();
+  });
+
+  it('should return the current helpkey from the getHelpKey method', (done) => {
+    const testKey = 'test-key.html';
+    helpWidget.setCurrentHelpKey(testKey);
+    const returnedKey = helpWidget['getHelpKey']();
+    expect(returnedKey).toEqual(testKey);
+    done();
+  });
+
+  it('should return the default helpkey from the getHelpKey method if no currentHelpKey exists', (done) => {
+    helpWidget.currentHelpKey = undefined;
+    const returnedKey = helpWidget['getHelpKey']();
+    expect(returnedKey).toEqual(helpWidget['defaultHelpKey']);
+    done();
+  });
+
+  it('should override its getCurrentHelpKey variable with one from the config (string value)', (done) => {
+    const fakeKey = 'my-test-key.html';
+    const fakeConfig = {
+      getCurrentHelpKey: fakeKey
+    };
+
+    spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
+    helpWidget['loadCalled'] = false;
+    helpWidget.load(fakeConfig);
+    const returnedKey = helpWidget['getHelpKey']();
+    expect(returnedKey).toEqual(fakeKey);
+    done();
+  });
+
+  it('should override its getCurrentHelpKey variable with one from the config (function value)', (done) => {
+    const fakeKey = 'fake-test-key.html';
+    const fakeConfig = {
+      getCurrentHelpKey: () => fakeKey
+    };
+
+    spyOn(helpWidget['widgetRenderer'], 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
+    helpWidget['loadCalled'] = false;
+    helpWidget.load(fakeConfig);
+    const returnedKey = helpWidget['getHelpKey']();
+
+    expect(returnedKey).toEqual(fakeKey);
     done();
   });
 
@@ -331,15 +346,6 @@ describe('BBHelpHelpWidget', () => {
     spyOn(helpWidget, 'close').and.callThrough();
     helpWidget['communicationService'].communicationAction.next('Close Widget');
     expect(helpWidget.close).toHaveBeenCalled();
-    done();
-  });
-
-  it ('should respond to action responses, Get Help Key', (done) => {
-    helpWidget['communicationService'].communicationAction.next('Get Help Key');
-    expect(helpWidget['communicationService'].postMessage).toHaveBeenCalledWith({
-      helpKey: helpWidget.getCurrentHelpKey(),
-      messageType: 'help-key'
-    });
     done();
   });
 
