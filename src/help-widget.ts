@@ -12,6 +12,7 @@ const PANEL_HEIGHT: number = 591;
 export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
   public config: HelpConfig;
+  public currentHelpKey: string;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
   private analyticsService: BBHelpAnalyticsService;
@@ -60,6 +61,11 @@ export class BBHelpHelpWidget {
 
     config.hostQueryParams = this.getQueryParams();
 
+    if (config.getCurrentHelpKey !== undefined) {
+      this.getCurrentHelpKey = config.getCurrentHelpKey;
+      delete config.getCurrentHelpKey;
+    }
+
     this.renderInvoker();
     this.sendConfig();
   }
@@ -76,7 +82,7 @@ export class BBHelpHelpWidget {
     this.invoker.setAttribute('aria-expanded', 'false');
   }
 
-  public open(helpKey?: string) {
+  public open(helpKey: string = this.getHelpKey()) {
     if (!this.widgetDisabled) {
       this.communicationService.postMessage({
         messageType: 'open-to-help-key',
@@ -102,6 +108,9 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
+
+    this.currentHelpKey = helpKey;
+
     this.communicationService.postMessage({
       messageType: 'update-current-help-key',
       helpKey
@@ -247,5 +256,17 @@ export class BBHelpHelpWidget {
 
   private isMobileView(): boolean {
     return (window.innerWidth <= SCREEN_XS_MAX || window.innerHeight <= PANEL_HEIGHT);
+  }
+
+  private getHelpKey() {
+    if ((typeof (this.getCurrentHelpKey) === 'function')) {
+      return this.getCurrentHelpKey();
+    }
+
+    return this.getCurrentHelpKey;
+  }
+
+  private getCurrentHelpKey: any = () => {
+    return this.currentHelpKey || this.defaultHelpKey;
   }
 }
