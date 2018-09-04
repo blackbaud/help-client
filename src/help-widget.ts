@@ -194,7 +194,6 @@ export class BBHelpHelpWidget {
   }
 
   private getQueryParams(): string {
-      //  Gets the value of a query string parameter in the current url.
       const results = window.location.search;
       return results;
   }
