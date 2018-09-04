@@ -188,6 +188,7 @@ describe('BBHelpCommunicationService', () => {
 
   it('should not try to handle messages from sources other than the skyux-spa-bb-help', (done) => {
     spyOn(commService.communicationAction, 'next').and.callThrough();
+    spyOn(window.console, 'error').and.callThrough();
     const testMessageType = 'Test Message Type';
     const event = {
       data: {
@@ -198,6 +199,7 @@ describe('BBHelpCommunicationService', () => {
     };
     triggerEvent(event);
     expect(commService.communicationAction.next).not.toHaveBeenCalled();
+    expect(window.console.error).not.toHaveBeenCalled();
     done();
   });
 });
