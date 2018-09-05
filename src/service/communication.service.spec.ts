@@ -186,7 +186,9 @@ describe('BBHelpCommunicationService', () => {
     done();
   });
 
-  it('should handle log an error if the message is from an invalid origin', (done) => {
+  it('should not try to handle messages from sources other than the skyux-spa-bb-help', (done) => {
+    spyOn(commService.communicationAction, 'next').and.callThrough();
+    spyOn(window.console, 'error').and.callThrough();
     const testMessageType = 'Test Message Type';
     const event = {
       data: {
@@ -195,12 +197,9 @@ describe('BBHelpCommunicationService', () => {
       },
       origin: 'Other Source'
     };
-
-    spyOn(window.console, 'error').and.callFake(() => {
-      return;
-    });
     triggerEvent(event);
-    expect(window.console.error).toHaveBeenCalledWith('Event origin not supported.');
+    expect(commService.communicationAction.next).not.toHaveBeenCalled();
+    expect(window.console.error).not.toHaveBeenCalled();
     done();
   });
 });
