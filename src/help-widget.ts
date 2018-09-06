@@ -181,6 +181,7 @@ export class BBHelpHelpWidget {
   private actionResponse(action: string) {
     switch (action) {
       case 'Close Widget':
+        this.invoker.focus();
         this.close();
         break;
       case 'Child Window Ready':
