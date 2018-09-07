@@ -344,8 +344,10 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should respond to action responses, Close Widget', (done) => {
     spyOn(helpWidget, 'close').and.callThrough();
+    spyOn(helpWidget['invoker'], 'focus');
     helpWidget['communicationService'].communicationAction.next('Close Widget');
     expect(helpWidget.close).toHaveBeenCalled();
+    expect(helpWidget['invoker'].focus).toHaveBeenCalled();
     done();
   });
 
