@@ -347,7 +347,6 @@ describe('BBHelpHelpWidget', () => {
     spyOn(helpWidget, 'close').and.callThrough();
     helpWidget['communicationService'].communicationAction.next('Close Widget');
     expect(helpWidget.close).toHaveBeenCalled();
-    console.log(document.activeElement);
     expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
   });
