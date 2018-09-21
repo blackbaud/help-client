@@ -169,6 +169,7 @@ describe('BBHelpHelpWidget', () => {
     expect(helpWidget['container'].classList).toContain('bb-help-closed');
     helpWidget.open();
     expect(helpWidget['container'].classList).not.toContain('bb-help-closed');
+    expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
   });
 
@@ -344,10 +345,10 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should respond to action responses, Close Widget', (done) => {
     spyOn(helpWidget, 'close').and.callThrough();
-    spyOn(helpWidget['invoker'], 'focus');
     helpWidget['communicationService'].communicationAction.next('Close Widget');
     expect(helpWidget.close).toHaveBeenCalled();
-    expect(helpWidget['invoker'].focus).toHaveBeenCalled();
+    console.log(document.activeElement);
+    expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
   });
 
