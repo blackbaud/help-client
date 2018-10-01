@@ -99,6 +99,7 @@ export class BBHelpHelpWidget {
       this.container.classList.remove(HELP_CLOSED_CLASS);
       this.invoker.setAttribute('aria-pressed', 'true');
       this.invoker.setAttribute('aria-expanded', 'true');
+      this.invoker.focus();
     }
   }
 
