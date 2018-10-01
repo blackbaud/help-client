@@ -1,110 +1,65 @@
-import { } from 'jasmine';
-
 import { BBHelpClient } from './help';
-import * as utils from './register-script';
 
-describe('help-client', () => {
-  const testCss: string = '{ background-color: red }';
-  let originalTimeout: number;
-  let registerScriptSpy: jasmine.Spy;
-  let fakeHelp: any;
-  let headStyles = '';
+describe('BBHelpClient', () => {
+  let mockHelpWidget: any;
 
-  const mockCreateElement = (): any => {
-    return {
-      appendChild(cssStyles: any) { this.cssStyles = cssStyles; },
-      cssStyles: '',
-      type: undefined
-    };
-  };
+  class MockHelpWidget {
+    public close() {
+      return;
+    }
 
-  const mockCreateTextNode = (css: any) => {
-    return testCss;
-  };
+    public load(helpConfig?: any) {
+      return;
+    }
 
-  const mockHeadAppendChild = (styleObject: any) => {
-    headStyles = styleObject.cssStyles;
-  };
+    public open(helpKey?: string) {
+      return;
+    }
 
-  beforeAll(() => {
-    registerScriptSpy = spyOn(
-      utils, 'registerScript'
-    ).and.callFake(() => {
-      (window as any).BBHELP = fakeHelp;
+    public toggleOpen() {
+      return;
+    }
+
+    public disableWidget() {
+      return;
+    }
+
+    public enableWidget() {
+     return;
+    }
+
+    public ready() {
       return Promise.resolve();
-    });
-  });
+    }
+
+    public setHelpKeyToDefault() {
+      return;
+    }
+
+    public setCurrentHelpKey() {
+      return;
+    }
+
+    public getCurrentHelpKey() {
+      return;
+    }
+
+    public getWhatsNewRevision() {
+      return;
+    }
+  }
 
   beforeEach(() => {
-    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    mockHelpWidget = new MockHelpWidget();
 
-    registerScriptSpy.calls.reset();
-    fakeHelp = {
-      HelpWidget: {
-        disabled: false,
-        opened: false,
-        close() {
-          this.opened = false;
-        },
-        load(helpConfig: any) {
-          // help widget initialized...
-        },
-        open(helpKey?: string) {
-          // help widget open...
-          this.opened = true;
-        },
-        toggleOpen() {
-          this.opened ? this.close() : this.open();
-        },
-        disableWidget() {
-          this.opened = false;
-          this.disabled = true;
-        },
-        enableWidget() {
-          this.disabled = false;
-        },
-        ready() {
-          return Promise.resolve();
-        }
-      }
+    (window as any).BBHELP = {
+      HelpWidget: mockHelpWidget
     };
-
-    spyOn(document, 'createElement').and.callFake(mockCreateElement);
-    spyOn(document, 'createTextNode').and.callFake(mockCreateTextNode);
-    spyOn(document.head, 'appendChild').and.callFake(mockHeadAppendChild);
   });
 
-  afterEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
-    registerScriptSpy.calls.reset();
-    BBHelpClient['defaultHelpKey'] = 'default.html';
-    BBHelpClient['currentHelpKey'] = undefined;
-  });
-
-  it('should add styles to the document head', (done) => {
-    expect(headStyles).toEqual('');
-    BBHelpClient.addStyles();
-    expect(headStyles).toEqual(testCss);
-    done();
-  });
-
-  it('should load the help widget library', (done) => {
-    BBHelpClient
-      .load({})
-      .then(() => {
-        expect(registerScriptSpy.calls.argsFor(0)).toEqual(
-          ['https://cdn.blackbaudcloud.com/bb-help/bb-help.js']
-        );
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget library was not loaded.');
-      });
-  });
-
-  it('should initialize the help widget with config', (done) => {
-    const helpLoadSpy = spyOn(fakeHelp.HelpWidget, 'load').and.callThrough();
+  it('should pass the config to the Help Widget if the Help Widget is ready', (done) => {
+    const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
+    const helpReady = spyOn(mockHelpWidget, 'ready').and.callThrough();
     const config = {
       productId: 'lo'
     };
@@ -112,7 +67,8 @@ describe('help-client', () => {
     BBHelpClient
       .load(config)
       .then(() => {
-        expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(config);
+        expect(helpReady).toHaveBeenCalled();
+        expect(helpLoadSpy).toHaveBeenCalledWith(config);
         done();
       })
       .catch(() => {
@@ -120,297 +76,145 @@ describe('help-client', () => {
       });
   });
 
-  it('should handle undefined config', (done) => {
-    const defaultConfig = {
-      getCurrentHelpKey: BBHelpClient.getCurrentHelpKey
+  it('should not pass the config to the Help Widget if the Help Widget is not ready', (done) => {
+    const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
+    const helpReady = spyOn(mockHelpWidget, 'ready').and.returnValue(Promise.reject('error message'));
+    const config = {
+      productId: 'lo'
     };
 
-    const helpLoadSpy = spyOn(fakeHelp.HelpWidget, 'load').and.callThrough();
+    BBHelpClient
+      .load(config)
+      .then(() => {
+        done();
+      })
+      .catch(() => {
+        expect(helpReady).toHaveBeenCalled();
+        expect(helpLoadSpy).not.toHaveBeenCalledWith(config);
+        done();
+      });
+  });
 
+  it('should assign {} to config if none is passed in', (done) => {
+    const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
     BBHelpClient
       .load()
       .then(() => {
-        expect(fakeHelp.HelpWidget.load).toHaveBeenCalledWith(defaultConfig);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget does not support undefined config.');
-      });
-  });
-
-  it('should add the required help widget elements to the page', (done) => {
-    BBHelpClient
-      .load({
-        productId: 'lo'
-      })
-      .then(() => {
-        expect(document.querySelectorAll('#bb-help-widget')).not.toBeNull();
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget elements were not created.');
-      });
-  });
-
-  it('should return the defaultHelpKey if no currentHelpKey is defined', (done) => {
-      const helpKey = BBHelpClient.getCurrentHelpKey();
-      expect(helpKey).toEqual('default.html');
-      done();
-  });
-
-  it('should set the defaultKey to the defaultHelpKey from the config', (done) => {
-    BBHelpClient
-      .load({
-        defaultHelpKey: 'new-default.html',
-        productId: 'lo'
-      })
-      .then(() => {
-        const helpKey = BBHelpClient['defaultHelpKey'];
-        expect(helpKey).toEqual('new-default.html');
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget elements were not created.');
-      });
-  });
-
-  it('should set the currentHelpKey to the helpKey passed as a parameter', (done) => {
-    const newHelpKey = 'test-key.html';
-    const initialHelpKey = BBHelpClient.getCurrentHelpKey();
-    BBHelpClient.setCurrentHelpKey(newHelpKey);
-    const helpKey = BBHelpClient.getCurrentHelpKey();
-    expect(initialHelpKey).toEqual('default.html');
-    expect(helpKey).not.toEqual(initialHelpKey);
-    expect(helpKey).toEqual(newHelpKey);
-    done();
-  });
-
-  it('should set the currentHelpKey to defaultHelpKey if no helpKey is passed as a parameter', (done) => {
-    BBHelpClient.setCurrentHelpKey();
-    const helpKey = BBHelpClient.getCurrentHelpKey();
-    expect(helpKey).toEqual('default.html');
-    done();
-  });
-
-  it('should set the currentHelpKey back to defaultHelpKey when setHelpKeyToDefault is called', (done) => {
-    const newHelpKey = 'test-key.html';
-    BBHelpClient.setCurrentHelpKey(newHelpKey);
-    const helpKey = BBHelpClient.getCurrentHelpKey();
-    BBHelpClient.setHelpKeyToDefault();
-    const currentHelpKey = BBHelpClient.getCurrentHelpKey();
-    expect(helpKey).toEqual(newHelpKey);
-    expect(currentHelpKey).toEqual('default.html');
-    done();
-  });
-
-  it('should open the widget to the currentHelpKey if no helpKey is passed as a parameter', (done) => {
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const ready = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
-
-    const newHelpKey = 'test-key.html';
-    BBHelpClient
-      .load()
-      .then()
-      .then(() => {
-        BBHelpClient.setCurrentHelpKey(newHelpKey);
-        BBHelpClient.openWidgetToHelpKey();
-        expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+        expect(helpLoadSpy).toHaveBeenCalledWith({});
         done();
       })
       .catch(() => {
         done.fail('The help widget was not configured.');
       });
+  });
+
+  it('should return ready when the Widget is ready', (done) => {
+    const helpReady = spyOn(mockHelpWidget, 'ready').and.callThrough();
+    BBHelpClient
+      .ready()
+      .then(() => {
+        expect(helpReady).toHaveBeenCalled();
+        done();
+      })
+      .catch(() => {
+        done.fail('The help widget elements were not created.');
+      });
+  });
+
+  it('should log an error if the Widget is never ready', (done) => {
+    const helpReady = spyOn(mockHelpWidget, 'ready').and.returnValue(Promise.reject('error message'));
+    const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
+    BBHelpClient
+      .ready()
+      .then(() => {
+        done();
+      })
+      .catch(() => {
+        expect(helpReady).toHaveBeenCalled();
+        expect(consoleSpy).toHaveBeenCalledWith('error message');
+        done.fail('The help widget elements were not created.');
+      });
+  });
+
+  it('should call the setCurrentHelpKey on the widget when setCurrentHelpKey is called', (done) => {
+    const helpOpenSpy = spyOn(mockHelpWidget, 'setCurrentHelpKey').and.callThrough();
+    const newHelpKey = 'test-key.html';
+
+    BBHelpClient.setCurrentHelpKey(newHelpKey);
+    expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+    done();
+  });
+
+  it('should call the setHelpKeyToDefault on the widget when setHelpKeyToDefault is called', (done) => {
+    const helpDefaultKeySpy = spyOn(mockHelpWidget, 'setHelpKeyToDefault').and.callThrough();
+
+    BBHelpClient.setHelpKeyToDefault();
+    expect(helpDefaultKeySpy).toHaveBeenCalled();
+    done();
   });
 
   it('should open the widget to a specified helpKey with openWidgetToHelpKey', (done) => {
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+    const helpOpenSpy = spyOn(mockHelpWidget, 'open').and.callThrough();
+
     const newHelpKey = 'test-key.html';
-    BBHelpClient
-      .load()
-      .then(() => {
-        BBHelpClient.setCurrentHelpKey(newHelpKey);
-        BBHelpClient.openWidgetToHelpKey('foo.html');
-        expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+
+    BBHelpClient.openWidgetToHelpKey(newHelpKey);
+    expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+    done();
   });
 
   it('should open the widget to a specified helpKey with openWidget', (done) => {
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+    const helpOpenSpy = spyOn(mockHelpWidget, 'open').and.callThrough();
     const newHelpKey = 'test-key.html';
-    BBHelpClient
-      .load()
-      .then(() => {
-        BBHelpClient.setCurrentHelpKey(newHelpKey);
-        BBHelpClient.openWidget('foo.html');
-        expect(helpOpenSpy).toHaveBeenCalledWith('foo.html');
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.openWidget(newHelpKey);
+    expect(helpOpenSpy).toHaveBeenCalledWith(newHelpKey);
+    done();
   });
 
-  it('should open and close the widget', (done) => {
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const helpCloseSpy = spyOn(fakeHelp.HelpWidget, 'close').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+  it('should open the widget to a without a helpKey with openWidget', (done) => {
+    const helpOpenSpy = spyOn(mockHelpWidget, 'open').and.callThrough();
 
-    BBHelpClient.load()
-      .then(() => {
-        expect(helpOpenSpy).not.toHaveBeenCalled();
-        BBHelpClient.openWidget();
-        expect(helpOpenSpy).toHaveBeenCalled();
-        expect(fakeHelp.HelpWidget.opened).toBe(true);
-        expect(helpCloseSpy).not.toHaveBeenCalled();
-        BBHelpClient.closeWidget();
-        expect(helpCloseSpy).toHaveBeenCalled();
-        expect(fakeHelp.HelpWidget.opened).toBe(false);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.openWidget();
+    expect(helpOpenSpy).toHaveBeenCalledWith(undefined);
+    done();
   });
 
-  it('should toggle the widget between open and closed', (done) => {
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const helpCloseSpy = spyOn(fakeHelp.HelpWidget, 'close').and.callThrough();
-    const helpToggleSpy = spyOn(fakeHelp.HelpWidget, 'toggleOpen').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+  it('should call toggleOpen on the HelpWidget with toggleOpen', (done) => {
+    const helpToggleOpenSpy = spyOn(mockHelpWidget, 'toggleOpen').and.callThrough();
 
-    BBHelpClient.load()
-      .then(() => {
-        expect(helpOpenSpy).not.toHaveBeenCalled();
-        return BBHelpClient.toggleOpen();
-      })
-      .then(() => {
-        expect(helpOpenSpy).toHaveBeenCalled();
-        expect(helpCloseSpy).not.toHaveBeenCalled();
-        return BBHelpClient.toggleOpen();
-      })
-      .then(() => {
-        expect(helpCloseSpy).toHaveBeenCalled();
-        expect(helpToggleSpy).toHaveBeenCalledTimes(2);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.toggleOpen();
+    expect(helpToggleOpenSpy).toHaveBeenCalled();
+    done();
   });
 
-  it('should disable and enable the widget', (done) => {
-    const helpDisableSpy = spyOn(fakeHelp.HelpWidget, 'disableWidget').and.callThrough();
-    const helpEnableSpy = spyOn(fakeHelp.HelpWidget, 'enableWidget').and.callThrough();
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+  it('should close the widget with closeWidget', (done) => {
+    const helpCloseSpy = spyOn(mockHelpWidget, 'close').and.callThrough();
 
-    BBHelpClient.load()
-      .then(() => {
-        expect(helpDisableSpy).not.toHaveBeenCalled();
-        return BBHelpClient.openWidget();
-      })
-      .then(() => {
-        expect(fakeHelp.HelpWidget.opened).toBe(true);
-        return BBHelpClient.disableWidget();
-      })
-      .then(() => {
-        expect(fakeHelp.HelpWidget.disabled).toBe(true);
-        return BBHelpClient.enableWidget();
-      })
-      .then(() => {
-        expect(helpEnableSpy).toHaveBeenCalled();
-        expect(fakeHelp.HelpWidget.disabled).toBe(false);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.closeWidget();
+    expect(helpCloseSpy).toHaveBeenCalled();
+    done();
   });
 
-  it('should close the widget on disabled', (done) => {
-    const helpDisableSpy = spyOn(fakeHelp.HelpWidget, 'disableWidget').and.callThrough();
-    const helpEnableSpy = spyOn(fakeHelp.HelpWidget, 'enableWidget').and.callThrough();
-    const helpOpenSpy = spyOn(fakeHelp.HelpWidget, 'open').and.callThrough();
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callFake(() => {
-      return Promise.resolve();
-    });
+  it('should disable the widget with disableWidget', (done) => {
+    const helpDisableSpy = spyOn(mockHelpWidget, 'disableWidget').and.callThrough();
 
-    BBHelpClient.load()
-      .then(() => {
-        expect(helpDisableSpy).not.toHaveBeenCalled();
-        return BBHelpClient.openWidget();
-      })
-      .then(() => {
-        expect(fakeHelp.HelpWidget.opened).toBe(true);
-        return BBHelpClient.disableWidget();
-      })
-      .then(() => {
-        expect(helpDisableSpy).toHaveBeenCalled();
-        expect(fakeHelp.HelpWidget.opened).toBe(false);
-        expect(fakeHelp.HelpWidget.disabled).toBe(true);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.disableWidget();
+    expect(helpDisableSpy).toHaveBeenCalled();
+    done();
   });
 
-  it('should resolve as ready when the load method has completed.', (done) => {
-    const readySpy = spyOn(BBHelpClient, 'ready').and.callThrough();
-    BBHelpClient.load()
-      .then(() => {
-        return BBHelpClient.ready();
-      })
-      .then(() => {
-        expect(readySpy).toHaveBeenCalled();
-        done();
-      });
+  it('should enable the widget with enableWidget', (done) => {
+    const helpEnableSpy = spyOn(mockHelpWidget, 'enableWidget').and.callThrough();
+
+    BBHelpClient.enableWidget();
+    expect(helpEnableSpy).toHaveBeenCalled();
+    done();
   });
 
-  it('should log an error if the HelpWidget ready method fails', (done) => {
-    const errMessage = 'The Help Widget failed to load.';
-    const consoleSpy = spyOn(console, 'error').and.callThrough();
-    const widgetSpy = spyOn(fakeHelp.HelpWidget, 'ready').and.callFake(() => {
-      return Promise.reject(errMessage);
-    });
-    BBHelpClient.load()
-      .then(() => {
-        return BBHelpClient.ready();
-      })
-      .then(() => {
-        expect(widgetSpy).toHaveBeenCalled();
-        expect(errMessage).toBe('The Help Widget failed to load.');
-        expect(consoleSpy).toHaveBeenCalledWith(errMessage);
-        done();
-      });
-  });
-
-  it('should err if the widget doesn\'t load before maxIterations are reached', (done) => {
-    const errMessage = 'The Help Widget failed to load.';
-    const consoleSpy = spyOn(console, 'error').and.callThrough();
-    BBHelpClient['widgetLoaded'] = false;
-    BBHelpClient.ready()
-      .then(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('The Help Widget failed to load.');
-        done();
-      });
+  it('should resolve what\'s new revisions', (done) => {
+    const helpWhatsNewSpy = spyOn(mockHelpWidget, 'getWhatsNewRevision').and.callThrough();
+    BBHelpClient.getWhatsNewRevision();
+    expect(helpWhatsNewSpy).toHaveBeenCalled();
+    done();
   });
 });

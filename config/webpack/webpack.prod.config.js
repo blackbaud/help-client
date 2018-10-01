@@ -9,19 +9,19 @@ module.exports = {
     libraryTarget: 'umd'
   },
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.ts', '.js']
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
         loader: 'ts-loader',
-        options: {
-          compilerOptions: {
-            declaration: false
-          }
-        }
-      }
+      },
+      {
+        test: /\.scss$/,
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
+        exclude: '/node_modules/'
+      },
     ]
   }
 };
