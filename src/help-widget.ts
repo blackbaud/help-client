@@ -196,8 +196,8 @@ export class BBHelpHelpWidget {
   }
 
   private getQueryParams(): string {
-      const results = window.location.search;
-      return results;
+    const results = window.location.search;
+    return results;
   }
 
   private sendConfig() {
