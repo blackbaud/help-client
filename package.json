@@ -1,5 +1,5 @@
 {
-  "name": "@blackbaud/help-client",
+  "name": "@blackbaud/help-client-test",
   "version": "1.3.0",
   "description": "Provides a client-side library for interacting with the Help Widget.",
   "main": "dist/bundles/help-client.umd.js",
