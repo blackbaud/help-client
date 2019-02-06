@@ -25,7 +25,7 @@ describe('BBHelpClient', () => {
     }
 
     public enableWidget() {
-     return;
+      return;
     }
 
     public ready() {
