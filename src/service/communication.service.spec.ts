@@ -27,7 +27,8 @@ describe('BBHelpCommunicationService', () => {
 
     spyOn(window, 'addEventListener').and.callFake(fakeMessageTrigger);
 
-    commService = new BBHelpCommunicationService(mockChildWindow);
+    commService = new BBHelpCommunicationService();
+    commService.bindChildWindowReference(mockChildWindow);
   });
 
   afterEach(() => {

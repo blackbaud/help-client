@@ -1,9 +1,27 @@
 
 import { BBHelpHelpWidget } from './help-widget';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { BBHelpStyleUtility } from './help-widget-style-utility';
+import { BBHelp } from './models/bbhelp';
+import { BBHelpAnalyticsService } from './service/analytics.service';
+import { BBHelpCommunicationService } from './service/communication.service';
 
 declare const BBHELP: any;
 
 export abstract class BBHelpClient {
+
+  public static initWidget(): BBHelp {
+    const styleUtility = new BBHelpStyleUtility();
+    const widgetRenderer = new BBHelpHelpWidgetRenderer(styleUtility);
+    const analyticsService = new BBHelpAnalyticsService();
+    const communicationService = new BBHelpCommunicationService();
+    const helpWidget = new BBHelpHelpWidget(
+      widgetRenderer,
+      analyticsService,
+      communicationService
+    );
+    return { HelpWidget: helpWidget };
+  }
 
   public static load(config: any = {}) {
     return BBHELP.HelpWidget.ready()
@@ -57,7 +75,5 @@ export abstract class BBHelpClient {
 }
 
 (() => {
-  (window as any).BBHELP = {
-    HelpWidget: new BBHelpHelpWidget()
-  };
+  (window as any).BBHELP = BBHelpClient.initWidget();
 })();
