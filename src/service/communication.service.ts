@@ -5,9 +5,12 @@ export class BBHelpCommunicationService {
 
   public communicationAction: Subject<any> = new Subject();
 
+  public childWindow: HTMLIFrameElement;
+
   public childWindowReady: boolean = false;
 
-  constructor(private childWindow: any) {
+  public bindChildWindowReference(childWindow: any) {
+    this.childWindow = childWindow;
     window.addEventListener('message', this.messageHandler());
   }
 

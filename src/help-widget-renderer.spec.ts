@@ -1,11 +1,14 @@
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
+import { MockStyleUtility } from './mocks/mock-style-utilty';
 
 describe('BBHelpHelpWidgetRenderer', () => {
   let widgetRenderer: BBHelpHelpWidgetRenderer;
+  let mockStyleUtility: any;
 
   beforeEach(() => {
-    widgetRenderer = new BBHelpHelpWidgetRenderer();
+    mockStyleUtility = new MockStyleUtility();
+    widgetRenderer = new BBHelpHelpWidgetRenderer(mockStyleUtility);
   });
 
   it('should create the help container', (done) => {

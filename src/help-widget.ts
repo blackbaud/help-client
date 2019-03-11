@@ -24,9 +24,14 @@ export class BBHelpHelpWidget {
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
 
-  constructor() {
-    this.widgetRenderer = new BBHelpHelpWidgetRenderer();
-    this.analyticsService = new BBHelpAnalyticsService();
+  constructor(
+    widgetRenderer: BBHelpHelpWidgetRenderer,
+    analyticsService: BBHelpAnalyticsService,
+    communicationService: BBHelpCommunicationService
+  ) {
+    this.widgetRenderer = widgetRenderer;
+    this.analyticsService = analyticsService;
+    this.communicationService = communicationService;
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
@@ -173,7 +178,7 @@ export class BBHelpHelpWidget {
   }
 
   private setUpCommunication() {
-    this.communicationService = new BBHelpCommunicationService(this.iframe);
+    this.communicationService.bindChildWindowReference(this.iframe);
     this.communicationService.communicationAction.subscribe((action: string) => {
       this.actionResponse(action);
     });
