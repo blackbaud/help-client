@@ -6,6 +6,7 @@ import { BBHelp } from './models/bbhelp';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
 import { MixpanelKeys } from './service/mixpanel.keys';
+
 declare const BBHELP: any;
 
 export abstract class BBHelpClient {
