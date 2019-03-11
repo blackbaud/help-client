@@ -5,7 +5,7 @@ import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { BBHelp } from './models/bbhelp';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
-import { MixpanelKeys } from './service/mixpanel.keys';
+import { MixpanelKeys } from './service/mixpanel-keys';
 
 declare const BBHELP: any;
 

@@ -1,4 +1,4 @@
-import { MixpanelKeys } from './mixpanel.keys';
+import { MixpanelKeys } from './mixpanel-keys';
 
 const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
 let PRODUCTION_KEY: string;
