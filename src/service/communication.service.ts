@@ -1,9 +1,10 @@
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 import { Subject } from 'rxjs';
+import { CommunicationAction } from '../models/communication-action';
 
 export class BBHelpCommunicationService {
 
-  public communicationAction: Subject<any> = new Subject();
+  public communicationAction: Subject<CommunicationAction> = new Subject();
 
   public childWindow: HTMLIFrameElement;
 
@@ -42,11 +43,14 @@ export class BBHelpCommunicationService {
         switch (message.messageType) {
           case 'ready':
             this.postMessage({ messageType: 'host-ready' });
-            this.communicationAction.next('Child Window Ready');
+            this.communicationAction.next({ messageType: 'Child Window Ready'});
             this.childWindowReady = true;
             break;
           case 'close-widget':
-            this.communicationAction.next('Close Widget');
+            this.communicationAction.next({ messageType: 'Close Widget'});
+            break;
+          case 'config-loaded':
+            this.communicationAction.next({ messageType: 'Config Loaded', data: message});
             break;
           default:
             console.error(`No matching response for message type: ${message.messageType}`);
