@@ -7,7 +7,6 @@ import { MockWidgetRenderer} from './mocks/mock-renderer';
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
-  let commReadyStatus: any;
   let mockWidgetRenderer: any;
   let mockAnalyticsService: any;
   let mockCommunicationService: any;
@@ -24,13 +23,14 @@ describe('BBHelpHelpWidget', () => {
       mockAnalyticsService,
       mockCommunicationService
     );
-    spyOn(mockAnalyticsService, 'trackEvent');
-    spyOn(mockCommunicationService, 'postMessage').and.callFake((message: any) => { return; });
-    spyOn(mockCommunicationService, 'ready').and.callFake((message: any) => commReadyStatus);
+    spyOn(mockAnalyticsService, 'trackEvent').and.callThrough();
+    spyOn(mockCommunicationService, 'postMessage').and.callThrough();
+    spyOn(mockCommunicationService, 'ready').and.callThrough();
     spyOn(mockCommunicationService, 'communicationAction').and.callThrough();
   });
 
   afterEach(() => {
+    document.body.innerHTML = '';
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
@@ -76,7 +76,7 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should return ready when the communication service is ready', (done) => {
-    commReadyStatus = Promise.resolve();
+    mockCommunicationService.commReadyStatus = Promise.resolve();
     helpWidget['elementsLoaded'] = true;
     helpWidget.ready()
       .then(() => {
@@ -90,7 +90,7 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should not return ready when the communication service is not ready', (done) => {
-    commReadyStatus = Promise.resolve();
+    mockCommunicationService.commReadyStatus = Promise.resolve();
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     helpWidget['elementsLoaded'] = false;
     helpWidget.ready()
@@ -121,8 +121,6 @@ describe('BBHelpHelpWidget', () => {
       config: fakeConfig,
       messageType: 'user-config'
     });
-
-    expect(mockWidgetRenderer.addInvokerStyles).toHaveBeenCalledWith(helpWidget['invoker'], fakeConfig);
     done();
   });
 
@@ -358,27 +356,29 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it ('should respond to action responses, Close Widget', (done) => {
+  it ('should react to actions, Close Widget', (done) => {
     spyOn(helpWidget, 'close').and.callThrough();
-    mockCommunicationService.communicationAction.next('Close Widget');
+    mockCommunicationService.communicationAction.next({ messageType: 'Close Widget' });
     expect(helpWidget.close).toHaveBeenCalled();
     expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
   });
 
-  it ('should respond to action responses, Child Window Ready (loadCalled false) by not sending the config', (done) => {
-    mockCommunicationService.communicationAction.next('Child Window Ready');
+  it ('should react to actions, Child Window Ready (loadCalled false) by not sending the config', (done) => {
+    const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
+    mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
     expect(mockCommunicationService.postMessage).not.toHaveBeenCalled();
+    expect(consoleSpy).not.toHaveBeenCalled();
     done();
   });
 
-  it ('should respond to action responses, Child Window Ready (loadCalled true) by sending the config', (done) => {
+  it ('should react to actions, Child Window Ready (loadCalled true) by sending the config', (done) => {
     const fakeConfig = {
       defaultHelpKey: 'test-default.html'
     };
 
     helpWidget.load(fakeConfig);
-    mockCommunicationService.communicationAction.next('Child Window Ready');
+    mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
     expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
       config: helpWidget.config,
       messageType: 'user-config'
@@ -386,13 +386,59 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
+  it ('should react to actions, Config Loaded by updating configs, defaultHelpKey, and render invoker', (done) => {
+    const originalConfig = {
+      defaultHelpKey: 'original-default.html'
+    };
+
+    const extendedConfig = {
+      defaultHelpKey: 'new-default.html',
+      headerColor: '#fff'
+    };
+
+    const rendererSpy = spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callThrough();
+    helpWidget.load(originalConfig);
+    expect(helpWidget.config).toEqual(originalConfig);
+    expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
+    mockCommunicationService.communicationAction.next({
+      data: JSON.stringify(extendedConfig),
+      messageType: 'Config Loaded'
+    });
+    expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
+    expect(helpWidget.config).toEqual(extendedConfig);
+    expect(helpWidget['defaultHelpKey']).toEqual(extendedConfig.defaultHelpKey);
+    done();
+  });
+
+  it ('should react to actions, Config Loaded by updating configs (no defaultHelpKey) and render invoker', (done) => {
+    const originalConfig = {
+      defaultHelpKey: 'original-default.html'
+    };
+
+    const extendedConfig = {
+      headerColor: '#fff'
+    };
+
+    const rendererSpy = spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callThrough();
+    helpWidget.load(originalConfig);
+    expect(helpWidget.config).toEqual(originalConfig);
+    mockCommunicationService.communicationAction.next({
+      data: JSON.stringify(extendedConfig),
+      messageType: 'Config Loaded'
+    });
+    expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
+    expect(helpWidget.config).toEqual(extendedConfig);
+    expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
+    done();
+  });
+
   it ('should log a console error if no matching action exists', (done) => {
-    const testAction = 'Test Action No Response';
+    const testAction = { messageType: 'Test Action No Response' };
     spyOn(window.console, 'error').and.callFake(() => {
       return;
     });
     mockCommunicationService.communicationAction.next(testAction);
-    expect(window.console.error).toHaveBeenCalledWith(`No matching response for action: ${testAction}`);
+    expect(window.console.error).toHaveBeenCalledWith(`No matching response for action: ${testAction.messageType}`);
     done();
   });
 

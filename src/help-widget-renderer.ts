@@ -47,7 +47,6 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
-    console.log('adding styles');
     invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
     invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
     invoker.innerHTML = '<span>?</span>';

@@ -1,4 +1,4 @@
 export interface CommunicationAction {
   messageType: string;
-  data?: any
-};
+  data?: any;
+}

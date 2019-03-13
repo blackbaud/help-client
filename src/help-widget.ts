@@ -1,6 +1,6 @@
 import { HelpConfig } from './help-config';
-import { CommunicationAction } from './models/communication-action';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { CommunicationAction } from './models/communication-action';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
 
@@ -195,12 +195,12 @@ export class BBHelpHelpWidget {
         }
         break;
       case 'Config Loaded':
-          const configData = JSON.parse(action.data.data);
-          this.updateConfigKeys(configData);
-          this.renderInvoker();
+        const configData = JSON.parse(action.data);
+        this.updateConfigKeys(configData);
+        this.renderInvoker();
         break;
       default:
-        console.error(`No matching response for action: ${action}`);
+        console.error(`No matching response for action: ${action.messageType}`);
     }
   }
 

@@ -36,7 +36,21 @@ export class BBHelpCommunicationService {
     });
   }
 
-  public messageHandler() {
+  public isFromHelpWidget(event: { origin: string, data: any }): boolean {
+    if (event.origin === HOST_ORIGIN) {
+      const message = event.data;
+      return !!message && message.source === 'skyux-spa-bb-help';
+    }
+
+    return false;
+  }
+
+  public postMessage(message: any, origin: string = HOST_ORIGIN) {
+    message.source = 'help-client';
+    this.childWindow.contentWindow.postMessage(message, origin);
+  }
+
+  private messageHandler() {
     return (event: any) => {
       if (this.isFromHelpWidget(event)) {
         const message = event.data;
@@ -50,27 +64,13 @@ export class BBHelpCommunicationService {
             this.communicationAction.next({ messageType: 'Close Widget'});
             break;
           case 'config-loaded':
-            this.communicationAction.next({ messageType: 'Config Loaded', data: message});
+            this.communicationAction.next({ messageType: 'Config Loaded', data: message.config});
             break;
           default:
-            console.error(`No matching response for message type: ${message.messageType}`);
+            console.error(`No matching response for message type: ${ message.messageType }`);
             break;
         }
       }
     };
-  }
-
-  public isFromHelpWidget(event: { origin: string, data: any }): boolean {
-    if (event.origin === HOST_ORIGIN) {
-      const message = event.data;
-      return !!message && message.source === 'skyux-spa-bb-help';
-    }
-
-    return false;
-  }
-
-  public postMessage(message: any, origin: string = HOST_ORIGIN) {
-    message.source = 'help-client';
-    this.childWindow.contentWindow.postMessage(message, origin);
   }
 }
