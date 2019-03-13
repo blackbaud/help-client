@@ -2,6 +2,8 @@ import { Subject } from 'rxjs';
 
 export class MockCommunicationService {
 
+  public commReadyStatus: any = Promise.resolve();
+
   public communicationAction: Subject<any> = new Subject();
 
   public childWindow: HTMLIFrameElement;
@@ -13,15 +15,7 @@ export class MockCommunicationService {
   }
 
   public ready() {
-    //
-  }
-
-  public messageHandler() {
-    //
-  }
-
-  public isFromHelpWidget() {
-    //
+    return this.commReadyStatus;
   }
 
   public postMessage() {
