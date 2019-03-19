@@ -172,7 +172,7 @@ describe('BBHelpCommunicationService', () => {
   it('should handle messages from the window, (config-loaded)', (done) => {
     const event = {
       data: {
-        config: {
+        data: {
           defaultHelpKey: 'new-default.html'
         },
         messageType: 'config-loaded',
@@ -184,7 +184,7 @@ describe('BBHelpCommunicationService', () => {
     spyOn(commService.communicationAction, 'next').and.callThrough();
     triggerEvent(event);
     expect(commService.communicationAction.next).toHaveBeenCalledWith({
-      data: event.data.config,
+      data: event.data.data,
       messageType: 'Config Loaded'
     });
     done();
