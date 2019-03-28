@@ -67,7 +67,7 @@ export class BBHelpCommunicationService {
             this.communicationAction.next({ messageType: 'Config Loaded', data: message.data });
             break;
           default:
-            console.error(`No matching response for message type: ${ message.messageType }`);
+            console.error(`No matching response for message type: ${message.messageType}`);
             break;
         }
       }
