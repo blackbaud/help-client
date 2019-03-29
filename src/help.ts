@@ -5,6 +5,7 @@ import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { BBHelp } from './models/bbhelp';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
+import { MixpanelKeys } from './service/mixpanel-keys';
 
 declare const BBHELP: any;
 
@@ -13,7 +14,8 @@ export abstract class BBHelpClient {
   public static initWidget(): BBHelp {
     const styleUtility = new BBHelpStyleUtility();
     const widgetRenderer = new BBHelpHelpWidgetRenderer(styleUtility);
-    const analyticsService = new BBHelpAnalyticsService();
+    const mixpanelKeys = new MixpanelKeys();
+    const analyticsService = new BBHelpAnalyticsService(mixpanelKeys);
     const communicationService = new BBHelpCommunicationService();
     const helpWidget = new BBHelpHelpWidget(
       widgetRenderer,

@@ -1,8 +1,8 @@
-const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
+import { MixpanelKeys } from './mixpanel-keys';
 
-// Default values for initializing the analytics client.
-const DEVELOPMENT_KEY = '0e26030f769c1e630c59e1b3dec37957';
-const PRODUCTION_KEY = '13c1581286213207b29bc7fc47e787e7';
+const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
+let PRODUCTION_KEY: string;
+let DEVELOPMENT_KEY: string;
 const HOST_NAME_REGEX = new RegExp('localhost');
 const PRODUCT_NAME = 'bb_help_widget';
 const DEFAULT_CONFIG = {
@@ -18,6 +18,12 @@ export class BBHelpAnalyticsService {
   private superProperties: any;
   private analyticsClient: any;
   private windowRef: any =  getWindow();
+
+  constructor(mixpanelKeys: MixpanelKeys) {
+    PRODUCTION_KEY = mixpanelKeys.PRODUCTION_KEY;
+    DEVELOPMENT_KEY = mixpanelKeys.DEVELOPMENT_KEY;
+  }
+
   public setupMixpanel(productId: string) {
     this.setAnalyticsClient(this.getMixpanel());
     this.initMixpanel();
@@ -70,15 +76,8 @@ export class BBHelpAnalyticsService {
   }
 
   private initMixpanel() {
-    const MIXPANEL_KEY = this.getMixpanelKey();
+    const MIXPANEL_KEY = this.isDevelopment() ? DEVELOPMENT_KEY : PRODUCTION_KEY;
     this.getAnalyticsClient().init(MIXPANEL_KEY, DEFAULT_CONFIG, PRODUCT_NAME);
-  }
-
-  private getMixpanelKey() {
-    if (this.isDevelopment()) {
-      return DEVELOPMENT_KEY;
-    }
-    return PRODUCTION_KEY;
   }
 
   private isDevelopment() {

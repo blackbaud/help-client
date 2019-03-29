@@ -4,19 +4,24 @@ import { BBHelpAnalyticsService } from './analytics.service';
 const demoConfig: HelpConfig = {
   productId: 'bbHelpTesting'
 };
-const DEVELOPMENT_KEY = '0e26030f769c1e630c59e1b3dec37957';
-const PRODUCTION_KEY = '13c1581286213207b29bc7fc47e787e7';
+
+class MockMixpanelKeys {
+  public DEVELOPMENT_KEY: string = 'development-key';
+  public PRODUCTION_KEY: string = 'production-key';
+}
 
 describe('BBHelpAnalyticsService', () => {
   let analyticsService: BBHelpAnalyticsService;
   let originalTimeout: number;
   let mixpanelSpy: any;
+  let mixpanelKeyCalled: string;
+  const mockMixpanelKeys = new MockMixpanelKeys();
 
   beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-    analyticsService = new BBHelpAnalyticsService();
+    analyticsService = new BBHelpAnalyticsService(mockMixpanelKeys);
 
     mixpanelSpy = spyOn<any>(analyticsService, 'getMixpanel').and.returnValue({
       bb_help_widget: {
@@ -24,7 +29,9 @@ describe('BBHelpAnalyticsService', () => {
         register: (object: any) => { return; },
         track: (eventName: any, payload: any) => { return; }
       },
-      init: (key: any, config: any, name: any) => { return; }
+      init: (key: any, config: any, name: any) => {
+        mixpanelKeyCalled = key;
+        return; }
     });
   });
 
@@ -52,8 +59,8 @@ describe('BBHelpAnalyticsService', () => {
       }
     };
     analyticsService.setupMixpanel(demoConfig.productId);
-    const returnedKey = analyticsService['getMixpanelKey']();
-    expect(returnedKey).toEqual(PRODUCTION_KEY);
+
+    expect(mixpanelKeyCalled).toEqual(mockMixpanelKeys.PRODUCTION_KEY);
     done();
   });
 
@@ -64,8 +71,7 @@ describe('BBHelpAnalyticsService', () => {
       }
     };
     analyticsService.setupMixpanel(demoConfig.productId);
-    const returnedKey = analyticsService['getMixpanelKey']();
-    expect(returnedKey).toEqual(DEVELOPMENT_KEY);
+    expect(mixpanelKeyCalled).toEqual(mockMixpanelKeys.DEVELOPMENT_KEY);
     done();
   });
 
@@ -78,8 +84,7 @@ describe('BBHelpAnalyticsService', () => {
     };
 
     analyticsService.setupMixpanel(demoConfig.productId);
-    const returnedKey = analyticsService['getMixpanelKey']();
-    expect(returnedKey).toEqual(DEVELOPMENT_KEY);
+    expect(mixpanelKeyCalled).toEqual(mockMixpanelKeys.DEVELOPMENT_KEY);
     done();
   });
 
