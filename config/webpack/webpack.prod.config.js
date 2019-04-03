@@ -16,6 +16,11 @@ module.exports = {
       {
         test: /\.ts$/,
         loader: 'ts-loader',
+        options: {
+          compilerOptions: {
+            declaration: false
+          }
+        }
       },
       {
         test: /\.scss$/,
