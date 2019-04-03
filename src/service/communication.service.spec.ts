@@ -27,7 +27,8 @@ describe('BBHelpCommunicationService', () => {
 
     spyOn(window, 'addEventListener').and.callFake(fakeMessageTrigger);
 
-    commService = new BBHelpCommunicationService(mockChildWindow);
+    commService = new BBHelpCommunicationService();
+    commService.bindChildWindowReference(mockChildWindow);
   });
 
   afterEach(() => {
@@ -148,7 +149,7 @@ describe('BBHelpCommunicationService', () => {
     spyOn(commService.communicationAction, 'next').and.callThrough();
     triggerEvent(event);
     expect(commService.postMessage).toHaveBeenCalledWith({ messageType: 'host-ready', source: 'help-client' });
-    expect(commService.communicationAction.next).toHaveBeenCalledWith('Child Window Ready');
+    expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Child Window Ready' });
     expect(commService.childWindowReady).toBe(true);
     done();
   });
@@ -164,7 +165,28 @@ describe('BBHelpCommunicationService', () => {
 
     spyOn(commService.communicationAction, 'next').and.callThrough();
     triggerEvent(event);
-    expect(commService.communicationAction.next).toHaveBeenCalledWith('Close Widget');
+    expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Close Widget'});
+    done();
+  });
+
+  it('should handle messages from the window, (config-loaded)', (done) => {
+    const event = {
+      data: {
+        data: {
+          defaultHelpKey: 'new-default.html'
+        },
+        messageType: 'config-loaded',
+        source: 'skyux-spa-bb-help'
+      },
+      origin: HOST_ORIGIN
+    };
+
+    spyOn(commService.communicationAction, 'next').and.callThrough();
+    triggerEvent(event);
+    expect(commService.communicationAction.next).toHaveBeenCalledWith({
+      data: event.data.data,
+      messageType: 'Config Loaded'
+    });
     done();
   });
 

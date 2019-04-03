@@ -1,5 +1,6 @@
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { CommunicationAction } from './models/communication-action';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
 
@@ -24,9 +25,14 @@ export class BBHelpHelpWidget {
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
 
-  constructor() {
-    this.widgetRenderer = new BBHelpHelpWidgetRenderer();
-    this.analyticsService = new BBHelpAnalyticsService();
+  constructor(
+    widgetRenderer: BBHelpHelpWidgetRenderer,
+    analyticsService: BBHelpAnalyticsService,
+    communicationService: BBHelpCommunicationService
+  ) {
+    this.widgetRenderer = widgetRenderer;
+    this.analyticsService = analyticsService;
+    this.communicationService = communicationService;
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
@@ -65,8 +71,6 @@ export class BBHelpHelpWidget {
       this.getCurrentHelpKey = config.getCurrentHelpKey;
       delete config.getCurrentHelpKey;
     }
-
-    this.renderInvoker();
     this.sendConfig();
   }
 
@@ -173,14 +177,14 @@ export class BBHelpHelpWidget {
   }
 
   private setUpCommunication() {
-    this.communicationService = new BBHelpCommunicationService(this.iframe);
-    this.communicationService.communicationAction.subscribe((action: string) => {
+    this.communicationService.bindChildWindowReference(this.iframe);
+    this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
       this.actionResponse(action);
     });
   }
 
-  private actionResponse(action: string) {
-    switch (action) {
+  private actionResponse(action: CommunicationAction) {
+    switch (action.messageType) {
       case 'Close Widget':
         this.invoker.focus();
         this.close();
@@ -190,8 +194,20 @@ export class BBHelpHelpWidget {
           this.sendConfig();
         }
         break;
+      case 'Config Loaded':
+        const configData = JSON.parse(action.data);
+        this.updateConfigKeys(configData);
+        this.renderInvoker();
+        break;
       default:
-        console.error(`No matching response for action: ${action}`);
+        console.error(`No matching response for action: ${action.messageType}`);
+    }
+  }
+
+  private updateConfigKeys(configOptions: any) {
+    this.config = configOptions;
+    if (configOptions.defaultHelpKey) {
+      this.defaultHelpKey = configOptions.defaultHelpKey;
     }
   }
 

@@ -1,13 +1,17 @@
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 import { Subject } from 'rxjs';
+import { CommunicationAction } from '../models/communication-action';
 
 export class BBHelpCommunicationService {
 
-  public communicationAction: Subject<any> = new Subject();
+  public communicationAction: Subject<CommunicationAction> = new Subject();
+
+  public childWindow: HTMLIFrameElement;
 
   public childWindowReady: boolean = false;
 
-  constructor(private childWindow: any) {
+  public bindChildWindowReference(childWindow: any) {
+    this.childWindow = childWindow;
     window.addEventListener('message', this.messageHandler());
   }
 
@@ -32,27 +36,6 @@ export class BBHelpCommunicationService {
     });
   }
 
-  public messageHandler() {
-    return (event: any) => {
-      if (this.isFromHelpWidget(event)) {
-        const message = event.data;
-        switch (message.messageType) {
-          case 'ready':
-            this.postMessage({ messageType: 'host-ready' });
-            this.communicationAction.next('Child Window Ready');
-            this.childWindowReady = true;
-            break;
-          case 'close-widget':
-            this.communicationAction.next('Close Widget');
-            break;
-          default:
-            console.error(`No matching response for message type: ${message.messageType}`);
-            break;
-        }
-      }
-    };
-  }
-
   public isFromHelpWidget(event: { origin: string, data: any }): boolean {
     if (event.origin === HOST_ORIGIN) {
       const message = event.data;
@@ -65,5 +48,29 @@ export class BBHelpCommunicationService {
   public postMessage(message: any, origin: string = HOST_ORIGIN) {
     message.source = 'help-client';
     this.childWindow.contentWindow.postMessage(message, origin);
+  }
+
+  private messageHandler() {
+    return (event: any) => {
+      if (this.isFromHelpWidget(event)) {
+        const message = event.data;
+        switch (message.messageType) {
+          case 'ready':
+            this.postMessage({ messageType: 'host-ready' });
+            this.communicationAction.next({ messageType: 'Child Window Ready'});
+            this.childWindowReady = true;
+            break;
+          case 'close-widget':
+            this.communicationAction.next({ messageType: 'Close Widget'});
+            break;
+          case 'config-loaded':
+            this.communicationAction.next({ messageType: 'Config Loaded', data: message.data });
+            break;
+          default:
+            console.error(`No matching response for message type: ${message.messageType}`);
+            break;
+        }
+      }
+    };
   }
 }

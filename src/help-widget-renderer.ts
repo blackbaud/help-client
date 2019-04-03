@@ -13,8 +13,8 @@ export class BBHelpHelpWidgetRenderer {
 
   private styleUtility: BBHelpStyleUtility;
 
-  constructor() {
-    this.styleUtility = new BBHelpStyleUtility();
+  constructor(styleUtility: BBHelpStyleUtility) {
+    this.styleUtility = styleUtility;
     this.styleUtility.addAllStyles();
   }
 
