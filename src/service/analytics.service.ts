@@ -1,14 +1,15 @@
 import { MixpanelKeys } from './mixpanel-keys';
 
 const CAMEL_TO_TITLE_CASE_REGEX = new RegExp(/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z])(?!\)))/g);
-let PRODUCTION_KEY: string;
-let DEVELOPMENT_KEY: string;
 const HOST_NAME_REGEX = new RegExp('localhost');
 const PRODUCT_NAME = 'bb_help_widget';
 const DEFAULT_CONFIG = {
   persistence: 'localStorage',
   protocol: 'https'
 };
+
+let PRODUCTION_KEY: string;
+let DEVELOPMENT_KEY: string;
 
 function getWindow(): any {
   return window;

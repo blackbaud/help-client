@@ -1,6 +1,7 @@
-const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 import { Subject } from 'rxjs';
 import { CommunicationAction } from '../models/communication-action';
+
+const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 
 export class BBHelpCommunicationService {
 
