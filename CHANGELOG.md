@@ -1,3 +1,12 @@
+# 2.0.0-beta.5 (2019-05-1)
+
+- Official Beta release of Help Client v2.
+  - Reformatted to support CDN and NPM
+  - Removed Travis publish and package steps.
+  - Adopted Azure npm-package-oss pipeline type in Azure.
+  - Reworked to use the new [BB Help SPA](https://host.nxt.blackbaud.com/bb-help/).
+  - Created a communication service to pass information between the SPA and Help Client.
+
 # 1.3.0 (2018-04-23)
 
 - Added an optional param to the `openWidget` method to pass a helpKey to the widget. [pull request #13](https://github.com/blackbaud/help-client/pull/13)
