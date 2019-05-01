@@ -9,7 +9,7 @@ module.exports = {
     libraryTarget: 'umd'
   },
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.ts', '.js']
   },
   module: {
     rules: [
@@ -21,7 +21,12 @@ module.exports = {
             declaration: false
           }
         }
-      }
+      },
+      {
+        test: /\.scss$/,
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
+        exclude: '/node_modules/'
+      },
     ]
   }
 };

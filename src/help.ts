@@ -1,55 +1,47 @@
+
+import { BBHelpHelpWidget } from './help-widget';
+import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { BBHelpStyleUtility } from './help-widget-style-utility';
+import { BBHelp } from './models/bbhelp';
+import { BBHelpAnalyticsService } from './service/analytics.service';
+import { BBHelpCommunicationService } from './service/communication.service';
+import { MixpanelKeys } from './service/mixpanel-keys';
+
 declare const BBHELP: any;
 
-import { registerScript } from './register-script';
-
 export abstract class BBHelpClient {
-  private static defaultHelpKey: string = 'default.html';
-  private static currentHelpKey: string;
 
-  private static widgetLoaded: boolean = false;
-
-  public static addStyles(): void {
-    const css = `
-      .bb-omnibar-bar.bar { padding-right: 50px !important; }
-      .bb-omnibar > .bb-omnibar-desktop > .bb-omnibar-accountflyout { right: 50px !important; }
-      #bb-help-container { z-index: 9999; }
-    `;
-    const style = document.createElement('style');
-    style.type = 'text/css';
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
+  public static initWidget(): BBHelp {
+    const styleUtility = new BBHelpStyleUtility();
+    const widgetRenderer = new BBHelpHelpWidgetRenderer(styleUtility);
+    const mixpanelKeys = new MixpanelKeys();
+    const analyticsService = new BBHelpAnalyticsService(mixpanelKeys);
+    const communicationService = new BBHelpCommunicationService();
+    const helpWidget = new BBHelpHelpWidget(
+      widgetRenderer,
+      analyticsService,
+      communicationService
+    );
+    return { HelpWidget: helpWidget };
   }
 
-  public static load(config: any = {}): Promise<any> {
-    if (config.defaultHelpKey !== undefined) {
-      BBHelpClient.defaultHelpKey = config.defaultHelpKey;
-    }
-
-    config.getCurrentHelpKey = BBHelpClient.getCurrentHelpKey;
-
-    return registerScript('https://cdn.blackbaudcloud.com/bb-help/bb-help.js')
+  public static load(config: any = {}) {
+    return BBHELP.HelpWidget.ready()
       .then(() => {
-        BBHelpClient.addStyles();
-        // Initialize the widget.
         BBHELP.HelpWidget.load(config);
-        BBHelpClient.widgetLoaded = true;
       });
   }
 
-  public static setCurrentHelpKey(helpKey: string = BBHelpClient.defaultHelpKey): void {
-    BBHelpClient.currentHelpKey = helpKey;
+  public static setCurrentHelpKey(helpKey?: string): void {
+    BBHELP.HelpWidget.setCurrentHelpKey(helpKey);
   }
 
   public static setHelpKeyToDefault(): void {
-    BBHelpClient.setCurrentHelpKey(BBHelpClient.defaultHelpKey);
+    BBHELP.HelpWidget.setHelpKeyToDefault();
   }
 
-  public static openWidgetToHelpKey(helpKey: string = BBHelpClient.currentHelpKey): void {
+  public static openWidgetToHelpKey(helpKey: string): void {
     BBHELP.HelpWidget.open(helpKey);
-  }
-
-  public static getCurrentHelpKey(): string {
-    return BBHelpClient.currentHelpKey || BBHelpClient.defaultHelpKey;
   }
 
   public static toggleOpen(): void {
@@ -72,35 +64,18 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.enableWidget();
   }
 
+  public static getWhatsNewRevision(): void {
+    BBHELP.HelpWidget.getWhatsNewRevision();
+  }
+
   public static ready(): Promise<any> {
-    return BBHelpClient.clientReady()
-      .then(() => {
-        return BBHELP.HelpWidget.ready();
-      })
+    return BBHELP.HelpWidget.ready()
       .catch((err: string) => {
         console.error(err);
       });
   }
-
-  private static clientReady(): Promise<any> {
-    const duration: number = 100;
-    const maxIterations: number = 50;
-
-    return new Promise((resolve: any, reject: any) => {
-      let readyAttempts: number = 0;
-
-      const interval: any = setInterval(() => {
-        readyAttempts++;
-        if (BBHelpClient.widgetLoaded) {
-          clearInterval(interval);
-          resolve();
-        }
-
-        if (readyAttempts >= maxIterations) {
-          clearInterval(interval);
-          reject('The Help Widget failed to load.');
-        }
-      }, duration);
-    });
-  }
 }
+
+(() => {
+  (window as any).BBHELP = BBHelpClient.initWidget();
+})();
