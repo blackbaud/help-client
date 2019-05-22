@@ -1,6 +1,6 @@
 # 2.0.0-beta.6 (2019-05-22)
 
-- Created amd bundle to support RE and FE use cases. [pull request #42](https://github.com/blackbaud/help-client/pull/42)
+- Created `amd` bundle to support RE and FE use cases. [#42](https://github.com/blackbaud/help-client/pull/42)
 
 # 2.0.0-beta.5 (2019-05-1)
 
@@ -13,22 +13,22 @@
 
 # 1.3.0 (2018-04-23)
 
-- Added optional param to `openWidget` method to pass `helpKey` to widget. [pull request #13](https://github.com/blackbaud/help-client/pull/13)
+- Added optional param to `openWidget` method to pass `helpKey` to widget. [#13](https://github.com/blackbaud/help-client/pull/13)
 
 # 1.2.0 (2018-04-19)
 
-- Added Ready, Open, Close, Disable, and Enable methods for widget. [pull request #11](https://github.com/blackbaud/help-client/pull/11)
+- Added Ready, Open, Close, Disable, and Enable methods for widget. [#11](https://github.com/blackbaud/help-client/pull/11)
 
 # 1.1.0 (2017-10-10)
 
-- Added method to expose `toggleOpen` method from widget. [pull request #8](https://github.com/blackbaud/help-client/pull/8)
+- Added method to expose `toggleOpen` method from widget. [#8](https://github.com/blackbaud/help-client/pull/8)
 
 # 1.0.2 (2017-09-06)
 
 - Added more methods to handle `helpKey` between client and help widget.
 - Added tests for methods and style changes.
 - Renamed `BBHelp` to `BBHelpClient` for clarity and distinction between client and widget.
-- [pull request #6](https://github.com/blackbaud/help-client/pull/6)
+- [#6](https://github.com/blackbaud/help-client/pull/6)
 
 # 1.0.1 (2017-05-10)
 
