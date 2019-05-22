@@ -24,7 +24,8 @@
     "pretest": "npm run lint",
     "compress": "uglifyjs dist/bundles/help-client.umd.js -m -o dist/bundles/help-client.umd.min.js",
     "compress:amd": "uglifyjs dist/bundles/help-client.amd.js -m -o dist/bundles/help-client.amd.min.js",
-    "build": "rimraf dist && tsc && webpack --config config/webpack/webpack.prod.config.js && npm run compress && npm run compress:amd",
+    "compress:all": "npm run compress && npm run compress:amd",
+    "build": "rimraf dist && tsc && webpack --config config/webpack/webpack.prod.config.js && npm run compress:all",
     "watch": "npm run test:unit -- --auto-watch --no-single-run",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack-dev-server --open --config config/webpack/webpack.dev.config.js"
