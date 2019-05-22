@@ -1,3 +1,7 @@
+# 2.0.0-beta.6 (2019-05-22)
+
+- Created amd bundle to support RE and FE use cases. [pull request #42](https://github.com/blackbaud/help-client/pull/42)
+
 # 2.0.0-beta.5 (2019-05-1)
 
 - Official beta release of Help Client v2.
