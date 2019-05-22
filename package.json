@@ -3,7 +3,7 @@
   "pipelineSettings": {
     "publishToCDN": true
   },
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.6",
   "description": "Provides a client-side library for interacting with the Help Widget.",
   "main": "dist/bundles/help-client.umd.js",
   "module": "index.ts",
@@ -23,7 +23,9 @@
     "test:unit:base": "node --max-old-space-size=4096 node_modules/karma/bin/karma start",
     "pretest": "npm run lint",
     "compress": "uglifyjs dist/bundles/help-client.umd.js -m -o dist/bundles/help-client.umd.min.js",
-    "build": "rimraf dist && tsc && webpack --config config/webpack/webpack.prod.config.js && npm run compress",
+    "compress:amd": "uglifyjs dist/bundles/help-client.amd.js -m -o dist/bundles/help-client.amd.min.js",
+    "compress:all": "npm run compress && npm run compress:amd",
+    "build": "rimraf dist && tsc && webpack --config config/webpack/webpack.prod.config.js && npm run compress:all",
     "watch": "npm run test:unit -- --auto-watch --no-single-run",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack-dev-server --open --config config/webpack/webpack.dev.config.js"
