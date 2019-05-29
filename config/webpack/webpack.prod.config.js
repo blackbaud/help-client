@@ -35,5 +35,5 @@ function createConfig(target, library, entry) {
 
 module.exports = [
   createConfig('umd', 'BBHelpClient', 'index.ts'),
-  createConfig('window', 'BBHELP', 'window-index.ts')
+  createConfig('global', 'BBHELP', 'global-index.ts')
 ];
