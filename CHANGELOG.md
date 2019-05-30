@@ -1,3 +1,7 @@
+# 2.0.0-beta.7 (2019-05-30)
+
+- Created `window` bundle to support RE and FE use cases. [#45](https://github.com/blackbaud/help-client/pull/45)
+
 # 2.0.0-beta.6 (2019-05-22)
 
 - Created `amd` bundle to support RE and FE use cases. [#42](https://github.com/blackbaud/help-client/pull/42)
