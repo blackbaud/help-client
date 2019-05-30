@@ -1,12 +1,12 @@
 var path = require('path');
 
-function createConfig(target) {
+function createConfig(target, library, entry) {
   return {
-    entry: './index.ts',
+    entry: `./${entry}`,
     output: {
       path: path.resolve(__dirname, '..', '..', 'dist', 'bundles'),
       filename: `help-client.${target}.js`,
-      library: 'BBHelpClient',
+      library: library,
       libraryTarget: target
     },
     resolve: {
@@ -34,6 +34,6 @@ function createConfig(target) {
 };
 
 module.exports = [
-  createConfig('umd'),
-  createConfig('amd')
+  createConfig('umd', 'BBHelpClient', 'index.ts'),
+  createConfig('global', 'BBHELP', 'global-index.ts')
 ];
