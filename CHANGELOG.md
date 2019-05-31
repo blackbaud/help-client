@@ -1,3 +1,7 @@
+# 2.0.0-beta.8 (2019-05-30)
+
+- Fixed a bug where the target `window` bundle was not attaching to the window. [#47](https://github.com/blackbaud/help-client/pull/47)
+
 # 2.0.0-beta.7 (2019-05-30)
 
 - Created the `window` bundle to support RE and FE use cases. [#45](https://github.com/blackbaud/help-client/pull/45)
