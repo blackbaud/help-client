@@ -205,7 +205,9 @@ export class BBHelpHelpWidget {
         const configData = JSON.parse(action.data);
         this.updateConfigKeys(configData);
         this.renderInvoker();
-        this.onHelpLoaded();
+        if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
         break;
       default:
         console.error(`No matching response for action: ${action.messageType}`);
