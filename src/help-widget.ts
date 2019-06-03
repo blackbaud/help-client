@@ -14,6 +14,7 @@ export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
   public config: HelpConfig;
   public currentHelpKey: string;
+  public onHelpLoaded: any;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
   private analyticsService: BBHelpAnalyticsService;
@@ -71,6 +72,13 @@ export class BBHelpHelpWidget {
       this.getCurrentHelpKey = config.getCurrentHelpKey;
       delete config.getCurrentHelpKey;
     }
+
+    if (config.onHelpLoaded !== undefined) {
+      this.onHelpLoaded = config.onHelpLoaded;
+      delete config.onHelpLoaded;
+      this.onHelpLoaded();
+    }
+
     this.sendConfig();
   }
 

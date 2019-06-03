@@ -48,7 +48,8 @@ export class BBHelpCommunicationService {
 
   public postMessage(message: any, origin: string = HOST_ORIGIN) {
     message.source = 'help-client';
-    this.childWindow.contentWindow.postMessage(message, origin);
+    const msg = JSON.parse(JSON.stringify(message));
+    this.childWindow.contentWindow.postMessage(msg, origin);
   }
 
   private messageHandler() {
