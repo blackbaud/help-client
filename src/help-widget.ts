@@ -76,7 +76,6 @@ export class BBHelpHelpWidget {
     if (config.onHelpLoaded !== undefined) {
       this.onHelpLoaded = config.onHelpLoaded;
       delete config.onHelpLoaded;
-      this.onHelpLoaded();
     }
 
     this.sendConfig();
@@ -206,6 +205,7 @@ export class BBHelpHelpWidget {
         const configData = JSON.parse(action.data);
         this.updateConfigKeys(configData);
         this.renderInvoker();
+        this.onHelpLoaded();
         break;
       default:
         console.error(`No matching response for action: ${action.messageType}`);
