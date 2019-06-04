@@ -78,6 +78,7 @@ export class BBHelpHelpWidget {
       delete config.onHelpLoaded;
     }
 
+    this.sanitizeConfig();
     this.sendConfig();
   }
 
@@ -298,5 +299,9 @@ export class BBHelpHelpWidget {
 
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
+  }
+
+  private sanitizeConfig() {
+    this.config = JSON.parse(JSON.stringify(this.config));
   }
 }
