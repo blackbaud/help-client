@@ -15,6 +15,7 @@ export interface HelpConfig {
   hideWidgetOnMobile?: boolean;
   knowledgebaseUrl?: string;
   locale?: string;
+  onHelpLoaded?: any;
   productId?: string;
   searchService?: string;
   trainingCentralUrl?: string;

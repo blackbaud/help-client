@@ -1,5 +1,4 @@
 import { BBHelpHelpWidget } from './help-widget';
-
 import { MockAnalyticsService } from './mocks/mock-analytics-service';
 import { MockCommunicationService } from './mocks/mock-communication-service';
 import { MockWidgetRenderer} from './mocks/mock-renderer';
@@ -333,6 +332,21 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
+  it('should override its onHelpLoaded variable with one from the config (function value)', (done) => {
+    const testResponse = 'test response';
+    const fakeConfig = {
+      onHelpLoaded: () => {
+        return(testResponse);
+      }
+    };
+
+    helpWidget['loadCalled'] = false;
+    helpWidget.load(fakeConfig);
+
+    expect(helpWidget.onHelpLoaded()).toBe(testResponse);
+    done();
+  });
+
   it ('should disable the help widget', (done) => {
     expect(helpWidget['widgetDisabled']).toBe(false);
     helpWidget.disableWidget();
@@ -388,7 +402,8 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should react to actions, Config Loaded by updating configs, defaultHelpKey, and render invoker', (done) => {
     const originalConfig = {
-      defaultHelpKey: 'original-default.html'
+      defaultHelpKey: 'original-default.html',
+      onHelpLoaded: () => true
     };
 
     const extendedConfig = {
@@ -509,5 +524,18 @@ describe('BBHelpHelpWidget', () => {
     window.dispatchEvent(new Event('resize'));
     expect(helpWidget['container'].classList).toContain('bb-help-container-mobile');
     done();
+  });
+
+  it('should sanitize config options to remove functions', () => {
+    const originalConfig = {
+      defaultHelpKey: 'original-default.html',
+      onHelpLoaded: () => true
+    };
+    const finalConfig = {
+      defaultHelpKey: 'original-default.html'
+    };
+    helpWidget.config = originalConfig;
+    helpWidget['sanitizeConfig']();
+    expect(helpWidget.config).toEqual(finalConfig);
   });
 });

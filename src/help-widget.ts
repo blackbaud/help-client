@@ -14,6 +14,7 @@ export class BBHelpHelpWidget {
   public iframe: HTMLIFrameElement;
   public config: HelpConfig;
   public currentHelpKey: string;
+  public onHelpLoaded: any;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
   private analyticsService: BBHelpAnalyticsService;
@@ -71,6 +72,13 @@ export class BBHelpHelpWidget {
       this.getCurrentHelpKey = config.getCurrentHelpKey;
       delete config.getCurrentHelpKey;
     }
+
+    if (config.onHelpLoaded !== undefined) {
+      this.onHelpLoaded = config.onHelpLoaded;
+      delete config.onHelpLoaded;
+    }
+
+    this.sanitizeConfig();
     this.sendConfig();
   }
 
@@ -198,6 +206,9 @@ export class BBHelpHelpWidget {
         const configData = JSON.parse(action.data);
         this.updateConfigKeys(configData);
         this.renderInvoker();
+        if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
         break;
       default:
         console.error(`No matching response for action: ${action.messageType}`);
@@ -288,5 +299,9 @@ export class BBHelpHelpWidget {
 
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
+  }
+
+  private sanitizeConfig() {
+    this.config = JSON.parse(JSON.stringify(this.config));
   }
 }
