@@ -526,7 +526,7 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should serialize json', () => {
+  it('should sanitize config options to remove functions', () => {
     const originalConfig = {
       defaultHelpKey: 'original-default.html',
       onHelpLoaded: () => true
