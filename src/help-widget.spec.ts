@@ -333,16 +333,17 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should override its onHelpLoaded variable with one from the config (function value)', (done) => {
+    const testResponse = 'test response';
     const fakeConfig = {
       onHelpLoaded: () => {
-        return {};
+        return(testResponse);
       }
     };
 
     helpWidget['loadCalled'] = false;
     helpWidget.load(fakeConfig);
 
-    expect(typeof helpWidget.onHelpLoaded).toBe(typeof Function);
+    expect(helpWidget.onHelpLoaded()).toBe(testResponse);
     done();
   });
 
