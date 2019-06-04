@@ -1,6 +1,6 @@
 # 2.0.0-beta.9 (2019-06-04)
 
-- Added JSON serialization to the config object to remove functions that could break the iFrame communications [#49](https://github.com/blackbaud/help-client/pull/49)
+- Added JSON serialization to the config object to remove functions that could break the iFrame communications. [#49](https://github.com/blackbaud/help-client/pull/49)
 
 # 2.0.0-beta.8 (2019-05-30)
 
