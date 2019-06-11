@@ -14,53 +14,21 @@ describe('BBHelpClient', () => {
 
   it('should pass the config to the Help Widget if the Help Widget is ready', (done) => {
     const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
-    const helpReady = spyOn(mockHelpWidget, 'ready').and.callThrough();
     const config = {
       productId: 'lo'
     };
 
-    BBHelpClient
-      .load(config)
-      .then(() => {
-        expect(helpReady).toHaveBeenCalled();
-        expect(helpLoadSpy).toHaveBeenCalledWith(config);
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
-  });
+    BBHelpClient.load(config);
 
-  it('should not pass the config to the Help Widget if the Help Widget is not ready', (done) => {
-    const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
-    const helpReady = spyOn(mockHelpWidget, 'ready').and.returnValue(Promise.reject('error message'));
-    const config = {
-      productId: 'lo'
-    };
-
-    BBHelpClient
-      .load(config)
-      .then(() => {
-        done();
-      })
-      .catch(() => {
-        expect(helpReady).toHaveBeenCalled();
-        expect(helpLoadSpy).not.toHaveBeenCalledWith(config);
-        done();
-      });
+    expect(helpLoadSpy).toHaveBeenCalledWith(config);
+    done();
   });
 
   it('should assign {} to config if none is passed in', (done) => {
     const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
-    BBHelpClient
-      .load()
-      .then(() => {
-        expect(helpLoadSpy).toHaveBeenCalledWith({});
-        done();
-      })
-      .catch(() => {
-        done.fail('The help widget was not configured.');
-      });
+    BBHelpClient.load();
+    expect(helpLoadSpy).toHaveBeenCalledWith({});
+    done();
   });
 
   it('should return ready when the Widget is ready', (done) => {
