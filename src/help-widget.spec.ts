@@ -114,13 +114,35 @@ describe('BBHelpHelpWidget', () => {
       return;
     });
 
-    helpWidget.load(fakeConfig);
-
-    expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
-      config: fakeConfig,
-      messageType: 'user-config'
+    helpWidget.load(fakeConfig).then(() => {
+      expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
+        config: fakeConfig,
+        messageType: 'user-config'
+      });
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
     });
-    done();
+  });
+
+  it('should not pass the config to the Help Widget if the Help Widget is not ready', (done) => {
+    const helpSendConfig = spyOn<any>(helpWidget, 'sendConfig').and.callThrough();
+    const helpReady = spyOn(helpWidget, 'ready').and.returnValue(Promise.reject('error message'));
+    const config = {
+      productId: 'lo'
+    };
+
+    helpWidget
+      .load(config)
+      .then(() => {
+        done();
+      })
+      .catch(() => {
+        expect(helpReady).toHaveBeenCalled();
+        expect(helpSendConfig).not.toHaveBeenCalled();
+        done();
+      });
   });
 
   it('should not load from a config if load has been called already', (done) => {
@@ -146,9 +168,13 @@ describe('BBHelpHelpWidget', () => {
     spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
     helpWidget['loadCalled'] = false;
     expect(helpWidget['defaultHelpKey']).toBe('default.html');
-    helpWidget.load(fakeConfig);
-    expect(helpWidget['defaultHelpKey']).toBe('new-default.html');
-    done();
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget['defaultHelpKey']).toBe('new-default.html');
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
   it('should set the hostQueryParams on the config to the queryParams from the window', (done) => {
@@ -162,18 +188,20 @@ describe('BBHelpHelpWidget', () => {
       return '?host-params=true&helplocale=en-us';
     });
 
-    helpWidget.load(fakeConfig);
-
-    expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
-      config: {
-        defaultHelpKey: 'new-default.html',
-        extends: 'test-config',
-        hostQueryParams: '?host-params=true&helplocale=en-us'
-      },
-      messageType: 'user-config'
+    helpWidget.load(fakeConfig).then(() => {
+      expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
+        config: {
+          defaultHelpKey: 'new-default.html',
+          extends: 'test-config',
+          hostQueryParams: '?host-params=true&helplocale=en-us'
+        },
+        messageType: 'user-config'
+      });
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
     });
-
-    done();
   });
 
   it('should open the help widget', (done) => {
@@ -311,10 +339,11 @@ describe('BBHelpHelpWidget', () => {
 
     spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
     helpWidget['loadCalled'] = false;
-    helpWidget.load(fakeConfig);
-    const returnedKey = helpWidget['getHelpKey']();
-    expect(returnedKey).toEqual(fakeKey);
-    done();
+    helpWidget.load(fakeConfig).then(() => {
+      const returnedKey = helpWidget['getHelpKey']();
+      expect(returnedKey).toEqual(fakeKey);
+      done();
+    });
   });
 
   it('should override its getCurrentHelpKey variable with one from the config (function value)', (done) => {
@@ -325,11 +354,14 @@ describe('BBHelpHelpWidget', () => {
 
     spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callFake((invoker: any, config: any) => { return; });
     helpWidget['loadCalled'] = false;
-    helpWidget.load(fakeConfig);
-    const returnedKey = helpWidget['getHelpKey']();
-
-    expect(returnedKey).toEqual(fakeKey);
-    done();
+    helpWidget.load(fakeConfig).then(() => {
+      const returnedKey = helpWidget['getHelpKey']();
+      expect(returnedKey).toEqual(fakeKey);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
   it('should override its onHelpLoaded variable with one from the config (function value)', (done) => {
@@ -341,10 +373,13 @@ describe('BBHelpHelpWidget', () => {
     };
 
     helpWidget['loadCalled'] = false;
-    helpWidget.load(fakeConfig);
-
-    expect(helpWidget.onHelpLoaded()).toBe(testResponse);
-    done();
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget.onHelpLoaded()).toBe(testResponse);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
   it ('should disable the help widget', (done) => {
@@ -391,13 +426,17 @@ describe('BBHelpHelpWidget', () => {
       defaultHelpKey: 'test-default.html'
     };
 
-    helpWidget.load(fakeConfig);
-    mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
-    expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
-      config: helpWidget.config,
-      messageType: 'user-config'
+    helpWidget.load(fakeConfig).then(() => {
+      mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
+      expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
+        config: helpWidget.config,
+        messageType: 'user-config'
+      });
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
     });
-    done();
   });
 
   it ('should react to actions, Config Loaded by updating configs, defaultHelpKey, and render invoker', (done) => {
@@ -412,17 +451,21 @@ describe('BBHelpHelpWidget', () => {
     };
 
     const rendererSpy = spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callThrough();
-    helpWidget.load(originalConfig);
-    expect(helpWidget.config).toEqual(originalConfig);
-    expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
-    mockCommunicationService.communicationAction.next({
-      data: JSON.stringify(extendedConfig),
-      messageType: 'Config Loaded'
+    helpWidget.load(originalConfig).then(() => {
+      expect(helpWidget.config).toEqual(originalConfig);
+      expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
+      mockCommunicationService.communicationAction.next({
+        data: JSON.stringify(extendedConfig),
+        messageType: 'Config Loaded'
+      });
+      expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
+      expect(helpWidget.config).toEqual(extendedConfig);
+      expect(helpWidget['defaultHelpKey']).toEqual(extendedConfig.defaultHelpKey);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
     });
-    expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
-    expect(helpWidget.config).toEqual(extendedConfig);
-    expect(helpWidget['defaultHelpKey']).toEqual(extendedConfig.defaultHelpKey);
-    done();
   });
 
   it ('should react to actions, Config Loaded by updating configs (no defaultHelpKey) and render invoker', (done) => {
@@ -435,16 +478,20 @@ describe('BBHelpHelpWidget', () => {
     };
 
     const rendererSpy = spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callThrough();
-    helpWidget.load(originalConfig);
-    expect(helpWidget.config).toEqual(originalConfig);
-    mockCommunicationService.communicationAction.next({
-      data: JSON.stringify(extendedConfig),
-      messageType: 'Config Loaded'
+    helpWidget.load(originalConfig).then(() => {
+      expect(helpWidget.config).toEqual(originalConfig);
+      mockCommunicationService.communicationAction.next({
+        data: JSON.stringify(extendedConfig),
+        messageType: 'Config Loaded'
+      });
+      expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
+      expect(helpWidget.config).toEqual(extendedConfig);
+      expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
     });
-    expect(rendererSpy).toHaveBeenCalledWith(helpWidget['invoker'], extendedConfig);
-    expect(helpWidget.config).toEqual(extendedConfig);
-    expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
-    done();
   });
 
   it ('should log a console error if no matching action exists', (done) => {
@@ -457,39 +504,59 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should assess what\'s new revision and return revision number', () => {
+  it('should assess what\'s new revision and return revision number', (done) => {
     const fakeConfig = {
       productId: 'rex',
       whatsNewRevisions: 'rex=30;'
     };
-    helpWidget.load(fakeConfig);
-    expect(helpWidget.getWhatsNewRevision()).toEqual(30);
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget.getWhatsNewRevision()).toEqual(30);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
-  it('should assess what\'s new revision and return revision number from several revisions', () => {
+  it('should assess what\'s new revision and return revision number from several revisions', (done) => {
     const fakeConfig = {
       productId: 'fe',
       whatsNewRevisions: 'rex=30;fe=10;lo=15'
     };
-    helpWidget.load(fakeConfig);
-    expect(helpWidget.getWhatsNewRevision()).toEqual(10);
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget.getWhatsNewRevision()).toEqual(10);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
-  it('should assess what\'s new revision with no found revision and return 0', () => {
+  it('should assess what\'s new revision with no found revision and return 0', (done) => {
     const fakeConfig = {
       productId: 'fe',
       whatsNewRevisions: 'rex=30;'
     };
-    helpWidget.load(fakeConfig);
-    expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
-  it('should assess what\'s new revision with undefined whatsNewRevisions property and return 0', () => {
+  it('should assess what\'s new revision with undefined whatsNewRevisions property and return 0', (done) => {
     const fakeConfig = {
       productId: 'rex'
     };
-    helpWidget.load(fakeConfig);
-    expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+    helpWidget.load(fakeConfig).then(() => {
+      expect(helpWidget.getWhatsNewRevision()).toEqual(0);
+      done();
+    })
+    .catch(() => {
+      done.fail('The help widget was not configured.');
+    });
   });
 
   it('should add the mobile container class when the window screen width is SCREEN_XS_MAX and below ', (done) => {

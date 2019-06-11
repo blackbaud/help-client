@@ -54,32 +54,35 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
-    if (this.loadCalled) {
-      return;
-    }
+    return this.ready()
+      .then(() => {
+        if (this.loadCalled) {
+          return;
+        }
 
-    this.analyticsService.setupMixpanel(config.productId);
+        this.analyticsService.setupMixpanel(config.productId);
 
-    this.loadCalled = true;
-    this.config = config;
-    if (config.defaultHelpKey !== undefined) {
-      this.defaultHelpKey = config.defaultHelpKey;
-    }
+        this.loadCalled = true;
+        this.config = config;
+        if (config.defaultHelpKey !== undefined) {
+          this.defaultHelpKey = config.defaultHelpKey;
+        }
 
-    config.hostQueryParams = this.getQueryParams();
+        config.hostQueryParams = this.getQueryParams();
 
-    if (config.getCurrentHelpKey !== undefined) {
-      this.getCurrentHelpKey = config.getCurrentHelpKey;
-      delete config.getCurrentHelpKey;
-    }
+        if (config.getCurrentHelpKey !== undefined) {
+          this.getCurrentHelpKey = config.getCurrentHelpKey;
+          delete config.getCurrentHelpKey;
+        }
 
-    if (config.onHelpLoaded !== undefined) {
-      this.onHelpLoaded = config.onHelpLoaded;
-      delete config.onHelpLoaded;
-    }
+        if (config.onHelpLoaded !== undefined) {
+          this.onHelpLoaded = config.onHelpLoaded;
+          delete config.onHelpLoaded;
+        }
 
-    this.sanitizeConfig();
-    this.sendConfig();
+        this.sanitizeConfig();
+        this.sendConfig();
+      });
   }
 
   public close() {

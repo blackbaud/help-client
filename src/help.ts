@@ -26,10 +26,7 @@ export abstract class BBHelpClient {
   }
 
   public static load(config: any = {}) {
-    return BBHELP.HelpWidget.ready()
-      .then(() => {
-        BBHELP.HelpWidget.load(config);
-      });
+    return BBHELP.HelpWidget.load(config);
   }
 
   public static setCurrentHelpKey(helpKey?: string): void {
