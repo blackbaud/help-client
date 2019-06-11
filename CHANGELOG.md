@@ -1,3 +1,7 @@
+# 2.0.0-beta.10 (2019-06-11)
+
+- Moved the help widget ready check logic in to the help widget load implementation to ensure that the inner iFrame has loaded before communication messages are sent to the iFrame. [#51](https://github.com/blackbaud/help-client/pull/51)
+
 # 2.0.0-beta.9 (2019-06-04)
 
 - Added JSON serialization to the config object to remove functions that could break the iFrame communications. [#49](https://github.com/blackbaud/help-client/pull/49)
