@@ -4,6 +4,7 @@ export interface HelpConfig {
   customLocales?: string[];
   defaultHelpKey?: string;
   extends?: string;
+  environmentId?: string;
   getChatData?: any;
   getCurrentHelpKey?: any;
   headerColor?: string;
