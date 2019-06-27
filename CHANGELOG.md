@@ -1,3 +1,9 @@
+# 2.0.0 (2019-06-27)
+
+- Official 2.0.0 release
+  - Added `environmentId` as a config option. [#53](https://github.com/blackbaud/help-client/pull/53)
+  - Updated `travis.yml` file to support the changes for `xvfb`
+
 # 2.0.0-beta.10 (2019-06-11)
 
 - Moved the help widget ready check logic in to the help widget load implementation to ensure that the inner iFrame has loaded before communication messages are sent to the iFrame. [#51](https://github.com/blackbaud/help-client/pull/51)
