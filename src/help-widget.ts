@@ -59,11 +59,12 @@ export class BBHelpHelpWidget {
         if (this.loadCalled) {
           return;
         }
-
         this.analyticsService.setupMixpanel(config.productId);
 
         this.loadCalled = true;
         this.config = config;
+        this.renderInvoker();
+
         if (config.defaultHelpKey !== undefined) {
           this.defaultHelpKey = config.defaultHelpKey;
         }
@@ -208,7 +209,6 @@ export class BBHelpHelpWidget {
       case 'Config Loaded':
         const configData = JSON.parse(action.data);
         this.updateConfigKeys(configData);
-        this.renderInvoker();
         if (this.onHelpLoaded) {
           this.onHelpLoaded();
         }
