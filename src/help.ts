@@ -13,14 +13,15 @@ export abstract class BBHelpClient {
 
   public static initWidget(): BBHelp {
     const styleUtility = new BBHelpStyleUtility();
-    const widgetRenderer = new BBHelpHelpWidgetRenderer(styleUtility);
+    const widgetRenderer = new BBHelpHelpWidgetRenderer();
     const mixpanelKeys = new MixpanelKeys();
     const analyticsService = new BBHelpAnalyticsService(mixpanelKeys);
     const communicationService = new BBHelpCommunicationService();
     const helpWidget = new BBHelpHelpWidget(
       widgetRenderer,
       analyticsService,
-      communicationService
+      communicationService,
+      styleUtility
     );
     return { HelpWidget: helpWidget };
   }

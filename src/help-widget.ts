@@ -1,5 +1,7 @@
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
+import { BBHelpStyleUtility } from './help-widget-style-utility';
+
 import { CommunicationAction } from './models/communication-action';
 import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
@@ -18,6 +20,7 @@ export class BBHelpHelpWidget {
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
   private analyticsService: BBHelpAnalyticsService;
+  private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
@@ -29,11 +32,17 @@ export class BBHelpHelpWidget {
   constructor(
     widgetRenderer: BBHelpHelpWidgetRenderer,
     analyticsService: BBHelpAnalyticsService,
-    communicationService: BBHelpCommunicationService
+    communicationService: BBHelpCommunicationService,
+    styleUtility: BBHelpStyleUtility
   ) {
+    this.styleUtility = styleUtility;
     this.widgetRenderer = widgetRenderer;
     this.analyticsService = analyticsService;
     this.communicationService = communicationService;
+  }
+
+  public init() {
+    this.styleUtility.addAllStyles();
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
@@ -54,12 +63,14 @@ export class BBHelpHelpWidget {
   }
 
   public load(config: HelpConfig) {
+    if (this.loadCalled) {
+      return;
+    }
+
+    this.init();
+
     return this.ready()
       .then(() => {
-        if (this.loadCalled) {
-          return;
-        }
-
         this.analyticsService.setupMixpanel(config.productId);
 
         this.loadCalled = true;

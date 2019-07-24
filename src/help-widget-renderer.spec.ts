@@ -9,7 +9,7 @@ describe('BBHelpHelpWidgetRenderer', () => {
 
   beforeEach(() => {
     mockStyleUtility = new MockStyleUtility();
-    widgetRenderer = new BBHelpHelpWidgetRenderer(mockStyleUtility);
+    widgetRenderer = new BBHelpHelpWidgetRenderer();
   });
 
   it('should create the help container', (done) => {

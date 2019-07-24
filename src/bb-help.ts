@@ -6,7 +6,7 @@ import { BBHelpCommunicationService } from './service/communication.service';
 import { MixpanelKeys } from './service/mixpanel-keys';
 
 const styleUtility = new BBHelpStyleUtility();
-const widgetRenderer = new BBHelpHelpWidgetRenderer(styleUtility);
+const widgetRenderer = new BBHelpHelpWidgetRenderer();
 const mixpanelKeys = new MixpanelKeys();
 const analyticsService = new BBHelpAnalyticsService(mixpanelKeys);
 const communicationService = new BBHelpCommunicationService();
@@ -14,7 +14,8 @@ const communicationService = new BBHelpCommunicationService();
 const helpWidget = new BBHelpHelpWidget(
   widgetRenderer,
   analyticsService,
-  communicationService
+  communicationService,
+  styleUtility
 );
 
 export { helpWidget as HelpWidget };
