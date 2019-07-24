@@ -1,6 +1,8 @@
 # 3.0.0-beta (2019-07-24)
 
--
+- Official 3.0.0 release
+  - Removed `rxjs` as a direct dependency.
+  - Added `rxjs` as a peer dependency.
 
 # 2.0.0 (2019-06-27)
 
