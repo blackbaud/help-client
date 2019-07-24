@@ -1,6 +1,6 @@
 # 2.0.1 (2019-07-24)
 
-- Updated package dependency structure to list `rxjs` as a peer dependency.
+- Fixed package dependency structure to list `rxjs` as a peer dependency.
 
 # 2.0.0 (2019-06-27)
 
