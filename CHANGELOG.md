@@ -1,3 +1,7 @@
+# 2.0.2 (2019-07-25)
+
+- Delayed rendering elements until the `load` method has been called. [#59](https://github.com/blackbaud/help-client/pull/59)
+
 # 2.0.1 (2019-07-24)
 
 - Fixed package dependency structure to list `rxjs` as a peer dependency.
