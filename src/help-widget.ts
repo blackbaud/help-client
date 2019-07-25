@@ -114,8 +114,8 @@ export class BBHelpHelpWidget {
   public open(helpKey: string = this.getHelpKey()) {
     if (!this.widgetDisabled) {
       this.communicationService.postMessage({
-        messageType: 'open-to-help-key',
-        helpKey
+        helpKey,
+        messageType: 'open-to-help-key'
       });
 
       this.analyticsService.trackEvent('Help Widget', {
@@ -142,8 +142,8 @@ export class BBHelpHelpWidget {
     this.currentHelpKey = helpKey;
 
     this.communicationService.postMessage({
-      messageType: 'update-current-help-key',
-      helpKey
+      helpKey,
+      messageType: 'update-current-help-key'
     });
   }
 

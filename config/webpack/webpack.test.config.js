@@ -2,14 +2,12 @@ const path = require('path');
 
 module.exports = {
   entry: './index.ts',
-
   devtool: 'inline-source-map',
-
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [path.resolve(__dirname, '..', '..', 'src'), 'node_modules']
   },
-
+  mode: 'production',
   module: {
     rules: [
       {

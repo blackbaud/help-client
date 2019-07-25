@@ -9,6 +9,7 @@ function createConfig(target, library, entry, name = '') {
       library: library,
       libraryTarget: target
     },
+    mode: 'production',
     resolve: {
       extensions: ['.ts', '.js']
     },
