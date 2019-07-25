@@ -1,5 +1,4 @@
 import { HelpConfig } from './help-config';
-import { BBHelpStyleUtility } from './help-widget-style-utility';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
@@ -10,13 +9,6 @@ const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
 export class BBHelpHelpWidgetRenderer {
-
-  private styleUtility: BBHelpStyleUtility;
-
-  constructor(styleUtility: BBHelpStyleUtility) {
-    this.styleUtility = styleUtility;
-    this.styleUtility.addAllStyles();
-  }
 
   public createContainer(): HTMLElement {
     let domElement: HTMLElement;
