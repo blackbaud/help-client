@@ -3,7 +3,7 @@
   "pipelineSettings": {
     "publishToCDN": true
   },
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Provides a client-side library for interacting with the Help Widget.",
   "main": "dist/bundles/help-client.umd.js",
   "module": "index.ts",
