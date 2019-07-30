@@ -23,4 +23,5 @@ export interface HelpConfig {
   useFlareSearch?: boolean;
   whatsNewRevisions?: any;
   hostQueryParams?: string;
+  whatsNewHelpKey?: string;
 }

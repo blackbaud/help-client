@@ -64,6 +64,9 @@ export class BBHelpCommunicationService {
           case 'close-widget':
             this.communicationAction.next({ messageType: 'Close Widget'});
             break;
+          case 'open-widget':
+            this.communicationAction.next({ messageType: 'Open Widget', helpKey: message.helpKey});
+            break;
           case 'config-loaded':
             this.communicationAction.next({ messageType: 'Config Loaded', data: message.data });
             break;
