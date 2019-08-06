@@ -1,3 +1,7 @@
+# 2.0.3 (2019-08-06)
+
+- Fixed a bug that caused the invoker to be hidden on mobile height sizes. [#62](https://github.com/blackbaud/help-client/pull/62)
+
 # 2.0.2 (2019-07-25)
 
 - Delayed rendering elements until the `load` method has been called. [#59](https://github.com/blackbaud/help-client/pull/59)
