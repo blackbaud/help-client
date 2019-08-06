@@ -579,7 +579,23 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
-  it('should not add the mobile container class when window dimentions are greater than specified values', (done) => {
+  it('should add the mobile width invoker class when screen is below mobile width', (done) => {
+    (window as any).innerWidth = 700;
+    (window as any).innerHeight = 1000;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['invoker'].classList).toContain('bb-help-mobile-width');
+    done();
+  });
+
+  it('should not add the mobile width invoker class when screen is above mobile width', (done) => {
+    (window as any).innerWidth = 1000;
+    (window as any).innerHeight = 400;
+    window.dispatchEvent(new Event('resize'));
+    expect(helpWidget['invoker'].classList).not.toContain('bb-help-mobile-width');
+    done();
+  });
+
+  it('should not add the mobile container class when window dimensions are greater than specified values', (done) => {
     (window as any).innerWidth = 1000;
     (window as any).innerHeight = 1000;
     window.dispatchEvent(new Event('resize'));
