@@ -9,6 +9,7 @@ import { BBHelpCommunicationService } from './service/communication.service';
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
 const DISABLE_TRANSITION: string = 'bb-help-disable-transition';
+const MOBILE_WIDTH_CLASS: string = 'bb-help-mobile-width';
 const SCREEN_XS_MAX: number = 767;
 const PANEL_HEIGHT: number = 591;
 
@@ -279,12 +280,12 @@ export class BBHelpHelpWidget {
   private setClassesForWindowSize() {
     this.container.classList.add(DISABLE_TRANSITION);
 
-    if (this.isMobileView() && this.isSetForMobile !== true) {
+    if (this.isSetForMobile !== true && (this.isMobileWidth() || this.isMobileHeight())) {
       this.isSetForMobile = true;
       this.container.classList.add(MOBILE_CONTAINER_CLASS);
     }
 
-    if (!this.isMobileView() && this.isSetForMobile !== false) {
+    if (this.isSetForMobile !== false && !this.isMobileWidth() && !this.isMobileHeight()) {
       this.isSetForMobile = false;
       this.container.classList.remove(MOBILE_CONTAINER_CLASS);
     }
@@ -299,8 +300,23 @@ export class BBHelpHelpWidget {
     this.container.classList.remove(DISABLE_TRANSITION);
   }
 
-  private isMobileView(): boolean {
-    return (window.innerWidth <= SCREEN_XS_MAX || window.innerHeight <= PANEL_HEIGHT);
+  private isMobileWidth(): boolean {
+    if (window.innerWidth <= SCREEN_XS_MAX) {
+      if (!this.invoker.classList.contains(MOBILE_WIDTH_CLASS)) {
+        this.invoker.classList.add(MOBILE_WIDTH_CLASS);
+      }
+      return true;
+    }
+
+    if (this.invoker.classList.contains(MOBILE_WIDTH_CLASS)) {
+      this.invoker.classList.remove(MOBILE_WIDTH_CLASS);
+    }
+
+    return false;
+  }
+
+  private isMobileHeight(): boolean {
+    return window.innerHeight <= PANEL_HEIGHT;
   }
 
   private getHelpKey() {

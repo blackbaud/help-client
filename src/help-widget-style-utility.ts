@@ -103,7 +103,7 @@ const mobileCss = `
     right: -100%;
   }
 
-  .bb-help-container-mobile#bb-help-container #bb-help-invoker.bb-help-hide-on-mobile {
+  .bb-help-mobile-width.bb-help-hide-on-mobile#bb-help-invoker {
     display: none;
   }
 `;
