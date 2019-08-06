@@ -10,6 +10,7 @@ module.exports = {
     library: 'BBHelpClient',
     libraryTarget: 'umd'
   },
+  mode: 'development',
   devtool: 'inline-source-map',
   resolve: {
     extensions: ['.ts', '.js']
