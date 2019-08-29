@@ -212,6 +212,10 @@ export class BBHelpHelpWidget {
         this.invoker.focus();
         this.close();
         break;
+        case 'Open Widget':
+          this.invoker.focus();
+          this.open(action.data);
+          break;
       case 'Child Window Ready':
         if (this.loadCalled) {
           this.sendConfig();

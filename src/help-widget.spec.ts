@@ -418,6 +418,14 @@ describe('BBHelpHelpWidget', () => {
     done();
   });
 
+  it ('should react to actions, Open Widget', (done) => {
+    spyOn(helpWidget, 'open').and.callThrough();
+    mockCommunicationService.communicationAction.next({ messageType: 'Open Widget', data: 'whats-new.html' });
+    expect(helpWidget.open).toHaveBeenCalledWith('whats-new.html');
+    expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
+    done();
+  });
+
   it ('should react to actions, Child Window Ready (loadCalled false) by not sending the config', (done) => {
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });

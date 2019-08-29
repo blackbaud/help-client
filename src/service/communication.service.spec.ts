@@ -169,6 +169,25 @@ describe('BBHelpCommunicationService', () => {
     done();
   });
 
+  it('should handle messages from the window, (open-widget)', (done) => {
+    const event = {
+      data: {
+        helpKey: 'whats-new.html',
+        messageType: 'open-widget',
+        source: 'skyux-spa-bb-help'
+      },
+      origin: HOST_ORIGIN
+    };
+
+    spyOn(commService.communicationAction, 'next').and.callThrough();
+    triggerEvent(event);
+    expect(commService.communicationAction.next).toHaveBeenCalledWith({
+      helpKey: 'whats-new.html',
+      messageType: 'Open Widget'
+    });
+    done();
+  });
+
   it('should handle messages from the window, (config-loaded)', (done) => {
     const event = {
       data: {
