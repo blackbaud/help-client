@@ -3,8 +3,11 @@ export interface HelpConfig {
   communityUrl?: string;
   customLocales?: string[];
   defaultHelpKey?: string;
-  extends?: string;
+  entitlements?: {
+    [key: string]: boolean;
+  };
   environmentId?: string;
+  extends?: string;
   getChatData?: any;
   getCurrentHelpKey?: any;
   headerColor?: string;
@@ -23,5 +26,5 @@ export interface HelpConfig {
   useFlareSearch?: boolean;
   whatsNewRevisions?: any;
   hostQueryParams?: string;
-  whatsNewHelpKey?: string;
+  whats_new_help_key?: string;
 }
