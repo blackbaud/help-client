@@ -214,7 +214,7 @@ export class BBHelpHelpWidget {
         break;
         case 'Open Widget':
           this.invoker.focus();
-          this.open(action.data);
+          this.open(action.helpKey);
           break;
       case 'Child Window Ready':
         if (this.loadCalled) {
