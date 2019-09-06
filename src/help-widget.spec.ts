@@ -420,7 +420,7 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should react to actions, Open Widget', (done) => {
     spyOn(helpWidget, 'open').and.callThrough();
-    mockCommunicationService.communicationAction.next({ messageType: 'Open Widget', data: 'whats-new.html' });
+    mockCommunicationService.communicationAction.next({ messageType: 'Open Widget', helpKey: 'whats-new.html' });
     expect(helpWidget.open).toHaveBeenCalledWith('whats-new.html');
     expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
