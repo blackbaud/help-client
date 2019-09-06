@@ -1,3 +1,7 @@
+# 2.1.0 (2019-09-06)
+
+- Added `open-widget` message handling. [#64](https://github.com/blackbaud/help-client/pull/64)
+
 # 2.0.3 (2019-08-06)
 
 - Fixed a bug that caused the invoker to be hidden on mobile height sizes. [#62](https://github.com/blackbaud/help-client/pull/62)
