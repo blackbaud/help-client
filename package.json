@@ -1,7 +1,8 @@
 {
   "name": "@blackbaud/help-client",
   "pipelineSettings": {
-    "publishToCDN": true
+    "publishToCDN": true,
+    "publishToNPM": true
   },
   "version": "2.1.0",
   "description": "Provides a client-side library for interacting with the Help Widget.",
