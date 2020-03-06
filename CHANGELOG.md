@@ -1,3 +1,6 @@
+# 2.2.0 (2020-03-06)
+- Fixed package dependency structure to list `mixpanel-browser` as a peer dependency. [#68](https://github.com/blackbaud/help-client/pull/68)
+
 # 2.1.0 (2019-09-06)
 
 - Added `open-widget` message handling. [#64](https://github.com/blackbaud/help-client/pull/64)

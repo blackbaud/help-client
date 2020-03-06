@@ -4,7 +4,7 @@
     "publishToCDN": true,
     "publishToNPM": true
   },
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Provides a client-side library for interacting with the Help Widget.",
   "main": "dist/bundles/help-client.umd.js",
   "module": "index.ts",
@@ -39,11 +39,11 @@
   },
   "homepage": "https://github.com/blackbaud/help-client#readme",
   "dependencies": {
-    "@types/tapable": "0.2.4",
-    "mixpanel-browser": "2.22.4"
+    "@types/tapable": "0.2.4"
   },
   "peerDependencies": {
-    "rxjs": "^6.0.0"
+    "rxjs": "^6.0.0",
+    "mixpanel-browser": "^2.22.4"
   },
   "devDependencies": {
     "@types/core-js": "0.9.41",
@@ -65,6 +65,7 @@
     "karma-mocha-reporter": "2.2.3",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.3",
+    "mixpanel-browser": "2.22.4",
     "node-sass": "4.9.0",
     "raw-loader": "0.5.1",
     "remap-istanbul": "0.9.5",
