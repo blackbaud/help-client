@@ -15,10 +15,14 @@ function getWindow(): any {
   return window;
 }
 
+/**
+ * @deprecated since v2.2.0. This project shouldn't need analytics in the future; all future analytics should be
+ * tracked by the widget itself.
+ */
 export class BBHelpAnalyticsService {
   private superProperties: any;
   private analyticsClient: any;
-  private windowRef: any =  getWindow();
+  private windowRef: any = getWindow();
 
   constructor(mixpanelKeys: MixpanelKeys) {
     PRODUCTION_KEY = mixpanelKeys.PRODUCTION_KEY;
