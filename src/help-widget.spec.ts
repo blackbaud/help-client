@@ -1,5 +1,4 @@
 import { BBHelpHelpWidget } from './help-widget';
-import { MockAnalyticsService } from './mocks/mock-analytics-service';
 import { MockCommunicationService } from './mocks/mock-communication-service';
 import { MockWidgetRenderer} from './mocks/mock-renderer';
 import { MockStyleUtility } from './mocks/mock-style-utilty';
@@ -8,7 +7,6 @@ describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
   let mockWidgetRenderer: any;
-  let mockAnalyticsService: any;
   let mockCommunicationService: any;
   let mockStyleUtility: any;
 
@@ -17,17 +15,14 @@ describe('BBHelpHelpWidget', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
     mockWidgetRenderer = new MockWidgetRenderer();
-    mockAnalyticsService = new MockAnalyticsService();
     mockCommunicationService = new MockCommunicationService();
     mockStyleUtility = new MockStyleUtility();
     helpWidget = new BBHelpHelpWidget(
       mockWidgetRenderer,
-      mockAnalyticsService,
       mockCommunicationService,
       mockStyleUtility
     );
     helpWidget.init();
-    spyOn(mockAnalyticsService, 'trackEvent').and.callThrough();
     spyOn(mockCommunicationService, 'postMessage').and.callThrough();
     spyOn(mockCommunicationService, 'ready').and.callThrough();
     spyOn(mockCommunicationService, 'communicationAction').and.callThrough();
