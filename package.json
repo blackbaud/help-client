@@ -38,9 +38,7 @@
     "url": "https://github.com/blackbaud/help-client/issues"
   },
   "homepage": "https://github.com/blackbaud/help-client#readme",
-  "dependencies": {
-    "@types/tapable": "0.2.4"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "rxjs": "^6.0.0",
     "mixpanel-browser": "^2.22.4"
