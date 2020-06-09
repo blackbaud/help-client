@@ -3,7 +3,6 @@ import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
 
 import { CommunicationAction } from './models/communication-action';
-import { BBHelpAnalyticsService } from './service/analytics.service';
 import { BBHelpCommunicationService } from './service/communication.service';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
@@ -20,7 +19,6 @@ export class BBHelpHelpWidget {
   public onHelpLoaded: any;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
-  private analyticsService: BBHelpAnalyticsService;
   private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
@@ -32,13 +30,11 @@ export class BBHelpHelpWidget {
 
   constructor(
     widgetRenderer: BBHelpHelpWidgetRenderer,
-    analyticsService: BBHelpAnalyticsService,
     communicationService: BBHelpCommunicationService,
     styleUtility: BBHelpStyleUtility
   ) {
     this.styleUtility = styleUtility;
     this.widgetRenderer = widgetRenderer;
-    this.analyticsService = analyticsService;
     this.communicationService = communicationService;
   }
 
@@ -72,8 +68,6 @@ export class BBHelpHelpWidget {
 
     return this.ready()
       .then(() => {
-        this.analyticsService.setupMixpanel(config.productId);
-
         this.loadCalled = true;
         this.config = config;
         if (config.defaultHelpKey !== undefined) {
@@ -98,9 +92,6 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
-    this.analyticsService.trackEvent('Help Widget', {
-      Action: 'Closed From Invoker'
-    });
     // Wait for client close transition to finish to send close message to SPA
     setTimeout(() => {
       this.communicationService.postMessage({
@@ -117,10 +108,6 @@ export class BBHelpHelpWidget {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'open-to-help-key'
-      });
-
-      this.analyticsService.trackEvent('Help Widget', {
-        Action: 'Opened From Invoker'
       });
 
       this.container.classList.remove(HELP_CLOSED_CLASS);

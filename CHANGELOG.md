@@ -1,3 +1,15 @@
+# 3.0.0 (2020-06-09)
+
+### Breaking changes
+
+- Removed the analytics service and `mixpanel-browser` dependency. Analytics should be handled by the consuming application. [#70](https://github.com/blackbaud/help-client/pull/70)
+
+# 3.0.0-rc.0 (2020-05-08)
+
+### Breaking changes
+
+- Removed the analytics service and `mixpanel-browser` dependency. Analytics should be handled by the consuming application. [#70](https://github.com/blackbaud/help-client/pull/70)
+
 # 2.2.0 (2020-03-06)
 - Fixed package dependency structure to list `mixpanel-browser` as a peer dependency. [#68](https://github.com/blackbaud/help-client/pull/68)
 
