@@ -23,12 +23,7 @@ function createConfig(target, library, entry, name = '') {
               declaration: false
             }
           }
-        },
-        {
-          test: /\.scss$/,
-          loaders: ['style-loader', 'css-loader', 'sass-loader'],
-          exclude: '/node_modules/'
-        },
+        }
       ]
     }
   }
