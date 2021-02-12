@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 function createConfig(target, library, entry, name = '') {
   return {
@@ -27,7 +27,7 @@ function createConfig(target, library, entry, name = '') {
       ]
     }
   }
-};
+}
 
 module.exports = [
   createConfig('umd', 'BBHelpClient', 'index.ts'),
