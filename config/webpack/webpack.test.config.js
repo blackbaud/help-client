@@ -35,7 +35,7 @@ module.exports = {
       {
         enforce: 'post',
         test: /\.(js|ts)$/,
-        loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
+        loader: 'source-map-inline-loader',
         include: path.resolve(__dirname, '..', '..', 'src'),
         exclude: [
           /\.(e2e|spec)\.ts$/,
