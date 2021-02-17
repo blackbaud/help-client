@@ -17,10 +17,8 @@
     "test": "karma start local.karma.conf.js",
     "posttest": "npm run lint",
     "test:ci": "karma start ci.karma.conf.js",
-    "compress": "uglifyjs dist/bundles/help-client.umd.js -m -o dist/bundles/help-client.umd.min.js",
-    "compress:global": "uglifyjs dist/bundles/help-client.global.js -m -o dist/bundles/help-client.global.min.js",
-    "compress:all": "npm run compress && npm run compress:global",
-    "build": "rimraf dist && tsc && webpack --config config/webpack/webpack.prod.config.js && npm run compress:all",
+    "prebuild": "rimraf dist",
+    "build": "tsc && webpack --config config/webpack/webpack.prod.config.js",
     "watch": "karma start local.karma.conf.js --auto-watch --no-single-run",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack serve --open --config config/webpack/webpack.dev.config.js"
