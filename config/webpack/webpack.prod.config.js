@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 function createConfig(target, library, entry, name = '') {
   return {
@@ -23,16 +23,11 @@ function createConfig(target, library, entry, name = '') {
               declaration: false
             }
           }
-        },
-        {
-          test: /\.scss$/,
-          loaders: ['style-loader', 'css-loader', 'sass-loader'],
-          exclude: '/node_modules/'
-        },
+        }
       ]
     }
   }
-};
+}
 
 module.exports = [
   createConfig('umd', 'BBHelpClient', 'index.ts'),

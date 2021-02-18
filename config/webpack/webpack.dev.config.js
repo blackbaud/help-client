@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs-extra');
 
@@ -21,11 +21,6 @@ module.exports = {
         test: /\.ts$/,
         loader: 'ts-loader'
       },
-      {
-        test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader'],
-        exclude: '/node_modules/'
-      },
     ]
   },
   devServer: {
@@ -46,4 +41,4 @@ module.exports = {
       devServer: 'http://localhost:9000'
     })
   ]
-};
+}
