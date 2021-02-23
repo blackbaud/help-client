@@ -12,7 +12,7 @@ export interface HelpConfig {
   getCurrentHelpKey?: any;
   headerColor?: string;
   headerTextColor?: string;
-  helpBaseUrl?: string;
+  helpBaseUrl?: string | ((locale: string) => string);
   helpCenterUrl?: string;
   hideHelpChat?: boolean | string;
   hideUndock?: boolean | string;
