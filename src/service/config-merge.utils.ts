@@ -1,6 +1,5 @@
 import { HelpConfig } from '../help-config';
 import { CONFIG_STORE, VALID_CONFIG_ID } from './config-store';
-import { getQueryParameterValue } from './utils';
 
 const FALLBACK_LOCALE = 'en-us';
 const FALLBACK_BASE_URL_ROOT = 'https://www.blackbaud.com/files/support/helpfiles';
@@ -67,4 +66,16 @@ function calculateLocale(config: HelpConfig): string {
     }
   }
   return FALLBACK_LOCALE;
+}
+
+/**
+ * retrieve query param values from HelpConfig#hostQueryParams.
+ * location.search is used as fallback.
+ */
+function getQueryParameterValue(config: HelpConfig, key: string): string {
+  const params: string = config.hostQueryParams || window.location.search;
+  const queryParam: string = key.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex: RegExp = new RegExp(`[?&]${queryParam}=([^&#]*)`);
+  const results: RegExpExecArray = regex.exec(params);
+  return !!results ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : undefined;
 }
