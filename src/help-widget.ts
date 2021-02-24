@@ -1,9 +1,7 @@
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
-
-import { CommunicationAction } from './models/communication-action';
-import { BBHelpCommunicationService } from './service/communication.service';
+import { mergeConfig } from './service/config-merge.utils';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
@@ -13,13 +11,9 @@ const SCREEN_XS_MAX: number = 767;
 const PANEL_HEIGHT: number = 591;
 
 export class BBHelpHelpWidget {
-  public iframe: HTMLIFrameElement;
   public config: HelpConfig;
   public currentHelpKey: string;
   public onHelpLoaded: any;
-  private widgetRenderer: BBHelpHelpWidgetRenderer;
-  private communicationService: BBHelpCommunicationService;
-  private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
   private elementsLoaded: boolean = false;
@@ -28,14 +22,7 @@ export class BBHelpHelpWidget {
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
 
-  constructor(
-    widgetRenderer: BBHelpHelpWidgetRenderer,
-    communicationService: BBHelpCommunicationService,
-    styleUtility: BBHelpStyleUtility
-  ) {
-    this.styleUtility = styleUtility;
-    this.widgetRenderer = widgetRenderer;
-    this.communicationService = communicationService;
+  constructor(private widgetRenderer: BBHelpHelpWidgetRenderer, private styleUtility: BBHelpStyleUtility) {
   }
 
   public init() {
@@ -43,23 +30,14 @@ export class BBHelpHelpWidget {
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
-    this.setUpCommunication();
-    window.addEventListener('resize', () => {
-      this.setClassesForWindowSize();
-    });
+    window.addEventListener('resize', () => this.setClassesForWindowSize());
   }
 
   public ready() {
-    return this.widgetReady()
-      .then(() => {
-        return this.communicationService.ready();
-      })
-      .catch((err: string) => {
-        console.error(err);
-      });
+    return this.widgetReady().catch((err: string) => console.error(err));
   }
 
-  public load(config: HelpConfig) {
+  public load(config: HelpConfig, location: Location = window.location) {
     if (this.loadCalled) {
       return;
     }
@@ -69,54 +47,54 @@ export class BBHelpHelpWidget {
     return this.ready()
       .then(() => {
         this.loadCalled = true;
-        this.config = config;
-        if (config.defaultHelpKey !== undefined) {
-          this.defaultHelpKey = config.defaultHelpKey;
+        this.config = mergeConfig(config);
+        if (this.config.defaultHelpKey !== undefined) {
+          this.defaultHelpKey = this.config.defaultHelpKey;
         }
 
-        config.hostQueryParams = this.getQueryParams();
+        // TODO move to mergeConfig
+        this.config.hostQueryParams = location.search;
 
-        if (config.getCurrentHelpKey !== undefined) {
-          this.getCurrentHelpKey = config.getCurrentHelpKey;
-          delete config.getCurrentHelpKey;
+        if (this.config.getCurrentHelpKey !== undefined) {
+          this.getCurrentHelpKey = this.config.getCurrentHelpKey;
+          delete this.config.getCurrentHelpKey;
         }
 
-        if (config.onHelpLoaded !== undefined) {
-          this.onHelpLoaded = config.onHelpLoaded;
-          delete config.onHelpLoaded;
+        if (this.config.onHelpLoaded !== undefined) {
+          this.onHelpLoaded = this.config.onHelpLoaded;
+          delete this.config.onHelpLoaded;
+        }
+        if (this.config.defaultHelpKey) {
+          this.defaultHelpKey = this.config.defaultHelpKey;
         }
 
-        this.sanitizeConfig();
-        this.sendConfig();
+        this.renderInvoker();
+        if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
       });
   }
 
+  /**
+   * Help keys are opened into new tabs, thus closing the widget isn't relevant anymore.
+   * @deprecated This is a no-op function for backward compatibility.
+   */
   public close() {
-    // Wait for client close transition to finish to send close message to SPA
-    setTimeout(() => {
-      this.communicationService.postMessage({
-        messageType: 'help-widget-closed'
-      });
-    }, 300);
-    this.container.classList.add(HELP_CLOSED_CLASS);
-    this.invoker.setAttribute('aria-pressed', 'false');
-    this.invoker.setAttribute('aria-expanded', 'false');
+    // no op
   }
 
   public open(helpKey: string = this.getHelpKey()) {
     if (!this.widgetDisabled) {
-      this.communicationService.postMessage({
-        helpKey,
-        messageType: 'open-to-help-key'
-      });
-
-      this.container.classList.remove(HELP_CLOSED_CLASS);
-      this.invoker.setAttribute('aria-pressed', 'true');
-      this.invoker.setAttribute('aria-expanded', 'true');
       this.invoker.focus();
+      const url = `${this.config.helpBaseUrl}${helpKey}`;
+      window.open(url, '_blank');
     }
   }
 
+  /**
+   * Help keys are opened into new tabs, thus toggling the widget isn't relevant anymore.
+   * @deprecated This function will always open for backward compatibility.
+   */
   public toggleOpen(helpKey?: string) {
     if (this.isCollapsed()) {
       this.open(helpKey);
@@ -126,13 +104,7 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-
     this.currentHelpKey = helpKey;
-
-    this.communicationService.postMessage({
-      helpKey,
-      messageType: 'update-current-help-key'
-    });
   }
 
   public setHelpKeyToDefault(): void {
@@ -186,76 +158,20 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private setUpCommunication() {
-    this.communicationService.bindChildWindowReference(this.iframe);
-    this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
-      this.actionResponse(action);
-    });
-  }
-
-  private actionResponse(action: CommunicationAction) {
-    switch (action.messageType) {
-      case 'Close Widget':
-        this.invoker.focus();
-        this.close();
-        break;
-        case 'Open Widget':
-          this.invoker.focus();
-          this.open(action.helpKey);
-          break;
-      case 'Child Window Ready':
-        if (this.loadCalled) {
-          this.sendConfig();
-        }
-        break;
-      case 'Config Loaded':
-        const configData = JSON.parse(action.data);
-        this.updateConfigKeys(configData);
-        this.renderInvoker();
-        if (this.onHelpLoaded) {
-          this.onHelpLoaded();
-        }
-        break;
-      default:
-        console.error(`No matching response for action: ${action.messageType}`);
-    }
-  }
-
-  private updateConfigKeys(configOptions: any) {
-    this.config = configOptions;
-    if (configOptions.defaultHelpKey) {
-      this.defaultHelpKey = configOptions.defaultHelpKey;
-    }
-  }
-
-  private getQueryParams(): string {
-    const results = window.location.search;
-    return results;
-  }
-
-  private sendConfig() {
-    this.communicationService.postMessage({
-      config: this.config,
-      messageType: 'user-config'
-    });
-  }
-
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
-    this.container.insertBefore(this.invoker, this.iframe);
+    this.container.appendChild(this.invoker);
   }
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
-    this.iframe = this.widgetRenderer.createIframe();
     this.elementsLoaded = true;
   }
 
   private renderElements() {
     this.setClassesForWindowSize();
     this.widgetRenderer.appendElement(this.container);
-    this.widgetRenderer.appendElement(this.iframe, this.container);
   }
 
   private setUpInvokerEvents() {
@@ -320,9 +236,5 @@ export class BBHelpHelpWidget {
 
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
-  }
-
-  private sanitizeConfig() {
-    this.config = JSON.parse(JSON.stringify(this.config));
   }
 }

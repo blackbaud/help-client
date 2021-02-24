@@ -1,9 +1,7 @@
-
 import { BBHelpHelpWidget } from './help-widget';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { BBHelp } from './models/bbhelp';
-import { BBHelpCommunicationService } from './service/communication.service';
 
 declare const BBHELP: any;
 
@@ -12,12 +10,7 @@ export abstract class BBHelpClient {
   public static initWidget(): BBHelp {
     const styleUtility = new BBHelpStyleUtility();
     const widgetRenderer = new BBHelpHelpWidgetRenderer();
-    const communicationService = new BBHelpCommunicationService();
-    const helpWidget = new BBHelpHelpWidget(
-      widgetRenderer,
-      communicationService,
-      styleUtility
-    );
+    const helpWidget = new BBHelpHelpWidget(widgetRenderer, styleUtility);
     return { HelpWidget: helpWidget };
   }
 

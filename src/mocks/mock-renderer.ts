@@ -2,12 +2,15 @@ export class MockWidgetRenderer {
 
   public createContainer() {
     const container = document.createElement('div');
+    container.id = 'bb-help-container';
     container.classList.add('bb-help-closed');
     return container;
   }
 
   public createInvoker() {
-    return document.createElement('button');
+    const invoker = document.createElement('button');
+    invoker.id = 'bb-help-invoker';
+    return invoker;
   }
 
   public createIframe() {

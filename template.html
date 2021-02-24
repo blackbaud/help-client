@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>BB Help Client</title>
-  </head>
-  <body>
-    Demo:
-    <button id="demo-button">Load Help Client</button>
-    <script>
-      let button = document.getElementById('demo-button');
-      button.addEventListener('click', loadDemo);
-
-      function loadDemo() {
-        const config = {
-          extends: 'bbhelp'
-        };
-        BBHELP.HelpWidget.load(config);
-      }
-    </script>
-  </body>
+<head>
+  <title>BB Help Client</title>
+</head>
+<body>
+Demo:
+<button onclick="loadDemo()">Load RENXT config</button>
+<script>
+  function loadDemo() {
+    BBHELP.HelpWidget.load({ extends: 'renxt' });
+  }
+</script>
+</body>
 </html>

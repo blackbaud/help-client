@@ -41,7 +41,7 @@ export const OBJECT_COMPARE_MATCHERS: jasmine.CustomMatcherFactories = {
 
         const missingProps = difference(relevantProps, new Set(actualProps));
         if (missingProps.size > 0) {
-          return { message: `Expected props ${missingProps} to exist`, pass: false };
+          return { message: `Expected props "${Array.from(missingProps).join(', ')}" to exist`, pass: false };
         }
 
         const propsWithIncorrectValues: string[] = [];

@@ -29,6 +29,9 @@ export class BBHelpHelpWidgetRenderer {
     return invoker;
   }
 
+  /**
+   * @deprecated
+   */
   public createIframe(): HTMLIFrameElement {
     let iframe: HTMLIFrameElement;
     iframe = document.createElement('iframe');
