@@ -1,15 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>BB Help Client</title>
+  <title>help-client demo</title>
+  <!--a hacky, get-it-done-now way to bring in styles from @skyux/theme-->
+  <link rel="stylesheet" type="text/css"
+        href="https://d1ed2bc0tt12m5.cloudfront.net/styles.c10433e4334ac7100968.css"/>
 </head>
-<body>
-Demo:
-<button onclick="loadDemo()">Load RENXT config</button>
-<script>
-  function loadDemo() {
-    BBHELP.HelpWidget.load({ extends: 'renxt' });
-  }
-</script>
+<body style="overflow: auto" onload="loadSvcidList()">
+<main class="sky-padding-even-default">
+  <h1>help-client demo</h1>
+  <button class="sky-btn sky-btn-default" onclick="unloadWidget()">Unload</button>
+  <h2>Standard svcid configs</h2>
+  <ul id="svcid-configs"></ul>
+  <script>
+    function unloadWidget() {
+      BBHELP.HelpWidget.unload();
+    }
+
+    function loadWidget(svcid) {
+      unloadWidget();
+      BBHELP.HelpWidget.load({ extends: svcid });
+    }
+
+    function loadSvcidList() {
+      const svcids = [
+        'admin', 'bbcrm', 'award-management', 'stewardship-management',
+        'chrch', 'edu', 'faith', 'fenxt', 'fenxt(fenxt.cdev)', 'fenxt(fenxt.ate)',
+        'fndlite', 'marketplace', 'renxt', 'smallgroups', 'tcs', 'gmk'
+      ];
+      const list = document.getElementById('svcid-configs');
+      svcids.forEach((id) => {
+        const button = document.createElement('button');
+        button.appendChild(document.createTextNode(id));
+        button.setAttribute('class', 'sky-btn sky-btn-link');
+        button.addEventListener('click', loadWidget.bind(null, id));
+        const item = document.createElement('li');
+        item.appendChild(button);
+        list.appendChild(item);
+      });
+    }
+  </script>
+</main>
 </body>
 </html>
