@@ -27,6 +27,39 @@ describe('BBHelpHelpWidget', () => {
     document.body.innerHTML = '';
   });
 
+  it('should unload widget', (done: DoneFn) => {
+    const removeEventListener = spyOn(window, 'removeEventListener').and.callFake(() => {
+    });
+    const addEventListener = spyOn(window, 'addEventListener').and.callFake(() => {
+    });
+    const config = { onHelpLoaded: jasmine.createSpy('onHelpLoaded') };
+    helpWidget.load(config)
+      .then(() => {
+        expect(addEventListener).toHaveBeenCalledWith('resize', jasmine.any(Function));
+        expect(addEventListener).toHaveBeenCalledTimes(1);
+        helpWidget.unload();
+        expect(helpWidget.onHelpLoaded).toBeUndefined();
+        expect(document.getElementById('bb-help-invoker')).toBeNull();
+        expect(helpWidget.currentHelpKey).toBeUndefined();
+        expect(helpWidget.config).toBeUndefined();
+        expect(removeEventListener).toHaveBeenCalledWith('resize', jasmine.any(Function));
+        expect(removeEventListener).toHaveBeenCalledTimes(1);
+        addEventListener.calls.reset();
+        removeEventListener.calls.reset();
+        return helpWidget.load(config);
+      })
+      .then(() => {
+        expect(helpWidget.onHelpLoaded).toBeDefined();
+        expect(document.getElementById('bb-help-invoker')).not.toBeNull();
+        helpWidget.setCurrentHelpKey('foo.html');
+        expect(helpWidget.currentHelpKey).toEqual('foo.html');
+        expect(helpWidget.config).toBeDefined();
+        expect(addEventListener).toHaveBeenCalledWith('resize', jasmine.any(Function));
+        expect(addEventListener).toHaveBeenCalledTimes(1);
+        done();
+      });
+  });
+
   it('should call the createContainer method on the renderer', (done: DoneFn) => {
     const mockContainer = document.createElement('div');
     mockContainer.classList.add('test-div');

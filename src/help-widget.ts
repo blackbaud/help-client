@@ -21,6 +21,7 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
+  private resizeEventListener: () => void;
 
   constructor(private widgetRenderer: BBHelpHelpWidgetRenderer, private styleUtility: BBHelpStyleUtility) {
   }
@@ -30,11 +31,26 @@ export class BBHelpHelpWidget {
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
-    window.addEventListener('resize', () => this.setClassesForWindowSize());
+    this.resizeEventListener = () => this.setClassesForWindowSize();
+    window.addEventListener('resize', this.resizeEventListener);
   }
 
   public ready() {
     return this.widgetReady().catch((err: string) => console.error(err));
+  }
+
+  public unload(): void {
+    if (!this.loadCalled) {
+      return;
+    }
+    this.invoker.remove();
+    this.onHelpLoaded = undefined;
+    this.currentHelpKey = undefined;
+    this.getCurrentHelpKey = () => this.currentHelpKey || this.defaultHelpKey;
+    this.defaultHelpKey = 'default.html';
+    this.config = undefined;
+    this.loadCalled = false;
+    window.removeEventListener('resize', this.resizeEventListener);
   }
 
   public load(config: HelpConfig, location: Location = window.location) {

@@ -18,6 +18,10 @@ export abstract class BBHelpClient {
     return BBHELP.HelpWidget.load(config);
   }
 
+  public static unload(): void {
+    BBHELP.HelpWidget.unload();
+  }
+
   public static setCurrentHelpKey(helpKey?: string): void {
     BBHELP.HelpWidget.setCurrentHelpKey(helpKey);
   }
