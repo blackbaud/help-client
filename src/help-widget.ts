@@ -140,6 +140,9 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
+  /**
+   * @deprecated
+   */
   public getWhatsNewRevision(): number {
     if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
       const revisions = this.config.whatsNewRevisions.split(';');
@@ -196,6 +199,9 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * @deprecated widget no longer expands, thus it is always collapsed
+   */
   private isCollapsed() {
     return this.container.classList.contains(HELP_CLOSED_CLASS);
   }

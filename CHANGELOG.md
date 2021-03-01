@@ -1,3 +1,9 @@
+# 3.0.1-rc.0
+
+- Replaced communication with bb-help SPA with functionality to open topics in a new tab.
+- Added unload functionality.
+- Deprecate config properties not related to topic URLs or styling.
+
 # 3.0.0 (2020-06-09)
 
 ### Breaking changes
