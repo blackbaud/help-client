@@ -6,11 +6,19 @@
   <link rel="stylesheet" type="text/css"
         href="https://d1ed2bc0tt12m5.cloudfront.net/styles.c10433e4334ac7100968.css"/>
 </head>
-<body style="overflow: auto" onload="loadSvcidList()">
+<body style="overflow: auto" onload="loadDemo()">
 <main class="sky-padding-even-default">
   <h1>help-client demo</h1>
-  <button class="sky-btn sky-btn-default" onclick="unloadWidget()">Unload</button>
   <h2>Standard svcid configs</h2>
+  <div class="sky-form-group">
+    <button class="sky-btn sky-btn-default" onclick="unloadWidget()">Unload</button>
+  </div>
+  <div class="sky-form-group">
+    <label for="locales" class="sky-control-label">Locale</label>
+    <select class="sky-form-control" id="locales">
+      <option value="">UNSPECIFIED</option>
+    </select>
+  </div>
   <ul id="svcid-configs"></ul>
   <script>
     function unloadWidget() {
@@ -19,7 +27,13 @@
 
     function loadWidget(svcid) {
       unloadWidget();
-      BBHELP.HelpWidget.load({ extends: svcid });
+      const locale = document.getElementById('locales').value;
+      const config = { extends: svcid };
+      if (locale) {
+        config.locale = locale;
+      }
+      console.log(config)
+      BBHELP.HelpWidget.load(config);
     }
 
     function loadSvcidList() {
@@ -38,6 +52,22 @@
         item.appendChild(button);
         list.appendChild(item);
       });
+    }
+
+    function loadLocales() {
+      const locales = ['en-us', 'en-gb', 'en-ca', 'en-au', 'en-nz', 'es-mx', 'qa', 'fr'];
+      const select = document.getElementById('locales');
+      locales.forEach(locale => {
+        const option = document.createElement('option');
+        option.appendChild(document.createTextNode(locale));
+        option.setAttribute('value', locale);
+        select.appendChild(option);
+      });
+    }
+
+    function loadDemo() {
+      loadLocales();
+      loadSvcidList();
     }
   </script>
 </main>

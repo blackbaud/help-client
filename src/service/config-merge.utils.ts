@@ -56,13 +56,13 @@ function appendSlash(input: string): string {
 function calculateLocale(config: HelpConfig): string {
   const localeQueryParamValue: string = getQueryParameterValue(config, 'helplocale');
   const locale = (localeQueryParamValue || config.locale || FALLBACK_LOCALE).toLowerCase();
-  const partialLocale = locale.split('-')[0];
+  const language = locale.split('-')[0];
 
   if (config.customLocales) {
     if (config.customLocales.indexOf(locale) > -1) {
       return locale;
-    } else if (config.customLocales.indexOf(partialLocale) > -1) {
-      return partialLocale;
+    } else if (config.customLocales.indexOf(language) > -1) {
+      return language;
     }
   }
   return FALLBACK_LOCALE;
