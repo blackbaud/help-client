@@ -1,8 +1,8 @@
 # 3.0.1-rc.0
 
-- Replaced communication with bb-help SPA with functionality to open topics in a new tab.
-- Added unload functionality.
-- Deprecate config properties not related to topic URLs or styling.
+- Replaced communication with bb-help SPA with functionality to open topics in a new tab. [#75](https://github.com/blackbaud/help-client/pull/75)
+- Added unload functionality. [#75](https://github.com/blackbaud/help-client/pull/75)
+- Deprecate config properties not related to topic URLs or styling. [#75](https://github.com/blackbaud/help-client/pull/75)
 
 # 3.0.0 (2020-06-09)
 
