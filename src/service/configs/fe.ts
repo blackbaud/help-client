@@ -2,7 +2,7 @@ import { HelpConfig } from '../../help-config';
 
 export const config: HelpConfig = {
   productId: 'fe',
-  customLocales: [],
+  customLocales: ['en-us', 'en-ca', 'en-au'],
   communityUrl: 'http://community.blackbaud.com/products/financialedgenxt',
   caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
   trainingCentralUrl: 'https://www.blackbaud.com/training/blackbaud-university/blackbaud-financial-edge-nxt',
