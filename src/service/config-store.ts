@@ -16,10 +16,9 @@ import { STEWARDSHIP_MANAGEMENT_CONFIG } from './configs/stewardship';
 import { config as tcsConfig } from './configs/tcs';
 
 export type VALID_CONFIG_ID = 'admin'
+  | 'award-management'
   | 'bbcrm'
   | 'bbhelp'
-  | 'award-management'
-  | 'stewardship-management'
   | 'chrch'
   | 'edu'
   | 'faith'
@@ -27,11 +26,12 @@ export type VALID_CONFIG_ID = 'admin'
   | 'fenxt(fenxt.cdev)'
   | 'fenxt(fenxt.ate)'
   | 'fndlite'
+  | 'gmk'
   | 'marketplace'
   | 'renxt'
   | 'smallgroups'
-  | 'tcs'
-  | 'gmk';
+  | 'stewardship-management'
+  | 'tcs';
 
 export const CONFIG_STORE: { [k in VALID_CONFIG_ID]: HelpConfig } = {
   admin: adminConfig,
