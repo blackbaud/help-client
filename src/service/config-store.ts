@@ -36,6 +36,7 @@ export type VALID_CONFIG_ID = 'admin'
 export const CONFIG_STORE: { [k in VALID_CONFIG_ID]: HelpConfig } = {
   admin: adminConfig,
   'award-management': AWARD_MANAGEMENT_CONFIG,
+  // This is necessary as bbcrm is using the old help format, and bulkimport is a modern SPA.
   bbcrm: bulkimportConfig,
   bbhelp: bbHelpConfig,
   chrch: churchConfig,
@@ -45,7 +46,6 @@ export const CONFIG_STORE: { [k in VALID_CONFIG_ID]: HelpConfig } = {
   // FE has various svcid's based on their environments for testing.
   ['fenxt(fenxt.cdev)']: feConfig,
   ['fenxt(fenxt.ate)']: feConfig,
-  // This is necessary as bbcrm is using the old help format, and bulkimport is a modern SPA.
   fndlite: fndliteConfig,
   gmk: gmkConfig,
   marketplace: marketplaceConfig,
