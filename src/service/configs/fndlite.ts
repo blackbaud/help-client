@@ -1,5 +1,8 @@
 import { HelpConfig } from '../../help-config';
 
+/**
+ * @deprecated fndlite is no longer a thing
+ */
 export const config: HelpConfig = {
   productId: 'fndlite',
   hideHelpChat: true,
