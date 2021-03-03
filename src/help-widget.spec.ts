@@ -28,6 +28,10 @@ describe('BBHelpHelpWidget', () => {
   });
 
   it('should unload widget', (done: DoneFn) => {
+    // Remove the original container that was added during beforeEach as a side effect.
+    // This is a hack in order to avoid restructuring this whole file
+    // which misguidedly relies on that beforeEach
+    document.getElementById('bb-help-container').remove();
     const removeEventListener = spyOn(window, 'removeEventListener').and.callFake(() => {
     });
     const addEventListener = spyOn(window, 'addEventListener').and.callFake(() => {
@@ -40,6 +44,7 @@ describe('BBHelpHelpWidget', () => {
         helpWidget.unload();
         expect(helpWidget.onHelpLoaded).toBeUndefined();
         expect(document.getElementById('bb-help-invoker')).toBeNull();
+        expect(document.getElementById('bb-help-container')).toBeNull();
         expect(helpWidget.currentHelpKey).toBeUndefined();
         expect(helpWidget.config).toBeUndefined();
         expect(removeEventListener).toHaveBeenCalledWith('resize', jasmine.any(Function));
@@ -51,6 +56,7 @@ describe('BBHelpHelpWidget', () => {
       .then(() => {
         expect(helpWidget.onHelpLoaded).toBeDefined();
         expect(document.getElementById('bb-help-invoker')).not.toBeNull();
+        expect(document.getElementById('bb-help-container')).not.toBeNull();
         helpWidget.setCurrentHelpKey('foo.html');
         expect(helpWidget.currentHelpKey).toEqual('foo.html');
         expect(helpWidget.config).toBeDefined();

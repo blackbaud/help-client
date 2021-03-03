@@ -43,7 +43,7 @@ export class BBHelpHelpWidget {
     if (!this.loadCalled) {
       return;
     }
-    this.invoker.remove();
+    this.container.remove();
     this.onHelpLoaded = undefined;
     this.currentHelpKey = undefined;
     this.getCurrentHelpKey = () => this.currentHelpKey || this.defaultHelpKey;
