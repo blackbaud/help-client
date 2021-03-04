@@ -1,21 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>BB Help Client</title>
-  </head>
-  <body>
-    Demo:
-    <button id="demo-button">Load Help Client</button>
-    <script>
-      let button = document.getElementById('demo-button');
-      button.addEventListener('click', loadDemo);
+<head>
+  <title>help-client demo</title>
+  <!--a hacky, get-it-done-now way to bring in styles from @skyux/theme-->
+  <link rel="stylesheet" type="text/css"
+        href="https://d1ed2bc0tt12m5.cloudfront.net/styles.c10433e4334ac7100968.css"/>
+</head>
+<body style="overflow: auto" onload="renderFormAndLoadWidget()">
+<main class="sky-padding-even-default">
+  <h1>help-client demo</h1>
+  <h2>Standard svcid configs</h2>
+  <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
+    <div class="sky-form-group">
+      <label for="svcid" class="sky-control-label sky-control-label-required">Service Id</label>
+      <select class="sky-form-control" id="svcid"></select>
+      <label for="locale" class="sky-control-label">Locale</label>
+      <select class="sky-form-control" id="locale">
+        <option value="">Unspecified</option>
+      </select>
+    </div>
+  </form>
+  <h3>Resulting config</h3>
+  <pre><code id="config"></code></pre>
+  <script>
+    function renderConfig() {
+      document.getElementById('config').textContent = JSON.stringify(buildConfig());
+    }
 
-      function loadDemo() {
-        const config = {
-          extends: 'bbhelp'
-        };
+    function buildConfig() {
+      const form = document.forms['widgetLoad'];
+      const svcid = form.elements['svcid'].value
+      const locale = form.elements['locale'].value
+      const config = { extends: svcid };
+      if (locale) {
+        config.locale = locale;
+      }
+      return config;
+    }
+
+    function loadWidget() {
+      BBHELP.HelpWidget.unload();
+      const config = buildConfig();
+      if (config.extends) {
         BBHELP.HelpWidget.load(config);
       }
-    </script>
-  </body>
+    }
+
+    function renderSvcIds() {
+      const svcids = [
+        'admin', 'award-management', 'bbcrm', 'chrch', 'edu', 'faith', 'fenxt', 'fenxt(fenxt.cdev)', 'fenxt(fenxt.ate)',
+        'fndlite', 'gmk', 'marketplace', 'renxt', 'smallgroups', 'stewardship-management', 'tcs'
+      ];
+      const select = document.getElementById('svcid');
+      svcids.forEach((id) => {
+        const option = document.createElement('option');
+        option.appendChild(document.createTextNode(id));
+        option.setAttribute('value', id);
+        select.appendChild(option);
+      });
+    }
+
+    function renderLocales() {
+      const locales = ['en-us', 'en-gb', 'en-ca', 'en-au', 'en-nz', 'es-mx', 'qa', 'fr'];
+      const select = document.getElementById('locale');
+      locales.forEach(locale => {
+        const option = document.createElement('option');
+        option.appendChild(document.createTextNode(locale));
+        option.setAttribute('value', locale);
+        select.appendChild(option);
+      });
+    }
+
+    function renderFormAndLoadWidget() {
+      renderLocales();
+      renderSvcIds();
+      renderConfig();
+      loadWidget();
+    }
+  </script>
+</main>
+</body>
 </html>

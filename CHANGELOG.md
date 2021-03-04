@@ -1,3 +1,14 @@
+# 3.0.1-rc.1
+
+- Fixed missing locales in FE config. [#75](https://github.com/blackbaud/help-client/pull/75)
+- Fixed unload logic that resulted in orphan containers on subsequent loads. [#75](https://github.com/blackbaud/help-client/pull/75)
+
+# 3.0.1-rc.0
+
+- Replaced communication with the bb-help SPA to open topics in a new tab. [#75](https://github.com/blackbaud/help-client/pull/75)
+- Added unload functionality. [#75](https://github.com/blackbaud/help-client/pull/75)
+- Deprecated config properties that are not related to topic URLs or styling. [#75](https://github.com/blackbaud/help-client/pull/75)
+
 # 3.0.0 (2020-06-09)
 
 ### Breaking changes
