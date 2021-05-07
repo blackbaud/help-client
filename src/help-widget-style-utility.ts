@@ -42,7 +42,7 @@ const widgetCss = `
     justify-content: center;
     align-items: center;
     border: none;
-    background-color: #4d5259;
+    background-color: transparent;
     color: #fff;
     position: absolute;
     cursor: pointer;
