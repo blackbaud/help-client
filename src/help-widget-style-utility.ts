@@ -46,7 +46,8 @@ const widgetCss = `
     color: #fff;
     position: absolute;
     cursor: pointer;
-    height: 50px;
+    height: 45px;
+    top: 5px;
     width: 40px;
     right: 100%;
     padding-left: 10px;
