@@ -74,8 +74,8 @@ describe('BBHelpHelpWidgetRenderer', () => {
   it('should add styles to the invoker to defaults if no header configs exists', (done) => {
     const invokerEl: HTMLButtonElement = widgetRenderer.createInvoker();
     // Different browsers return the color value as rgb or hex.
-    const bgColorHex: string = '#71bf43';
-    const bgColorRGB: string = 'rgb(113, 191, 67)';
+    const bgColorHex: string = '#4d5259';
+    const bgColorRGB: string = 'rgb(77, 82, 89)';
 
     const headerTexColorHex: string = '#fffff';
     const headerTextcolorRGB: string = 'rgb(255, 255, 255)';

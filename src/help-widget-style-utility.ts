@@ -33,8 +33,6 @@ const widgetCss = `
 
   .bb-omnibar-collapsed #bb-help-container.bb-help-closed #bb-help-invoker:not(:hover) {
     height: ${collapsedHeaderHeight};
-    border-bottom-left-radius: 25px;
-    border-top-left-radius: 25px;
     width: 30px;
     padding: 2px 10px 7px 6px;
   }
@@ -43,10 +41,8 @@ const widgetCss = `
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom-left-radius: 25px;
-    border-top-left-radius: 25px;
     border: none;
-    background: #71bf44;
+    background-color: #4d5259;
     color: #fff;
     position: absolute;
     cursor: pointer;
