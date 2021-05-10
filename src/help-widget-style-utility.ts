@@ -48,9 +48,10 @@ const widgetCss = `
     cursor: pointer;
     height: 45px;
     top: 5px;
-    width: 40px;
+    width: 50px;
     right: 100%;
-    padding-left: 10px;
+    margin: 0;
+    padding: 0;
     border: none;
   }
 
