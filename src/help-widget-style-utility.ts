@@ -33,8 +33,6 @@ const widgetCss = `
 
   .bb-omnibar-collapsed #bb-help-container.bb-help-closed #bb-help-invoker:not(:hover) {
     height: ${collapsedHeaderHeight};
-    border-bottom-left-radius: 25px;
-    border-top-left-radius: 25px;
     width: 30px;
     padding: 2px 10px 7px 6px;
   }
@@ -43,17 +41,17 @@ const widgetCss = `
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom-left-radius: 25px;
-    border-top-left-radius: 25px;
     border: none;
-    background: #71bf44;
+    background-color: transparent;
     color: #fff;
     position: absolute;
     cursor: pointer;
-    height: 50px;
-    width: 40px;
+    height: 45px;
+    top: 5px;
+    width: 50px;
     right: 100%;
-    padding-left: 10px;
+    margin: 0;
+    padding: 0;
     border: none;
   }
 
