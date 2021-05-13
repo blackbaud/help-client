@@ -3,7 +3,6 @@ import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { mergeConfig } from './service/config-merge.utils';
 
-const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
 const DISABLE_TRANSITION: string = 'bb-help-disable-transition';
 const MOBILE_WIDTH_CLASS: string = 'bb-help-mobile-width';
@@ -16,6 +15,7 @@ export class BBHelpHelpWidget {
   public onHelpLoaded: any;
   private container: HTMLElement;
   private invoker: HTMLElement;
+  private menu: HTMLElement;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
@@ -180,11 +180,13 @@ export class BBHelpHelpWidget {
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
     this.container.appendChild(this.invoker);
+    this.container.appendChild(this.menu);
   }
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
+    this.menu = this.widgetRenderer.createMenu();
     this.elementsLoaded = true;
   }
 
@@ -195,15 +197,71 @@ export class BBHelpHelpWidget {
 
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
-      this.toggleOpen();
+      this.menu.classList.toggle('help-menu-collapse');
+      if (!this.menu.classList.contains('help-menu-collapse')) {
+        (this.menu.firstElementChild as HTMLElement).focus();
+      }
     });
+    this.menu.addEventListener('focusout', (event: FocusEvent) => {
+      const relatedTarget = event.relatedTarget as HTMLElement;
+      // if the focus is being moved to something outside of the menu, hide the menu.
+      if (!this.container.contains(relatedTarget)) {
+        this.menu.classList.add('help-menu-collapse');
+      }
+    });
+    this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeydown(event));
+  }
+
+  private handleKeydown(event: KeyboardEvent): void {
+    switch (event.key.toLowerCase()) {
+      case 'escape':
+      case 'esc': // ie support
+      case 'tab':
+        this.menu.classList.add('help-menu-collapse');
+        this.invoker.focus();
+        break;
+      case 'arrowdown':
+      case 'arrowright':
+      case 'down': // ie support
+      case 'right': // ie support
+        this.focusOnNextMenuItem();
+        break;
+      case 'arrowup':
+      case 'arrowleft':
+      case 'up': // ie support
+      case 'left': // ie support
+        this.focusOnPreviousMenuItem();
+        break;
+      default:
+        break;
+    }
+  }
+
+  private focusOnPreviousMenuItem() {
+    if (this.menu.contains(document.activeElement)) {
+      if (document.activeElement.previousElementSibling) {
+        (document.activeElement.previousElementSibling as HTMLElement).focus();
+      } else {
+        (this.menu.lastElementChild as HTMLElement).focus();
+      }
+    }
+  }
+
+  private focusOnNextMenuItem() {
+    if (this.menu.contains(document.activeElement)) {
+      if (document.activeElement.nextElementSibling) {
+        (document.activeElement.nextElementSibling as HTMLElement).focus();
+      } else {
+        (this.menu.firstElementChild as HTMLElement).focus();
+      }
+    }
   }
 
   /**
    * @deprecated widget no longer expands, thus it is always collapsed
    */
   private isCollapsed() {
-    return this.container.classList.contains(HELP_CLOSED_CLASS);
+    return true;
   }
 
   private setClassesForWindowSize() {
@@ -258,5 +316,5 @@ export class BBHelpHelpWidget {
 
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
-  }
+  };
 }
