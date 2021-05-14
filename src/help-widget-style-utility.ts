@@ -52,6 +52,10 @@ const widgetCss = `
     border: none;
   }
 
+  #bb-help-invoker:hover, #bb-help-invoker:focus {
+    background-color: #35393e;
+  }
+
   #bb-help-invoker > span {
     display: flex;
     justify-content: center;

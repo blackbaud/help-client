@@ -3,9 +3,6 @@ import { HelpConfig } from './help-config';
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
-// Some browsers return the hexdecimal values are rgb and vice versa when the style is set with javascript.
-const BB_HEADER_COLOR: string = 'transparent';
-const BB_HEADER_TEXT_COLOR: string = '#fff'; // this is to match omnibar's text color;
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
 
@@ -53,8 +50,12 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
-    invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
-    invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
+    if (config.headerColor) {
+      invoker.style.backgroundColor = config.headerColor;
+    }
+    if (config.headerTextColor) {
+      invoker.style.color = config.headerTextColor;
+    }
     invoker.innerHTML = '<span>?</span>';
     if (config.hideWidgetOnMobile !== false) {
       invoker.classList.add(BB_HELP_HIDE_ON_MOBILE_CLASS);
