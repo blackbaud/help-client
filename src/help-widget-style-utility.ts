@@ -1,5 +1,5 @@
-const panelHeight = '45px';
-const panelWidth = '50px';
+const panelHeight = '591px';
+const panelWidth = '450px';
 const collapsedHeaderHeight = '30px';
 const containerZIndex = 9999;
 
@@ -23,7 +23,7 @@ const widgetCss = `
     z-index: ${containerZIndex};
     line-height: normal;
     position: fixed;
-    top: 5px;
+    top: 0;
     right: 0;
     transition: right 250ms ease-in;
     height: ${panelHeight};
@@ -44,9 +44,12 @@ const widgetCss = `
     border: none;
     background-color: transparent;
     color: #fff;
+    position: absolute;
     cursor: pointer;
-    height: 100%;
-    width: 100%;
+    height: 45px;
+    top: 5px;
+    width: 50px;
+    right: 100%;
     margin: 0;
     padding: 0;
     border: none;
@@ -75,35 +78,6 @@ const widgetCss = `
 
   .bb-help-closed #bb-help-iframe {
     box-shadow: none;
-  }
-
-  .help-menu {
-    position: absolute;
-    top: 45px;
-    right: 0;
-    min-width: 100px;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px 0 rgba(0,0,0,.3);
-  }
-
-  .help-menu-item {
-    border: none;
-    display: block;
-    margin: 4px;
-    min-width: 160px;
-    text-align: left;
-    color: #212327;
-    cursor: pointer;
-    padding: 3px 20px;
-    width: 100%;
-  }
-
-  .help-menu-item:hover, .help-menu-item:focus {
-    background-color: #eeeeef;
-  }
-
-  .help-menu-collapse {
-    display: none
   }
 `;
 

@@ -8,7 +8,6 @@ const BB_HEADER_COLOR: string = 'transparent';
 const BB_HEADER_TEXT_COLOR: string = '#fff'; // this is to match omnibar's text color;
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
-
 export class BBHelpHelpWidgetRenderer {
 
   public createContainer(): HTMLElement {
@@ -16,6 +15,7 @@ export class BBHelpHelpWidgetRenderer {
     domElement = document.createElement('div');
     domElement.id = 'bb-help-container';
     domElement.classList.add('bb-help-container');
+    domElement.classList.add('bb-help-closed');
     return domElement;
   }
 
@@ -27,17 +27,6 @@ export class BBHelpHelpWidgetRenderer {
     invoker.setAttribute('aria-pressed', 'false');
     invoker.id = BB_HELP_INVOKER_ID;
     return invoker;
-  }
-
-  public createMenu(): HTMLDivElement {
-    const labels = ['Get help', 'What\'s new', 'Support resources'];
-    const menu = document.createElement('div');
-    menu.classList.add('help-menu');
-    menu.classList.add('help-menu-collapse');
-    menu.setAttribute('role', 'menu');
-    const items = labels.map(label => this.createMenuItem(label));
-    items.forEach(item => menu.appendChild(item));
-    return menu;
   }
 
   /**
@@ -63,15 +52,5 @@ export class BBHelpHelpWidgetRenderer {
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
     parentEl.appendChild(el);
-  }
-
-  private createMenuItem(label: string): HTMLAnchorElement {
-    const item = document.createElement('a');
-    item.href = 'https://duckduckgo.com';
-    item.target = '_blank';
-    item.classList.add('help-menu-item');
-    item.setAttribute('role', 'menuitem');
-    item.appendChild(document.createTextNode(label));
-    return item;
   }
 }
