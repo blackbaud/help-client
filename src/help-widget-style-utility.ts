@@ -104,6 +104,8 @@ const widgetCss = `
 
   .help-menu-item:hover, .help-menu-item:focus {
     background-color: #eeeeef;
+    text-decoration: none;
+    color: #212327;
   }
 
   .help-menu-collapse {
