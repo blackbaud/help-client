@@ -197,16 +197,17 @@ export class BBHelpHelpWidget {
 
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
-      this.menu.classList.toggle('help-menu-collapse');
-      if (!this.menu.classList.contains('help-menu-collapse')) {
-        (this.menu.firstElementChild as HTMLElement).focus();
+      if (this.isMenuCollapsed()) {
+        this.expandMenu();
+      } else {
+        this.collapseMenu(true);
       }
     });
     this.menu.addEventListener('focusout', (event: FocusEvent) => {
       const relatedTarget = event.relatedTarget as HTMLElement;
       // if the focus is being moved to something outside of the menu, hide the menu.
       if (!this.container.contains(relatedTarget)) {
-        this.menu.classList.add('help-menu-collapse');
+        this.collapseMenu(false);
       }
     });
     this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeydown(event));
@@ -217,8 +218,7 @@ export class BBHelpHelpWidget {
       case 'escape':
       case 'esc': // ie support
       case 'tab':
-        this.menu.classList.add('help-menu-collapse');
-        this.invoker.focus();
+        this.collapseMenu(true);
         break;
       case 'arrowdown':
       case 'arrowright':
@@ -258,10 +258,28 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * @deprecated widget no longer expands, thus it is always collapsed
+   * @deprecated widget no longer expands, thus it is always collapsed in the original definition of the function.
    */
   private isCollapsed() {
     return true;
+  }
+
+  private isMenuCollapsed(): boolean {
+    return this.menu.classList.contains('help-menu-collapse');
+  }
+
+  private expandMenu(): void {
+    this.menu.classList.remove('help-menu-collapse');
+    this.invoker.classList.add('active');
+    (this.menu.firstElementChild as HTMLElement).focus();
+  }
+
+  private collapseMenu(focusOnInvoker: boolean): void {
+    this.menu.classList.add('help-menu-collapse');
+    this.invoker.classList.remove('active');
+    if (focusOnInvoker) {
+      this.invoker.focus();
+    }
   }
 
   private setClassesForWindowSize() {
