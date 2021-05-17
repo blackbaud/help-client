@@ -198,7 +198,7 @@ export class BBHelpHelpWidget {
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
       if (this.isMenuCollapsed()) {
-        this.expandMenu();
+        this.expandMenu(true);
       } else {
         this.collapseMenu(true);
       }
@@ -210,10 +210,30 @@ export class BBHelpHelpWidget {
         this.collapseMenu(false);
       }
     });
-    this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleKeydown(event));
+    this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleMenuKeydown(event));
+    this.invoker.addEventListener('keydown', (event: KeyboardEvent) => this.handleInvokerKeydown(event));
   }
 
-  private handleKeydown(event: KeyboardEvent): void {
+  private handleInvokerKeydown(event: KeyboardEvent): void {
+    switch (event.key.toLowerCase()) {
+      case 'arrowdown':
+      case 'arrowright':
+      case 'down': // ie support
+      case 'right': // ie support
+        this.expandMenu(true);
+        break;
+      case 'arrowup':
+      case 'arrowleft':
+      case 'up': // ie support
+      case 'left': // ie support
+        this.expandMenu(false);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private handleMenuKeydown(event: KeyboardEvent): void {
     switch (event.key.toLowerCase()) {
       case 'escape':
       case 'esc': // ie support
@@ -268,10 +288,14 @@ export class BBHelpHelpWidget {
     return this.menu.classList.contains('help-menu-collapse');
   }
 
-  private expandMenu(): void {
+  private expandMenu(focusOnFirst: boolean): void {
     this.menu.classList.remove('help-menu-collapse');
     this.invoker.classList.add('active');
-    (this.menu.firstElementChild as HTMLElement).focus();
+    if (focusOnFirst) {
+      (this.menu.firstElementChild as HTMLElement).focus();
+    } else {
+      (this.menu.lastElementChild as HTMLElement).focus();
+    }
   }
 
   private collapseMenu(focusOnInvoker: boolean): void {

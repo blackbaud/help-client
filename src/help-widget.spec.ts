@@ -196,6 +196,36 @@ describe('BBHelpHelpWidget', () => {
       });
   });
 
+  ['arrowdown', 'arrowright', 'down', 'right'].forEach(key => {
+    it(`should open menu and focus on first item when ${key} key is pressed`, (done: DoneFn) => {
+      helpWidget.load({})
+        .then(() => {
+          const menu = document.querySelector('div.help-menu');
+          const invoker = document.getElementById('bb-help-invoker');
+          invoker.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+          expect(menu.classList).not.toContain('help-menu-collapse');
+          expect(invoker.classList).toContain('active');
+          expect(document.activeElement).toBe(menu.firstElementChild);
+          done();
+        });
+    });
+  });
+
+  ['arrowup', 'arrowleft', 'up', 'left'].forEach(key => {
+    it(`should open menu and focus on last item when ${key} key is pressed`, (done: DoneFn) => {
+      helpWidget.load({})
+        .then(() => {
+          const menu = document.querySelector('div.help-menu');
+          const invoker = document.getElementById('bb-help-invoker');
+          invoker.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+          expect(menu.classList).not.toContain('help-menu-collapse');
+          expect(invoker.classList).toContain('active');
+          expect(document.activeElement).toBe(menu.lastElementChild);
+          done();
+        });
+    });
+  });
+
   describe('when menu is shown', () => {
     beforeEach(async () => {
       const appButton = document.createElement('button');
