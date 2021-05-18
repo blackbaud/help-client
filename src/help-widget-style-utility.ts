@@ -85,27 +85,31 @@ const widgetCss = `
     position: absolute;
     top: 45px;
     right: 0;
-    min-width: 100px;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px 0 rgba(0,0,0,.3);
+    min-width: 200px;
+    background-color: #35393e;
+    padding: 6px 0;
   }
 
   .help-menu-item {
     border: none;
     display: block;
-    margin: 4px;
     min-width: 160px;
     text-align: left;
-    color: #212327;
+    color: white;
     cursor: pointer;
-    padding: 3px 20px;
+    padding: 15px;
     width: 100%;
+    background-color: transparent;
   }
 
   .help-menu-item:hover, .help-menu-item:focus {
-    background-color: #eeeeef;
+    background-color: #4d5259;
     text-decoration: none;
-    color: #212327;
+    color: white;
+  }
+
+  .help-menu-separator {
+    border-top: solid 1px #8b919b;
   }
 
   .help-menu-collapse {

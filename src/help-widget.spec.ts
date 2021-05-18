@@ -340,6 +340,36 @@ describe('BBHelpHelpWidget', () => {
         });
       });
     });
+
+    describe('when focused on element before separator', () => {
+      let separator: HTMLDivElement;
+
+      beforeEach(() => {
+        separator = document.querySelector('div.help-menu-separator');
+        (separator.previousElementSibling as HTMLElement).focus();
+      });
+
+      it('should skip separator when user cycles to next item', () => {
+        const menu = document.querySelector('div.help-menu');
+        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'down' }));
+        expect(document.activeElement).toBe(separator.nextElementSibling);
+      });
+    });
+
+    describe('when focused on element after separator', () => {
+      let separator: HTMLDivElement;
+
+      beforeEach(() => {
+        separator = document.querySelector('div.help-menu-separator');
+        (separator.nextElementSibling as HTMLElement).focus();
+      });
+
+      it('should skip separator when user cycles to previous item', () => {
+        const menu = document.querySelector('div.help-menu');
+        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'up' }));
+        expect(document.activeElement).toBe(separator.previousElementSibling);
+      });
+    });
   });
 
   it('should pass a helpKey to the open method from toggleOpen', (done: DoneFn) => {

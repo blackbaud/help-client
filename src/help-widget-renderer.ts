@@ -5,6 +5,7 @@ const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
+const SEPARATOR = '|';
 
 export class BBHelpHelpWidgetRenderer {
 
@@ -27,7 +28,7 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public createMenu(): HTMLDivElement {
-    const labels = ['Get help', 'What\'s new', 'Support resources'];
+    const labels = ['Get help', 'What\'s new', SEPARATOR, 'Support resources'];
     const menu = document.createElement('div');
     menu.classList.add('help-menu');
     menu.classList.add('help-menu-collapse');
@@ -66,13 +67,24 @@ export class BBHelpHelpWidgetRenderer {
     parentEl.appendChild(el);
   }
 
-  private createMenuItem(label: string): HTMLAnchorElement {
-    const item = document.createElement('a');
-    item.href = 'https://duckduckgo.com';
-    item.target = '_blank';
-    item.classList.add('help-menu-item');
-    item.setAttribute('role', 'menuitem');
-    item.appendChild(document.createTextNode(label));
-    return item;
+  /**
+   * Creates a menu item based on the label.
+   * If the label is {@link SEPARATOR}, then a separator item is created.
+   */
+  private createMenuItem(label: string): HTMLAnchorElement | HTMLDivElement {
+    if (label === SEPARATOR) {
+      const separator = document.createElement('div');
+      separator.classList.add('help-menu-separator');
+      separator.setAttribute('aria-hidden', 'true');
+      return separator;
+    } else {
+      const item = document.createElement('a');
+      item.href = 'https://duckduckgo.com';
+      item.target = '_blank';
+      item.classList.add('help-menu-item');
+      item.setAttribute('role', 'menuitem');
+      item.appendChild(document.createTextNode(label));
+      return item;
+    }
   }
 }

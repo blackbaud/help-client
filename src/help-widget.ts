@@ -259,8 +259,13 @@ export class BBHelpHelpWidget {
 
   private focusOnPreviousMenuItem() {
     if (this.menu.contains(document.activeElement)) {
-      if (document.activeElement.previousElementSibling) {
-        (document.activeElement.previousElementSibling as HTMLElement).focus();
+      let prevElement = document.activeElement.previousElementSibling as HTMLElement;
+      if (prevElement) {
+        // skip the separator
+        if (prevElement.classList.contains('help-menu-separator')) {
+          prevElement = prevElement.previousElementSibling as HTMLElement;
+        }
+        prevElement.focus();
       } else {
         (this.menu.lastElementChild as HTMLElement).focus();
       }
@@ -269,8 +274,13 @@ export class BBHelpHelpWidget {
 
   private focusOnNextMenuItem() {
     if (this.menu.contains(document.activeElement)) {
-      if (document.activeElement.nextElementSibling) {
-        (document.activeElement.nextElementSibling as HTMLElement).focus();
+      let nextElement = document.activeElement.nextElementSibling as HTMLElement;
+      if (nextElement) {
+        // skip the separator
+        if (nextElement.classList.contains('help-menu-separator')) {
+          nextElement = nextElement.nextElementSibling as HTMLElement;
+        }
+        nextElement.focus();
       } else {
         (this.menu.firstElementChild as HTMLElement).focus();
       }
