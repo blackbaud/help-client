@@ -29,6 +29,7 @@ const widgetCss = `
     height: ${panelHeight};
     width: ${panelWidth};
     box-sizing: border-box;
+    padding: 0px;   /* this is here to override the padding that auth-client applies */
   }
 
   .bb-omnibar-collapsed #bb-help-container.bb-help-closed #bb-help-invoker:not(:hover) {
