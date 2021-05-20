@@ -50,10 +50,14 @@ const widgetCss = `
     margin: 0;
     padding: 0;
     border: none;
+    background-clip: padding-box;
   }
 
   #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
     background-color: #35393e;
+    border-top: 5px solid rgba(0,0,0,.3);
+    height: 50px;
+    margin-top: -5px;
   }
 
   #bb-help-invoker > span {
