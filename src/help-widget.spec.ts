@@ -184,14 +184,14 @@ describe('BBHelpHelpWidget', () => {
         const menu = document.querySelector('div.help-menu');
         const invoker = document.getElementById('bb-help-invoker');
         expect(menu.classList).toContain('help-menu-collapse');
-        expect(invoker).not.toContain('active');
+        expect(invoker).not.toContain('bb-help-active');
         invoker.click();
         expect(menu.classList).not.toContain('help-menu-collapse');
-        expect(invoker.classList).toContain('active');
+        expect(invoker.classList).toContain('bb-help-active');
         expect(menu.firstElementChild).toBe(document.activeElement);
         invoker.click();
         expect(menu.classList).toContain('help-menu-collapse');
-        expect(invoker).not.toContain('active');
+        expect(invoker).not.toContain('bb-help-active');
         done();
       });
   });
@@ -204,7 +204,7 @@ describe('BBHelpHelpWidget', () => {
           const invoker = document.getElementById('bb-help-invoker');
           invoker.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
-          expect(invoker.classList).toContain('active');
+          expect(invoker.classList).toContain('bb-help-active');
           expect(document.activeElement).toBe(menu.firstElementChild);
           done();
         });
@@ -219,7 +219,7 @@ describe('BBHelpHelpWidget', () => {
           const invoker = document.getElementById('bb-help-invoker');
           invoker.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
-          expect(invoker.classList).toContain('active');
+          expect(invoker.classList).toContain('bb-help-active');
           expect(document.activeElement).toBe(menu.lastElementChild);
           done();
         });
@@ -241,7 +241,7 @@ describe('BBHelpHelpWidget', () => {
       invoker.click();
       const menu = document.querySelector('div.help-menu');
       expect(menu.classList).toContain('help-menu-collapse');
-      expect(invoker).not.toContain('active');
+      expect(invoker).not.toContain('bb-help-active');
     });
 
     it('should hide menu when something outside container is focused', () => {
@@ -250,7 +250,7 @@ describe('BBHelpHelpWidget', () => {
       const button = document.querySelector('button#app-button');
       menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: button }));
       expect(menu.classList).toContain('help-menu-collapse');
-      expect(invoker).not.toContain('active');
+      expect(invoker).not.toContain('bb-help-active');
     });
 
     it('should not hide menu when something inside container is focused', () => {
@@ -258,7 +258,7 @@ describe('BBHelpHelpWidget', () => {
       const invoker = document.getElementById('bb-help-invoker');
       menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: invoker }));
       expect(menu.classList).not.toContain('help-menu-collapse');
-      expect(invoker.classList).toContain('active');
+      expect(invoker.classList).toContain('bb-help-active');
     });
 
     it('should ignore unknown keyboard keys', () => {
@@ -266,7 +266,7 @@ describe('BBHelpHelpWidget', () => {
       const invoker = document.getElementById('bb-help-invoker');
       menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
       expect(menu.classList).not.toContain('help-menu-collapse');
-      expect(invoker.classList).toContain('active');
+      expect(invoker.classList).toContain('bb-help-active');
       expect(document.activeElement).toBe(menu.firstElementChild);
     });
 
@@ -276,7 +276,7 @@ describe('BBHelpHelpWidget', () => {
         const invoker = document.getElementById('bb-help-invoker');
         menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
         expect(menu.classList).toContain('help-menu-collapse');
-        expect(invoker).not.toContain('active');
+        expect(invoker).not.toContain('bb-help-active');
         expect(document.activeElement).toBe(invoker);
       });
     });
@@ -287,7 +287,7 @@ describe('BBHelpHelpWidget', () => {
         const invoker = document.getElementById('bb-help-invoker');
         menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
         expect(menu.classList).not.toContain('help-menu-collapse');
-        expect(invoker.classList).toContain('active');
+        expect(invoker.classList).toContain('bb-help-active');
         expect(document.activeElement).toBe(menu.firstElementChild.nextElementSibling);
       });
     });
@@ -300,7 +300,7 @@ describe('BBHelpHelpWidget', () => {
         (menu.firstElementChild.nextElementSibling as HTMLElement).focus();
         menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
         expect(menu.classList).not.toContain('help-menu-collapse');
-        expect(invoker.classList).toContain('active');
+        expect(invoker.classList).toContain('bb-help-active');
         expect(document.activeElement).toBe(menu.firstElementChild);
       });
     });
@@ -317,7 +317,7 @@ describe('BBHelpHelpWidget', () => {
           const invoker = document.getElementById('bb-help-invoker');
           menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
-          expect(invoker.classList).toContain('active');
+          expect(invoker.classList).toContain('bb-help-active');
           expect(document.activeElement).toBe(menu.lastElementChild);
         });
       });
@@ -335,7 +335,7 @@ describe('BBHelpHelpWidget', () => {
           const invoker = document.getElementById('bb-help-invoker');
           menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
-          expect(invoker.classList).toContain('active');
+          expect(invoker.classList).toContain('bb-help-active');
           expect(document.activeElement).toBe(menu.firstElementChild);
         });
       });

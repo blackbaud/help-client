@@ -300,7 +300,8 @@ export class BBHelpHelpWidget {
 
   private expandMenu(focusOnFirst: boolean): void {
     this.menu.classList.remove('help-menu-collapse');
-    this.invoker.classList.add('active');
+    this.invoker.classList.add('bb-help-active');
+    this.container.classList.add('bb-help-active');
     if (focusOnFirst) {
       (this.menu.firstElementChild as HTMLElement).focus();
     } else {
@@ -310,7 +311,8 @@ export class BBHelpHelpWidget {
 
   private collapseMenu(focusOnInvoker: boolean): void {
     this.menu.classList.add('help-menu-collapse');
-    this.invoker.classList.remove('active');
+    this.invoker.classList.remove('bb-help-active');
+    this.container.classList.remove('bb-help-active');
     if (focusOnInvoker) {
       this.invoker.focus();
     }

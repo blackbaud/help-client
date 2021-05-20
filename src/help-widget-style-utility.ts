@@ -52,7 +52,7 @@ const widgetCss = `
     border: none;
   }
 
-  #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.active {
+  #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
     background-color: #35393e;
   }
 
