@@ -5,7 +5,15 @@ const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
-const SEPARATOR = '|';
+
+const SEPARATOR: '|' = '|';
+type LinkMenuItem = { label: string, url: string, class?: string };
+type SeparatorMenuItem = { label: typeof SEPARATOR };
+type MenuItem = LinkMenuItem | SeparatorMenuItem;
+
+function isSeparator(item: MenuItem): item is SeparatorMenuItem {
+  return item.label === SEPARATOR;
+}
 
 export class BBHelpHelpWidgetRenderer {
 
@@ -27,14 +35,19 @@ export class BBHelpHelpWidgetRenderer {
     return invoker;
   }
 
-  public createMenu(): HTMLDivElement {
-    const labels = ['Open help', 'What\'s new', SEPARATOR, 'Support resources'];
+  public createMenu(contentUrl: string): HTMLDivElement {
+    const menuItemInfo: MenuItem[] = [
+      { label: 'Open help', url: contentUrl, class: 'bb-help-content-link' },
+      { label: 'What\'s new', url: 'https://duckduckgo.com' },
+      { label: SEPARATOR },
+      { label: 'Support resources', url: 'https://support.blackbaud.com' }
+    ];
     const menu = document.createElement('div');
     menu.classList.add('help-menu');
     menu.classList.add('help-menu-collapse');
     menu.setAttribute('role', 'menu');
-    const items = labels.map(label => this.createMenuItem(label));
-    items.forEach(item => menu.appendChild(item));
+    menuItemInfo.map(label => this.createMenuItem(label))
+      .forEach(item => menu.appendChild(item));
     return menu;
   }
 
@@ -68,23 +81,26 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   /**
-   * Creates a menu item based on the label.
-   * If the label is {@link SEPARATOR}, then a separator item is created.
+   * Creates a menu item based on the label and url.
+   * If the label is {@link SEPARATOR}, then a separator item is created and the url is ignored.
    */
-  private createMenuItem(label: string): HTMLAnchorElement | HTMLDivElement {
-    if (label === SEPARATOR) {
+  private createMenuItem(item: MenuItem): HTMLAnchorElement | HTMLDivElement {
+    if (isSeparator(item)) {
       const separator = document.createElement('div');
       separator.classList.add('help-menu-separator');
       separator.setAttribute('aria-hidden', 'true');
       return separator;
     } else {
-      const item = document.createElement('a');
-      item.href = 'https://duckduckgo.com';
-      item.target = '_blank';
-      item.classList.add('help-menu-item');
-      item.setAttribute('role', 'menuitem');
-      item.appendChild(document.createTextNode(label));
-      return item;
+      const anchor = document.createElement('a');
+      anchor.href = item.url;
+      anchor.target = '_blank';
+      anchor.classList.add('help-menu-item');
+      if (item.class) {
+        anchor.classList.add(item.class);
+      }
+      anchor.setAttribute('role', 'menuitem');
+      anchor.appendChild(document.createTextNode(item.label));
+      return anchor;
     }
   }
 }

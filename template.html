@@ -56,9 +56,7 @@
     function loadWidget() {
       BBHELP.HelpWidget.unload();
       const config = buildConfig();
-      if (config.extends) {
-        BBHELP.HelpWidget.load(config);
-      }
+      return BBHELP.HelpWidget.load(config);
     }
 
     function renderSvcIds() {
@@ -86,11 +84,11 @@
       });
     }
 
-    function renderFormAndLoadWidget() {
+    renderFormAndLoadWidget = async () => {
       renderLocales();
       renderSvcIds();
       renderConfig();
-      loadWidget();
+      await loadWidget();
     }
   </script>
 </main>
