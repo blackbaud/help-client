@@ -28,7 +28,7 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public createMenu(): HTMLDivElement {
-    const labels = ['Get help', 'What\'s new', SEPARATOR, 'Support resources'];
+    const labels = ['Open help', 'What\'s new', SEPARATOR, 'Support resources'];
     const menu = document.createElement('div');
     menu.classList.add('help-menu');
     menu.classList.add('help-menu-collapse');
