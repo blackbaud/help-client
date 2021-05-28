@@ -71,20 +71,13 @@ describe('BBHelpHelpWidgetRenderer', () => {
     done();
   });
 
-  it('should add styles to the invoker to defaults if no header configs exists', (done) => {
+  it('should not add styles directly to the invoker if no header configs exist', (done) => {
     const invokerEl: HTMLButtonElement = widgetRenderer.createInvoker();
-    // Different browsers return the color value as rgb or hex.
-    const headerTextColorHex: string = '#fffff';
-    const headerTextColorRGB: string = 'rgb(255, 255, 255)';
 
     widgetRenderer.addInvokerStyles(invokerEl, {});
 
-    const TEXT_COLOR: string = (invokerEl.style.color.indexOf('rgb') > -1)
-      ? headerTextColorRGB
-      : headerTextColorHex;
-
-    expect(invokerEl.style.backgroundColor).toEqual('transparent');
-    expect(invokerEl.style.color).toEqual(TEXT_COLOR);
+    expect(invokerEl.style.backgroundColor).toEqual('');
+    expect(invokerEl.style.color).toEqual('');
     expect(invokerEl.innerHTML).toEqual('<span>?</span>');
     done();
   });

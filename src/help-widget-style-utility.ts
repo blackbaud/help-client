@@ -1,5 +1,5 @@
-const panelHeight = '591px';
-const panelWidth = '450px';
+const panelHeight = '45px';
+const panelWidth = '50px';
 const collapsedHeaderHeight = '30px';
 const containerZIndex = 9999;
 
@@ -23,12 +23,13 @@ const widgetCss = `
     z-index: ${containerZIndex};
     line-height: normal;
     position: fixed;
-    top: 0;
+    top: 5px;
     right: 0;
     transition: right 250ms ease-in;
     height: ${panelHeight};
     width: ${panelWidth};
     box-sizing: border-box;
+    padding: 0px;   /* this is here to override the padding that auth-client applies */
   }
 
   .bb-omnibar-collapsed #bb-help-container.bb-help-closed #bb-help-invoker:not(:hover) {
@@ -44,15 +45,20 @@ const widgetCss = `
     border: none;
     background-color: transparent;
     color: #fff;
-    position: absolute;
     cursor: pointer;
-    height: 45px;
-    top: 5px;
-    width: 50px;
-    right: 100%;
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     border: none;
+    background-clip: padding-box;
+  }
+
+  #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
+    background-color: #35393e;
+    border-top: 5px solid rgba(0,0,0,.3);
+    height: 50px;
+    margin-top: -5px;
   }
 
   #bb-help-invoker > span {
@@ -78,6 +84,41 @@ const widgetCss = `
 
   .bb-help-closed #bb-help-iframe {
     box-shadow: none;
+  }
+
+  .help-menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    min-width: 200px;
+    background-color: #35393e;
+    padding: 6px 0;
+  }
+
+  .help-menu-item {
+    border: none;
+    display: block;
+    min-width: 160px;
+    text-align: left;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    background-color: transparent;
+  }
+
+  .help-menu-item:hover, .help-menu-item:focus {
+    background-color: #4d5259;
+    text-decoration: none;
+    color: white;
+  }
+
+  .help-menu-separator {
+    border-top: solid 1px #8b919b;
+  }
+
+  .help-menu-collapse {
+    display: none
   }
 `;
 

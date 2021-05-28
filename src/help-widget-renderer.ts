@@ -3,11 +3,10 @@ import { HelpConfig } from './help-config';
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
-// Some browsers return the hexdecimal values are rgb and vice versa when the style is set with javascript.
-const BB_HEADER_COLOR: string = 'transparent';
-const BB_HEADER_TEXT_COLOR: string = '#fff'; // this is to match omnibar's text color;
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
+const SEPARATOR = '|';
+
 export class BBHelpHelpWidgetRenderer {
 
   public createContainer(): HTMLElement {
@@ -15,7 +14,6 @@ export class BBHelpHelpWidgetRenderer {
     domElement = document.createElement('div');
     domElement.id = 'bb-help-container';
     domElement.classList.add('bb-help-container');
-    domElement.classList.add('bb-help-closed');
     return domElement;
   }
 
@@ -27,6 +25,17 @@ export class BBHelpHelpWidgetRenderer {
     invoker.setAttribute('aria-pressed', 'false');
     invoker.id = BB_HELP_INVOKER_ID;
     return invoker;
+  }
+
+  public createMenu(): HTMLDivElement {
+    const labels = ['Open help', 'What\'s new', SEPARATOR, 'Support resources'];
+    const menu = document.createElement('div');
+    menu.classList.add('help-menu');
+    menu.classList.add('help-menu-collapse');
+    menu.setAttribute('role', 'menu');
+    const items = labels.map(label => this.createMenuItem(label));
+    items.forEach(item => menu.appendChild(item));
+    return menu;
   }
 
   /**
@@ -42,8 +51,12 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
-    invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
-    invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
+    if (config.headerColor) {
+      invoker.style.backgroundColor = config.headerColor;
+    }
+    if (config.headerTextColor) {
+      invoker.style.color = config.headerTextColor;
+    }
     invoker.innerHTML = '<span>?</span>';
     if (config.hideWidgetOnMobile !== false) {
       invoker.classList.add(BB_HELP_HIDE_ON_MOBILE_CLASS);
@@ -52,5 +65,26 @@ export class BBHelpHelpWidgetRenderer {
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
     parentEl.appendChild(el);
+  }
+
+  /**
+   * Creates a menu item based on the label.
+   * If the label is {@link SEPARATOR}, then a separator item is created.
+   */
+  private createMenuItem(label: string): HTMLAnchorElement | HTMLDivElement {
+    if (label === SEPARATOR) {
+      const separator = document.createElement('div');
+      separator.classList.add('help-menu-separator');
+      separator.setAttribute('aria-hidden', 'true');
+      return separator;
+    } else {
+      const item = document.createElement('a');
+      item.href = 'https://duckduckgo.com';
+      item.target = '_blank';
+      item.classList.add('help-menu-item');
+      item.setAttribute('role', 'menuitem');
+      item.appendChild(document.createTextNode(label));
+      return item;
+    }
   }
 }

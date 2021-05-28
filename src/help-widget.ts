@@ -3,7 +3,6 @@ import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { mergeConfig } from './service/config-merge.utils';
 
-const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
 const DISABLE_TRANSITION: string = 'bb-help-disable-transition';
 const MOBILE_WIDTH_CLASS: string = 'bb-help-mobile-width';
@@ -16,6 +15,7 @@ export class BBHelpHelpWidget {
   public onHelpLoaded: any;
   private container: HTMLElement;
   private invoker: HTMLElement;
+  private menu: HTMLElement;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
@@ -180,11 +180,13 @@ export class BBHelpHelpWidget {
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
     this.container.appendChild(this.invoker);
+    this.container.appendChild(this.menu);
   }
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
+    this.menu = this.widgetRenderer.createMenu();
     this.elementsLoaded = true;
   }
 
@@ -195,15 +197,125 @@ export class BBHelpHelpWidget {
 
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
-      this.toggleOpen();
+      if (this.isMenuCollapsed()) {
+        this.expandMenu(true);
+      } else {
+        this.collapseMenu(true);
+      }
     });
+    this.menu.addEventListener('focusout', (event: FocusEvent) => {
+      const relatedTarget = event.relatedTarget as HTMLElement;
+      // if the focus is being moved to something outside of the menu, hide the menu.
+      if (!this.container.contains(relatedTarget)) {
+        this.collapseMenu(false);
+      }
+    });
+    this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleMenuKeydown(event));
+    this.invoker.addEventListener('keydown', (event: KeyboardEvent) => this.handleInvokerKeydown(event));
+  }
+
+  private handleInvokerKeydown(event: KeyboardEvent): void {
+    switch (event.key.toLowerCase()) {
+      case 'arrowdown':
+      case 'arrowright':
+      case 'down': // ie support
+      case 'right': // ie support
+        this.expandMenu(true);
+        break;
+      case 'arrowup':
+      case 'arrowleft':
+      case 'up': // ie support
+      case 'left': // ie support
+        this.expandMenu(false);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private handleMenuKeydown(event: KeyboardEvent): void {
+    switch (event.key.toLowerCase()) {
+      case 'escape':
+      case 'esc': // ie support
+      case 'tab':
+        this.collapseMenu(true);
+        break;
+      case 'arrowdown':
+      case 'arrowright':
+      case 'down': // ie support
+      case 'right': // ie support
+        this.focusOnNextMenuItem();
+        break;
+      case 'arrowup':
+      case 'arrowleft':
+      case 'up': // ie support
+      case 'left': // ie support
+        this.focusOnPreviousMenuItem();
+        break;
+      default:
+        break;
+    }
+  }
+
+  private focusOnPreviousMenuItem() {
+    if (this.menu.contains(document.activeElement)) {
+      let prevElement = document.activeElement.previousElementSibling as HTMLElement;
+      if (prevElement) {
+        // skip the separator
+        if (prevElement.classList.contains('help-menu-separator')) {
+          prevElement = prevElement.previousElementSibling as HTMLElement;
+        }
+        prevElement.focus();
+      } else {
+        (this.menu.lastElementChild as HTMLElement).focus();
+      }
+    }
+  }
+
+  private focusOnNextMenuItem() {
+    if (this.menu.contains(document.activeElement)) {
+      let nextElement = document.activeElement.nextElementSibling as HTMLElement;
+      if (nextElement) {
+        // skip the separator
+        if (nextElement.classList.contains('help-menu-separator')) {
+          nextElement = nextElement.nextElementSibling as HTMLElement;
+        }
+        nextElement.focus();
+      } else {
+        (this.menu.firstElementChild as HTMLElement).focus();
+      }
+    }
   }
 
   /**
-   * @deprecated widget no longer expands, thus it is always collapsed
+   * @deprecated widget no longer expands, thus it is always collapsed in the original definition of the function.
    */
   private isCollapsed() {
-    return this.container.classList.contains(HELP_CLOSED_CLASS);
+    return true;
+  }
+
+  private isMenuCollapsed(): boolean {
+    return this.menu.classList.contains('help-menu-collapse');
+  }
+
+  private expandMenu(focusOnFirst: boolean): void {
+    this.menu.classList.remove('help-menu-collapse');
+    this.invoker.classList.add('bb-help-active');
+    this.container.classList.add('bb-help-active');
+    if (focusOnFirst) {
+      (this.menu.firstElementChild as HTMLElement).focus();
+    } else {
+      (this.menu.lastElementChild as HTMLElement).focus();
+    }
+  }
+
+  private collapseMenu(focusOnInvoker: boolean): void {
+    this.menu.classList.add('help-menu-collapse');
+    this.invoker.classList.remove('bb-help-active');
+    this.container.classList.remove('bb-help-active');
+    if (focusOnInvoker) {
+      this.invoker.focus();
+    }
   }
 
   private setClassesForWindowSize() {
