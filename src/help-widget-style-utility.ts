@@ -54,11 +54,60 @@ const widgetCss = `
     background-clip: padding-box;
   }
 
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker {
+    color: #212327;
+  }
+
   #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
     background-color: #35393e;
     border-top: 5px solid rgba(0,0,0,.3);
     height: 50px;
     margin-top: -5px;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover {
+    background-color: #fff;
+    border-top: none;
+    border-bottom: solid 1px #00b4f1;
+    height: 46px;
+    margin-top: 0;
+    outline: none;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):focus {
+    border: solid 2px #1870b8;
+    background-color: #fff;
+    height: 45px;
+    margin-top: 0;
+    outline: none;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:active,
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker.bb-help-active {
+    border: none;
+    background-color: #fff;
+    height: 45px;
+    margin-top: 0;
+    outline: none;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,.3);
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:active:after,
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker.bb-help-active:after {
+    position: absolute;
+    height: 4px;
+    top: 41px;
+    left: 0;
+    width: 100%;
+    content: '';
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:active:after {
+    background-color: #00b4f1;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker.bb-help-active:after {
+    background-color: #fff;
   }
 
   #bb-help-invoker > span {
@@ -95,6 +144,11 @@ const widgetCss = `
     padding: 6px 0;
   }
 
+  body.sky-theme-modern > #bb-help-container > .help-menu {
+    background-color: #fff;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,.3);
+  }
+
   .help-menu-item {
     border: none;
     display: block;
@@ -110,7 +164,38 @@ const widgetCss = `
   .help-menu-item:hover, .help-menu-item:focus {
     background-color: #4d5259;
     text-decoration: none;
-    color: white;
+  }
+
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item {
+    color: #212327;
+    background-color: #fff;
+    position: relative;
+    outline: none;
+  }
+
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item:active:before,
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item:not(:focus):hover:before {
+    position: absolute;
+    background-color: #00b4f1;
+    height: 100%;
+    top: 0;
+    left: 0;
+    content: '';
+  }
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item:not(:focus):hover:before {
+    width: 1px;
+  }
+
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item:active:before {
+    width: 4px;
+  }
+
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-item:not(:active):focus {
+    width: 100%;
+    height: 100%;
+    padding: 13px;
+    border: solid 2px #1870b8;
+    outline: none;
   }
 
   .help-menu-separator {
