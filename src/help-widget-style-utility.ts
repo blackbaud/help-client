@@ -202,6 +202,10 @@ const widgetCss = `
     border-top: solid 1px #8b919b;
   }
 
+  body.sky-theme-modern > #bb-help-container > .help-menu > .help-menu-separator {
+    border-color: #d2d2d2;
+  }
+
   .help-menu-collapse {
     display: none
   }
