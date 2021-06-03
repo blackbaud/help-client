@@ -70,7 +70,7 @@ const widgetCss = `
     background-color: #fff;
     border: none;
     height: 100%;
-    margin-top: 0;
+    margin-top: -1px;
   }
 
   body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover:before {
