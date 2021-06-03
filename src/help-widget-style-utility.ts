@@ -66,14 +66,14 @@ const widgetCss = `
     margin-top: -5px;
   }
 
-  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):hover {
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):not(.bb-help-active):not(:focus):hover {
     background-color: #fff;
     border: none;
     height: 100%;
     margin-top: -1px;
   }
 
-  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):hover:before {
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):not(.bb-help-active):not(:focus):hover:before {
     position: absolute;
     display: block;
     bottom: 0;
