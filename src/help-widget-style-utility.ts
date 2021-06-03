@@ -99,6 +99,9 @@ const widgetCss = `
     height: 45px;
     margin-top: 0;
     outline: none;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker.bb-help-active {
     box-shadow: 0px 1px 3px 0px rgba(0,0,0,.3);
   }
 
