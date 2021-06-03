@@ -1,7 +1,7 @@
 const panelHeight = '45px';
 const panelWidth = '50px';
 const collapsedHeaderHeight = '30px';
-const containerZIndex = 9999;
+const containerZIndex = 1000; // equal to omnibar's z-index
 
 const widgetCss = `
   #bb-help-container.bb-help-disable-transition {
@@ -121,6 +121,8 @@ const widgetCss = `
 
   body.sky-theme-modern > #bb-help-container > #bb-help-invoker.bb-help-active:after {
     background-color: #fff;
+    bottom: -4px;
+    z-index: ${containerZIndex + 1};
   }
 
   #bb-help-invoker > span {
