@@ -66,14 +66,14 @@ const widgetCss = `
     margin-top: -5px;
   }
 
-  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover {
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):hover {
     background-color: #fff;
     border: none;
     height: 100%;
     margin-top: -1px;
   }
 
-  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover:before {
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):hover:before {
     position: absolute;
     display: block;
     bottom: 0;
@@ -88,7 +88,7 @@ const widgetCss = `
     border: solid 2px #1870b8;
     background-color: #fff;
     height: 45px;
-    margin-top: 0;
+    margin-top: -1px;
     outline: none;
   }
 
@@ -97,7 +97,7 @@ const widgetCss = `
     border: none;
     background-color: #fff;
     height: 45px;
-    margin-top: 0;
+    margin-top: -1px;
     outline: none;
   }
 
