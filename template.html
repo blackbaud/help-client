@@ -10,6 +10,12 @@
       overflow: auto;
     }
 
+    body.sky-theme-modern {
+      background-color: #fcfcfc;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
     .fake-omnibar {
       background-color: #4d5259;
       width: 100%;
@@ -20,13 +26,16 @@
       background-color: #fff;
       height: 46px;
       border-bottom: solid 1px #e2e3e4;
-      /*color: #212327;*/
     }
 
     .fake-omnibar-accent {
       width: 100%;
       height: 5px;
       background: linear-gradient(to right, #71bf44 0, #31b986 50%, #00b2ec 100%);
+    }
+
+    body.sky-theme-modern > .fake-omnibar-accent {
+      height: 4px;
     }
   </style>
 </head>
@@ -103,7 +112,6 @@
       renderSvcIds();
       renderConfig();
       await loadWidget();
-      document.querySelector('button#bb-help-invoker').click();
     }
 
     function switchTheme() {

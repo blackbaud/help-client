@@ -56,9 +56,10 @@ const widgetCss = `
 
   body.sky-theme-modern > #bb-help-container > #bb-help-invoker {
     color: #212327;
+    margin-top: -1px;
   }
 
-  #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
+  #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
     background-color: #35393e;
     border-top: 5px solid rgba(0,0,0,.3);
     height: 50px;
@@ -67,11 +68,20 @@ const widgetCss = `
 
   body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover {
     background-color: #fff;
-    border-top: none;
-    border-bottom: solid 1px #00b4f1;
-    height: 46px;
+    border: none;
+    height: 100%;
     margin-top: 0;
-    outline: none;
+  }
+
+  body.sky-theme-modern > #bb-help-container > #bb-help-invoker:hover:before {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: -1px;
+    right: -1px;
+    content: '';
+    border-bottom: solid 1px #00b4f1;
+    margin-bottom: 1px;
   }
 
   body.sky-theme-modern > #bb-help-container > #bb-help-invoker:not(:active):focus {
