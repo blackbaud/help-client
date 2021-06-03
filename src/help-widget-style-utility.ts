@@ -59,7 +59,7 @@ const widgetCss = `
     margin-top: -1px;
   }
 
-  #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
+  #bb-help-invoker:hover, #bb-help-invoker:focus, #bb-help-invoker:active, #bb-help-invoker.bb-help-active {
     background-color: #35393e;
     border-top: 5px solid rgba(0,0,0,.3);
     height: 50px;
