@@ -382,28 +382,39 @@ describe('BBHelpHelpWidget', () => {
       });
   });
 
-  it('should set and send widget currentHelpKey to help SPA', () => {
-    const testKey = 'help.html';
-    helpWidget.setCurrentHelpKey(testKey);
-    expect(helpWidget.currentHelpKey).toEqual(testKey);
+  it('should set and send widget currentHelpKey to help SPA', (done: DoneFn) => {
+    const config = { helpBaseUrl: 'https://bb.com' };
+    helpWidget.load(config)
+      .then(() => {
+        const testKey = 'help.html';
+        helpWidget.setCurrentHelpKey(testKey);
+        expect(helpWidget.currentHelpKey).toEqual(testKey);
+        const contentAnchor: HTMLAnchorElement = document.querySelector('a.bb-help-content-link');
+        expect(contentAnchor.href).toEqual(`${config.helpBaseUrl}/${testKey}`);
+        done();
+      });
   });
 
   it('should set the helpKey to the defaultHelpKey if no helpKey is passed to setCurrentHelpKey', (done: DoneFn) => {
-    const config = { defaultHelpKey: 'test.default' };
+    const config = { defaultHelpKey: 'test.default', helpBaseUrl: 'https://bb.com' };
     helpWidget.load(config)
       .then(() => {
         helpWidget.setCurrentHelpKey();
         expect(helpWidget.currentHelpKey).toEqual(config.defaultHelpKey);
+        const contentAnchor: HTMLAnchorElement = document.querySelector('a.bb-help-content-link');
+        expect(contentAnchor.href).toEqual(`${config.helpBaseUrl}/${config.defaultHelpKey}`);
         done();
       });
   });
 
   it('should set the help key to the default help key', (done: DoneFn) => {
-    const config = { defaultHelpKey: 'test.default' };
+    const config = { defaultHelpKey: 'test.default', helpBaseUrl: 'https://bb.com' };
     helpWidget.load(config)
       .then(() => {
         helpWidget.setHelpKeyToDefault();
         expect(helpWidget.currentHelpKey).toEqual(config.defaultHelpKey);
+        const contentAnchor: HTMLAnchorElement = document.querySelector('a.bb-help-content-link');
+        expect(contentAnchor.href).toEqual(`${config.helpBaseUrl}/${config.defaultHelpKey}`);
         done();
       });
   });

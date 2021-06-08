@@ -121,6 +121,8 @@ export class BBHelpHelpWidget {
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
     this.currentHelpKey = helpKey;
+    const anchor: HTMLAnchorElement = this.menu.querySelector('a.bb-help-content-link');
+    anchor.href = `${this.config.helpBaseUrl}${helpKey}`;
   }
 
   public setHelpKeyToDefault(): void {
@@ -179,6 +181,8 @@ export class BBHelpHelpWidget {
 
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
+    this.menu = this.widgetRenderer.createMenu(`${this.config.helpBaseUrl}${this.getHelpKey()}`);
+    this.setUpMenuEvents();
     this.container.appendChild(this.invoker);
     this.container.appendChild(this.menu);
   }
@@ -186,7 +190,6 @@ export class BBHelpHelpWidget {
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
-    this.menu = this.widgetRenderer.createMenu();
     this.elementsLoaded = true;
   }
 
@@ -203,6 +206,10 @@ export class BBHelpHelpWidget {
         this.collapseMenu(true);
       }
     });
+    this.invoker.addEventListener('keydown', (event: KeyboardEvent) => this.handleInvokerKeydown(event));
+  }
+
+  private setUpMenuEvents() {
     this.menu.addEventListener('focusout', (event: FocusEvent) => {
       const relatedTarget = event.relatedTarget as HTMLElement;
       // if the focus is being moved to something outside of the menu, hide the menu.
@@ -211,7 +218,6 @@ export class BBHelpHelpWidget {
       }
     });
     this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleMenuKeydown(event));
-    this.invoker.addEventListener('keydown', (event: KeyboardEvent) => this.handleInvokerKeydown(event));
   }
 
   private handleInvokerKeydown(event: KeyboardEvent): void {

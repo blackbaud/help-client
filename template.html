@@ -6,10 +6,26 @@
   <link rel="stylesheet" type="text/css"
         href="https://d1ed2bc0tt12m5.cloudfront.net/styles.c10433e4334ac7100968.css"/>
   <style>
+    body {
+      overflow: auto;
+    }
+
+    body.sky-theme-modern {
+      background-color: #fcfcfc;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
     .fake-omnibar {
       background-color: #4d5259;
       width: 100%;
       height: 45px;
+    }
+
+    body.sky-theme-modern > .fake-omnibar {
+      background-color: #fff;
+      height: 46px;
+      border-bottom: solid 1px #e2e3e4;
     }
 
     .fake-omnibar-accent {
@@ -17,11 +33,18 @@
       height: 5px;
       background: linear-gradient(to right, #71bf44 0, #31b986 50%, #00b2ec 100%);
     }
+
+    body.sky-theme-modern > .fake-omnibar-accent {
+      height: 4px;
+    }
   </style>
 </head>
-<body style="overflow: auto" onload="renderFormAndLoadWidget()">
+<body onload="renderFormAndLoadWidget()">
 <div class="fake-omnibar-accent"></div>
 <div class="fake-omnibar"></div>
+<div>
+  <button onclick="switchTheme()">Switch theme</button>
+</div>
 <main class="sky-padding-even-default">
   <h1>help-client demo</h1>
   <h2>Standard svcid configs</h2>
@@ -56,9 +79,7 @@
     function loadWidget() {
       BBHELP.HelpWidget.unload();
       const config = buildConfig();
-      if (config.extends) {
-        BBHELP.HelpWidget.load(config);
-      }
+      return BBHELP.HelpWidget.load(config);
     }
 
     function renderSvcIds() {
@@ -86,11 +107,15 @@
       });
     }
 
-    function renderFormAndLoadWidget() {
+    renderFormAndLoadWidget = async () => {
       renderLocales();
       renderSvcIds();
       renderConfig();
-      loadWidget();
+      await loadWidget();
+    }
+
+    function switchTheme() {
+      document.body.classList.toggle('sky-theme-modern');
     }
   </script>
 </main>
