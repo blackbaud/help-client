@@ -232,142 +232,171 @@ describe('BBHelpHelpWidget', () => {
       appButton.appendChild(document.createTextNode('App content'));
       appButton.id = 'app-button';
       document.body.appendChild(appButton);
-      await helpWidget.load({ helpBaseUrl: 'https://bb.com' })
-        .then(() => document.getElementById('bb-help-invoker').click());
     });
 
-    it('should hide menu when invoker is clicked', () => {
-      const invoker = document.getElementById('bb-help-invoker');
-      invoker.click();
-      const menu = document.querySelector('div.help-menu');
-      expect(menu.classList).toContain('help-menu-collapse');
-      expect(invoker).not.toContain('bb-help-active');
-    });
+    describe('with a What\'s new config', () => {
+      beforeEach(async () => {
+        await helpWidget.load({
+          helpBaseUrl: 'https://bb.com',
+          whatsNewConfig: { url: 'https://new.bb.com', newTab: false }
+        })
+          .then(() => document.getElementById('bb-help-invoker').click());
+      });
 
-    it('should hide menu when something outside container is focused', () => {
-      const invoker = document.getElementById('bb-help-invoker');
-      const menu = document.querySelector('div.help-menu');
-      const button = document.querySelector('button#app-button');
-      menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: button }));
-      expect(menu.classList).toContain('help-menu-collapse');
-      expect(invoker).not.toContain('bb-help-active');
-    });
+      it('should show all three menu links and separator', () => {
+        const items = document.querySelectorAll('div.help-menu > a.help-menu-item');
+        expect(items.length).toEqual(3);
+        const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
+        expect(separators.length).toEqual(1);
+      });
 
-    it('should not hide menu when something inside container is focused', () => {
-      const menu = document.querySelector('div.help-menu');
-      const invoker = document.getElementById('bb-help-invoker');
-      menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: invoker }));
-      expect(menu.classList).not.toContain('help-menu-collapse');
-      expect(invoker.classList).toContain('bb-help-active');
-    });
-
-    it('should ignore unknown keyboard keys', () => {
-      const menu = document.querySelector('div.help-menu');
-      const invoker = document.getElementById('bb-help-invoker');
-      menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
-      expect(menu.classList).not.toContain('help-menu-collapse');
-      expect(invoker.classList).toContain('bb-help-active');
-      expect(document.activeElement).toBe(menu.firstElementChild);
-    });
-
-    ['escape', 'esc', 'tab'].forEach(key => {
-      it(`should hide menu when ${key} key is pressed`, () => {
-        const menu = document.querySelector('div.help-menu');
+      it('should hide menu when invoker is clicked', () => {
         const invoker = document.getElementById('bb-help-invoker');
-        menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+        invoker.click();
+        const menu = document.querySelector('div.help-menu');
         expect(menu.classList).toContain('help-menu-collapse');
         expect(invoker).not.toContain('bb-help-active');
-        expect(document.activeElement).toBe(invoker);
       });
-    });
 
-    ['arrowdown', 'arrowright', 'down', 'right'].forEach(key => {
-      it(`should focus on next item when ${key} key is pressed`, () => {
+      it('should hide menu when something outside container is focused', () => {
+        const invoker = document.getElementById('bb-help-invoker');
+        const menu = document.querySelector('div.help-menu');
+        const button = document.querySelector('button#app-button');
+        menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: button }));
+        expect(menu.classList).toContain('help-menu-collapse');
+        expect(invoker).not.toContain('bb-help-active');
+      });
+
+      it('should not hide menu when something inside container is focused', () => {
         const menu = document.querySelector('div.help-menu');
         const invoker = document.getElementById('bb-help-invoker');
-        menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+        menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: invoker }));
         expect(menu.classList).not.toContain('help-menu-collapse');
         expect(invoker.classList).toContain('bb-help-active');
-        expect(document.activeElement).toBe(menu.firstElementChild.nextElementSibling);
       });
-    });
 
-    ['arrowup', 'arrowleft', 'up', 'left'].forEach(key => {
-      it(`should focus on previous item when ${key} key is pressed`, () => {
+      it('should ignore unknown keyboard keys', () => {
         const menu = document.querySelector('div.help-menu');
         const invoker = document.getElementById('bb-help-invoker');
-        // focus on the second one for the test so we can assert it goes back to the first
-        (menu.firstElementChild.nextElementSibling as HTMLElement).focus();
-        menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
         expect(menu.classList).not.toContain('help-menu-collapse');
         expect(invoker.classList).toContain('bb-help-active');
         expect(document.activeElement).toBe(menu.firstElementChild);
       });
-    });
 
-    describe('when focused on first element', () => {
-      beforeEach(() => {
-        const menu = document.querySelector('div.help-menu');
-        (menu.firstElementChild as HTMLElement).focus();
+      ['escape', 'esc', 'tab'].forEach(key => {
+        it(`should hide menu when ${key} key is pressed`, () => {
+          const menu = document.querySelector('div.help-menu');
+          const invoker = document.getElementById('bb-help-invoker');
+          menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+          expect(menu.classList).toContain('help-menu-collapse');
+          expect(invoker).not.toContain('bb-help-active');
+          expect(document.activeElement).toBe(invoker);
+        });
       });
 
-      ['arrowup', 'arrowleft', 'up', 'left'].forEach(key => {
-        it(`should wrap focus to last item when ${key} key is pressed`, () => {
+      ['arrowdown', 'arrowright', 'down', 'right'].forEach(key => {
+        it(`should focus on next item when ${key} key is pressed`, () => {
           const menu = document.querySelector('div.help-menu');
           const invoker = document.getElementById('bb-help-invoker');
           menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
           expect(invoker.classList).toContain('bb-help-active');
-          expect(document.activeElement).toBe(menu.lastElementChild);
+          expect(document.activeElement).toBe(menu.firstElementChild.nextElementSibling);
         });
       });
-    });
 
-    describe('when focused on last element', () => {
-      beforeEach(() => {
-        const menu = document.querySelector('div.help-menu');
-        (menu.lastElementChild as HTMLElement).focus();
-      });
-
-      ['arrowdown', 'arrowright', 'down', 'right'].forEach(key => {
-        it(`should wrap focus to first item when ${key} key is pressed`, () => {
+      ['arrowup', 'arrowleft', 'up', 'left'].forEach(key => {
+        it(`should focus on previous item when ${key} key is pressed`, () => {
           const menu = document.querySelector('div.help-menu');
           const invoker = document.getElementById('bb-help-invoker');
+          // focus on the second one for the test so we can assert it goes back to the first
+          (menu.firstElementChild.nextElementSibling as HTMLElement).focus();
           menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
           expect(menu.classList).not.toContain('help-menu-collapse');
           expect(invoker.classList).toContain('bb-help-active');
           expect(document.activeElement).toBe(menu.firstElementChild);
         });
       });
+
+      describe('when focused on first element', () => {
+        beforeEach(() => {
+          const menu = document.querySelector('div.help-menu');
+          (menu.firstElementChild as HTMLElement).focus();
+        });
+
+        ['arrowup', 'arrowleft', 'up', 'left'].forEach(key => {
+          it(`should wrap focus to last item when ${key} key is pressed`, () => {
+            const menu = document.querySelector('div.help-menu');
+            const invoker = document.getElementById('bb-help-invoker');
+            menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+            expect(menu.classList).not.toContain('help-menu-collapse');
+            expect(invoker.classList).toContain('bb-help-active');
+            expect(document.activeElement).toBe(menu.lastElementChild);
+          });
+        });
+      });
+
+      describe('when focused on last element', () => {
+        beforeEach(() => {
+          const menu = document.querySelector('div.help-menu');
+          (menu.lastElementChild as HTMLElement).focus();
+        });
+
+        ['arrowdown', 'arrowright', 'down', 'right'].forEach(key => {
+          it(`should wrap focus to first item when ${key} key is pressed`, () => {
+            const menu = document.querySelector('div.help-menu');
+            const invoker = document.getElementById('bb-help-invoker');
+            menu.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+            expect(menu.classList).not.toContain('help-menu-collapse');
+            expect(invoker.classList).toContain('bb-help-active');
+            expect(document.activeElement).toBe(menu.firstElementChild);
+          });
+        });
+      });
+
+      describe('when focused on element before separator', () => {
+        let separator: HTMLDivElement;
+
+        beforeEach(() => {
+          separator = document.querySelector('div.help-menu-separator');
+          (separator.previousElementSibling as HTMLElement).focus();
+        });
+
+        it('should skip separator when user cycles to next item', () => {
+          const menu = document.querySelector('div.help-menu');
+          menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'down' }));
+          expect(document.activeElement).toBe(separator.nextElementSibling);
+        });
+      });
+
+      describe('when focused on element after separator', () => {
+        let separator: HTMLDivElement;
+
+        beforeEach(() => {
+          separator = document.querySelector('div.help-menu-separator');
+          (separator.nextElementSibling as HTMLElement).focus();
+        });
+
+        it('should skip separator when user cycles to previous item', () => {
+          const menu = document.querySelector('div.help-menu');
+          menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'up' }));
+          expect(document.activeElement).toBe(separator.previousElementSibling);
+        });
+      });
     });
 
-    describe('when focused on element before separator', () => {
-      let separator: HTMLDivElement;
-
-      beforeEach(() => {
-        separator = document.querySelector('div.help-menu-separator');
-        (separator.previousElementSibling as HTMLElement).focus();
+    describe('without a What\'s new config', () => {
+      beforeEach(async () => {
+        await helpWidget.load({ helpBaseUrl: 'https://bb.com' })
+          .then(() => document.getElementById('bb-help-invoker').click());
       });
 
-      it('should skip separator when user cycles to next item', () => {
-        const menu = document.querySelector('div.help-menu');
-        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'down' }));
-        expect(document.activeElement).toBe(separator.nextElementSibling);
-      });
-    });
-
-    describe('when focused on element after separator', () => {
-      let separator: HTMLDivElement;
-
-      beforeEach(() => {
-        separator = document.querySelector('div.help-menu-separator');
-        (separator.nextElementSibling as HTMLElement).focus();
-      });
-
-      it('should skip separator when user cycles to previous item', () => {
-        const menu = document.querySelector('div.help-menu');
-        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'up' }));
-        expect(document.activeElement).toBe(separator.previousElementSibling);
+      it('should show only two menu links and separator', () => {
+        const items = document.querySelectorAll('div.help-menu > a.help-menu-item');
+        expect(items.length).toEqual(2);
+        const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
+        expect(separators.length).toEqual(1);
       });
     });
   });

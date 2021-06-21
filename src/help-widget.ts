@@ -181,7 +181,7 @@ export class BBHelpHelpWidget {
 
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
-    this.menu = this.widgetRenderer.createMenu(`${this.config.helpBaseUrl}${this.getHelpKey()}`);
+    this.menu = this.widgetRenderer.createMenu(`${this.config.helpBaseUrl}${this.getHelpKey()}`, this.config.whatsNewConfig);
     this.setUpMenuEvents();
     this.container.appendChild(this.invoker);
     this.container.appendChild(this.menu);

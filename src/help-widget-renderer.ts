@@ -1,4 +1,4 @@
-import { HelpConfig } from './help-config';
+import { HelpConfig, WhatsNewConfig } from './help-config';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
@@ -7,7 +7,7 @@ const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
 
 const SEPARATOR: '|' = '|';
-type LinkMenuItem = { label: string, url: string, class?: string };
+type LinkMenuItem = { label: string, url: string, newTab: boolean, class?: string };
 type SeparatorMenuItem = { label: typeof SEPARATOR };
 type MenuItem = LinkMenuItem | SeparatorMenuItem;
 
@@ -35,13 +35,16 @@ export class BBHelpHelpWidgetRenderer {
     return invoker;
   }
 
-  public createMenu(contentUrl: string): HTMLDivElement {
+  public createMenu(contentUrl: string, newFeatureConfig: WhatsNewConfig): HTMLDivElement {
     const menuItemInfo: MenuItem[] = [
-      { label: 'Open help', url: contentUrl, class: 'bb-help-content-link' },
-      { label: 'What\'s new', url: 'https://duckduckgo.com' },
+      { label: 'Open help', url: contentUrl, class: 'bb-help-content-link', newTab: true },
       { label: SEPARATOR },
-      { label: 'Support resources', url: 'https://support.blackbaud.com' }
+      { label: 'Support resources', url: 'https://support.blackbaud.com', newTab: true }
     ];
+    if (newFeatureConfig && newFeatureConfig.url) {
+      const whatsNewItem = { label: 'What\'s new', url: newFeatureConfig.url, newTab: newFeatureConfig.newTab };
+      menuItemInfo.splice(1, 0, whatsNewItem);
+    }
     const menu = document.createElement('div');
     menu.classList.add('help-menu');
     menu.classList.add('help-menu-collapse');
