@@ -244,8 +244,11 @@ describe('BBHelpHelpWidget', () => {
       });
 
       it('should show all three menu links and separator', () => {
-        const items = document.querySelectorAll('div.help-menu > a.help-menu-item');
+        const items: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('div.help-menu > a.help-menu-item');
         expect(items.length).toEqual(3);
+        expect(items.item(0).target).toEqual('_blank');
+        expect(items.item(1).target).toEqual('');
+        expect(items.item(2).target).toEqual('_blank');
         const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
         expect(separators.length).toEqual(1);
       });
@@ -395,6 +398,9 @@ describe('BBHelpHelpWidget', () => {
       it('should show only two menu links and separator', () => {
         const items = document.querySelectorAll('div.help-menu > a.help-menu-item');
         expect(items.length).toEqual(2);
+        items.forEach((item: HTMLAnchorElement) => {
+          expect(item.target).toEqual('_blank', `${item.textContent} is missing _blank target`);
+        });
         const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
         expect(separators.length).toEqual(1);
       });

@@ -96,7 +96,9 @@ export class BBHelpHelpWidgetRenderer {
     } else {
       const anchor = document.createElement('a');
       anchor.href = item.url;
-      anchor.target = '_blank';
+      if (item.newTab) {
+        anchor.target = '_blank';
+      }
       anchor.classList.add('help-menu-item');
       if (item.class) {
         anchor.classList.add(item.class);
