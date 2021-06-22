@@ -35,14 +35,19 @@ export class BBHelpHelpWidgetRenderer {
     return invoker;
   }
 
-  public createMenu(contentUrl: string, newFeatureConfig: WhatsNewConfig): HTMLDivElement {
+  public createMenu(contentUrl: string, whatsNewConfig: WhatsNewConfig, location: Location): HTMLDivElement {
     const menuItemInfo: MenuItem[] = [
       { label: 'Open help', url: contentUrl, class: 'bb-help-content-link', newTab: true },
       { label: SEPARATOR },
       { label: 'Support resources', url: 'https://support.blackbaud.com', newTab: true }
     ];
-    if (newFeatureConfig && newFeatureConfig.url) {
-      const whatsNewItem = { label: 'What\'s new', url: newFeatureConfig.url, newTab: newFeatureConfig.newTab };
+    if (whatsNewConfig && whatsNewConfig.url) {
+      const queryParams = decodeURIComponent(location.search);
+      const whatsNewItem = {
+        label: 'What\'s new',
+        url: `${whatsNewConfig.url}${queryParams}`,
+        newTab: whatsNewConfig.newTab
+      };
       menuItemInfo.splice(1, 0, whatsNewItem);
     }
     const menu = document.createElement('div');

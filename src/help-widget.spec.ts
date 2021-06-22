@@ -234,12 +234,10 @@ describe('BBHelpHelpWidget', () => {
       document.body.appendChild(appButton);
     });
 
-    describe('with a What\'s new config', () => {
+    describe('with a What\'s new config and query parameters', () => {
       beforeEach(async () => {
-        await helpWidget.load({
-          helpBaseUrl: 'https://bb.com',
-          whatsNewConfig: { url: 'https://new.bb.com', newTab: false }
-        })
+        const config = { helpBaseUrl: 'https://bb.com', whatsNewConfig: { url: 'https://new.bb.com', newTab: false } };
+        await helpWidget.load(config, { search: '?a=b&c=d' } as Location)
           .then(() => document.getElementById('bb-help-invoker').click());
       });
 
@@ -247,8 +245,32 @@ describe('BBHelpHelpWidget', () => {
         const items: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('div.help-menu > a.help-menu-item');
         expect(items.length).toEqual(3);
         expect(items.item(0).target).toEqual('_blank');
+        expect(items.item(0).href).toEqual('https://bb.com/default.html');
         expect(items.item(1).target).toEqual('');
+        expect(items.item(1).href).toEqual('https://new.bb.com/?a=b&c=d');
         expect(items.item(2).target).toEqual('_blank');
+        expect(items.item(2).href).toEqual('https://support.blackbaud.com/');
+        const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
+        expect(separators.length).toEqual(1);
+      });
+    });
+
+    describe('with a What\'s new config and no query parameters', () => {
+      beforeEach(async () => {
+        const config = { helpBaseUrl: 'https://bb.com', whatsNewConfig: { url: 'https://new.bb.com', newTab: false } };
+        await helpWidget.load(config)
+          .then(() => document.getElementById('bb-help-invoker').click());
+      });
+
+      it('should show all three menu links and separator', () => {
+        const items: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('div.help-menu > a.help-menu-item');
+        expect(items.length).toEqual(3);
+        expect(items.item(0).target).toEqual('_blank');
+        expect(items.item(0).href).toEqual('https://bb.com/default.html');
+        expect(items.item(1).target).toEqual('');
+        expect(items.item(1).href).toEqual('https://new.bb.com/');
+        expect(items.item(2).target).toEqual('_blank');
+        expect(items.item(2).href).toEqual('https://support.blackbaud.com/');
         const separators = document.querySelectorAll('div.help-menu > div.help-menu-separator');
         expect(separators.length).toEqual(1);
       });
