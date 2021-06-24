@@ -21,3 +21,4 @@ Learn more about the Help Widget's [configuration options](https://github.com/bl
 ## Reporting an Issue
 For feature requests, bug reports, or other issues that you wish to report/request, please file an issue in the [Help Library Issuse](https://github.com/blackbaud/skyux-lib-help/issues) repo.
 
+

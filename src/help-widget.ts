@@ -84,7 +84,7 @@ export class BBHelpHelpWidget {
           this.defaultHelpKey = this.config.defaultHelpKey;
         }
 
-        this.renderInvoker();
+        this.renderInvoker(location);
         if (this.onHelpLoaded) {
           this.onHelpLoaded();
         }
@@ -179,9 +179,10 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private renderInvoker() {
+  private renderInvoker(location: Location) {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
-    this.menu = this.widgetRenderer.createMenu(`${this.config.helpBaseUrl}${this.getHelpKey()}`);
+    const contentUrl = `${this.config.helpBaseUrl}${this.getHelpKey()}`;
+    this.menu = this.widgetRenderer.createMenu(contentUrl, this.config.whatsNewConfig, location);
     this.setUpMenuEvents();
     this.container.appendChild(this.invoker);
     this.container.appendChild(this.menu);

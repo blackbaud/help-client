@@ -1,3 +1,8 @@
+export interface WhatsNewConfig {
+  url: string;
+  newTab: boolean;
+}
+
 export interface HelpConfig {
   /**
    * @deprecated
@@ -69,4 +74,5 @@ export interface HelpConfig {
    * @deprecated
    */
   whats_new_help_key?: string;
+  whatsNewConfig?: WhatsNewConfig;
 }
