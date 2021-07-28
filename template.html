@@ -47,19 +47,33 @@
 </div>
 <main class="sky-padding-even-default">
   <h1>help-client demo</h1>
-  <h2>Standard svcid configs</h2>
-  <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
-    <div class="sky-form-group">
-      <label for="svcid" class="sky-control-label sky-control-label-required">Service Id</label>
-      <select class="sky-form-control" id="svcid"></select>
-      <label for="locale" class="sky-control-label">Locale</label>
-      <select class="sky-form-control" id="locale">
-        <option value="">Unspecified</option>
-      </select>
-    </div>
-  </form>
-  <h3>Resulting config</h3>
-  <pre><code id="config"></code></pre>
+  <h2>Load widget</h2>
+  <section>
+    <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
+      <div class="sky-form-group">
+        <label for="svcid" class="sky-control-label sky-control-label-required">Service Id</label>
+        <select class="sky-form-control" id="svcid"></select>
+        <label for="locale" class="sky-control-label">Locale</label>
+        <select class="sky-form-control" id="locale">
+          <option value="">Unspecified</option>
+        </select>
+      </div>
+    </form>
+    <h3>Resulting config</h3>
+    <pre><code id="config"></code></pre>
+  </section>
+
+  <h2>Open topic</h2>
+  <section>
+    <form name="topicOpen">
+      <div class="sky-form-group">
+        <label for="topic" class="sky-control-label">Topic</label>
+        <input class="sky-form-control" id="topic" type="text" placeholder="leave empty to open default topic"/>
+      </div>
+    </form>
+    <button class="sky-btn sky-btn-default" onclick="openTopic()">Open topic</button>
+  </section>
+
   <script>
     function renderConfig() {
       document.getElementById('config').textContent = JSON.stringify(buildConfig());
@@ -79,7 +93,8 @@
     function loadWidget() {
       BBHELP.HelpWidget.unload();
       const config = buildConfig();
-      return BBHELP.HelpWidget.load(config);
+      return BBHELP.HelpWidget.load(config)
+        .then(() => renderTopic(BBHELP.HelpWidget.currentHelpKey));
     }
 
     function renderSvcIds() {
@@ -116,6 +131,23 @@
 
     function switchTheme() {
       document.body.classList.toggle('sky-theme-modern');
+    }
+
+    function openTopic() {
+      const form = document.forms['topicOpen'];
+      const topic = form.elements['topic'].value;
+      if (topic) {
+        BBHELP.HelpWidget.open(topic);
+      } else {
+        BBHELP.HelpWidget.open();
+      }
+    }
+
+    function renderTopic(topic) {
+      if (topic) {
+        const form = document.forms['topicOpen'];
+        form.elements['topic'].value = topic;
+      }
     }
   </script>
 </main>
