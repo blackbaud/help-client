@@ -1,6 +1,4 @@
 import { BBHelpHelpWidget } from './help-widget';
-import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
-import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { BBHelp } from './models/bbhelp';
 
 declare const BBHELP: any;
@@ -8,9 +6,7 @@ declare const BBHELP: any;
 export abstract class BBHelpClient {
 
   public static initWidget(): BBHelp {
-    const styleUtility = new BBHelpStyleUtility();
-    const widgetRenderer = new BBHelpHelpWidgetRenderer();
-    const helpWidget = new BBHelpHelpWidget(widgetRenderer, styleUtility);
+    const helpWidget = new BBHelpHelpWidget();
     return { HelpWidget: helpWidget };
   }
 
