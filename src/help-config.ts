@@ -41,6 +41,7 @@ export interface HelpConfig {
    * @deprecated
    */
   hideHelpChat?: boolean | string;
+  helpUpdateCallback?: (args: { url: string }) => void;
   /**
    * @deprecated
    */

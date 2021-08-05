@@ -131,6 +131,20 @@ describe('BBHelpHelpWidget', () => {
       });
   });
 
+  it('should call helpUpdateCallback when setting current help key', (done: DoneFn) => {
+    const helpUpdateCallbackSpy = jasmine.createSpy('helpUpdateCallback');
+    const config = { helpBaseUrl: 'https://bb.com', helpUpdateCallback: helpUpdateCallbackSpy };
+    helpWidget.load(config)
+      .then(() => {
+        const testKey = 'help.html';
+        helpWidget.setCurrentHelpKey(testKey);
+        expect(helpWidget.currentHelpKey).toEqual(testKey);
+        expect(helpUpdateCallbackSpy).toHaveBeenCalledTimes(1);
+        expect(helpUpdateCallbackSpy).toHaveBeenCalledWith({ url: `${config.helpBaseUrl}/${testKey}` });
+        done();
+      });
+  });
+
   it('should set and send widget currentHelpKey to help SPA', (done: DoneFn) => {
     const config = { helpBaseUrl: 'https://bb.com' };
     helpWidget.load(config)
@@ -138,7 +152,6 @@ describe('BBHelpHelpWidget', () => {
         const testKey = 'help.html';
         helpWidget.setCurrentHelpKey(testKey);
         expect(helpWidget.currentHelpKey).toEqual(testKey);
-        // TODO how do we tell omnibar of this
         done();
       });
   });
@@ -149,7 +162,6 @@ describe('BBHelpHelpWidget', () => {
       .then(() => {
         helpWidget.setCurrentHelpKey();
         expect(helpWidget.currentHelpKey).toEqual(config.defaultHelpKey);
-        // TODO how do we tell omnibar of this
         done();
       });
   });
@@ -160,7 +172,6 @@ describe('BBHelpHelpWidget', () => {
       .then(() => {
         helpWidget.setHelpKeyToDefault();
         expect(helpWidget.currentHelpKey).toEqual(config.defaultHelpKey);
-        // TODO how do we tell omnibar of this
         done();
       });
   });

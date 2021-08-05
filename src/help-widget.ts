@@ -60,6 +60,11 @@ export class BBHelpHelpWidget {
           delete this.config.getCurrentHelpKey;
         }
 
+        if (this.config.helpUpdateCallback !== undefined) {
+          this.helpUpdateCallback = this.config.helpUpdateCallback;
+          delete this.config.helpUpdateCallback;
+        }
+
         if (this.config.onHelpLoaded !== undefined) {
           this.onHelpLoaded = this.config.onHelpLoaded;
           delete this.config.onHelpLoaded;
@@ -84,8 +89,7 @@ export class BBHelpHelpWidget {
 
   public open(helpKey: string = this.getHelpKey()) {
     if (!this.widgetDisabled) {
-      const url = `${this.config.helpBaseUrl}${helpKey}`;
-      window.open(url, '_blank');
+      window.open(this.buildCurrentUrl(helpKey), '_blank');
     }
   }
 
@@ -103,7 +107,9 @@ export class BBHelpHelpWidget {
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
     this.currentHelpKey = helpKey;
-    // TODO how do we tell omnibar of this
+    if (this.helpUpdateCallback) {
+      this.helpUpdateCallback({ url: this.buildCurrentUrl(helpKey) });
+    }
   }
 
   public setHelpKeyToDefault(): void {
@@ -144,6 +150,10 @@ export class BBHelpHelpWidget {
     return true;
   }
 
+  private buildCurrentUrl(helpKey: string): string {
+    return `${this.config.helpBaseUrl}${helpKey}`;
+  }
+
   private getHelpKey() {
     if ((typeof (this.getCurrentHelpKey) === 'function')) {
       return this.getCurrentHelpKey();
@@ -155,4 +165,6 @@ export class BBHelpHelpWidget {
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
   }
+
+  private helpUpdateCallback: (args: {url: string}) =>  void = undefined;
 }
