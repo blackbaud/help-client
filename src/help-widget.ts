@@ -8,6 +8,7 @@ export class BBHelpHelpWidget {
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
+  private helpUpdateCallback: (args: { url: string }) => void = undefined;
 
   /**
    * @deprecated
@@ -165,6 +166,4 @@ export class BBHelpHelpWidget {
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
   }
-
-  private helpUpdateCallback: (args: {url: string}) =>  void = undefined;
 }
