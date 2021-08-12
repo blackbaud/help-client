@@ -1,8 +1,11 @@
 import { HelpConfig } from './help-config';
 import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
-import { mergeConfig } from './service/config-merge.utils';
 
+import { CommunicationAction } from './models/communication-action';
+import { BBHelpCommunicationService } from './service/communication.service';
+
+const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
 const DISABLE_TRANSITION: string = 'bb-help-disable-transition';
 const MOBILE_WIDTH_CLASS: string = 'bb-help-mobile-width';
@@ -10,20 +13,29 @@ const SCREEN_XS_MAX: number = 767;
 const PANEL_HEIGHT: number = 591;
 
 export class BBHelpHelpWidget {
+  public iframe: HTMLIFrameElement;
   public config: HelpConfig;
   public currentHelpKey: string;
   public onHelpLoaded: any;
+  private widgetRenderer: BBHelpHelpWidgetRenderer;
+  private communicationService: BBHelpCommunicationService;
+  private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
-  private menu: HTMLElement;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
-  private resizeEventListener: () => void;
 
-  constructor(private widgetRenderer: BBHelpHelpWidgetRenderer, private styleUtility: BBHelpStyleUtility) {
+  constructor(
+    widgetRenderer: BBHelpHelpWidgetRenderer,
+    communicationService: BBHelpCommunicationService,
+    styleUtility: BBHelpStyleUtility
+  ) {
+    this.styleUtility = styleUtility;
+    this.widgetRenderer = widgetRenderer;
+    this.communicationService = communicationService;
   }
 
   public init() {
@@ -31,29 +43,23 @@ export class BBHelpHelpWidget {
     this.createElements();
     this.setUpInvokerEvents();
     this.renderElements();
-    this.resizeEventListener = () => this.setClassesForWindowSize();
-    window.addEventListener('resize', this.resizeEventListener);
+    this.setUpCommunication();
+    window.addEventListener('resize', () => {
+      this.setClassesForWindowSize();
+    });
   }
 
   public ready() {
-    return this.widgetReady().catch((err: string) => console.error(err));
+    return this.widgetReady()
+      .then(() => {
+        return this.communicationService.ready();
+      })
+      .catch((err: string) => {
+        console.error(err);
+      });
   }
 
-  public unload(): void {
-    if (!this.loadCalled) {
-      return;
-    }
-    this.container.remove();
-    this.onHelpLoaded = undefined;
-    this.currentHelpKey = undefined;
-    this.getCurrentHelpKey = () => this.currentHelpKey || this.defaultHelpKey;
-    this.defaultHelpKey = 'default.html';
-    this.config = undefined;
-    this.loadCalled = false;
-    window.removeEventListener('resize', this.resizeEventListener);
-  }
-
-  public load(config: HelpConfig, location: Location = window.location) {
+  public load(config: HelpConfig) {
     if (this.loadCalled) {
       return;
     }
@@ -63,54 +69,54 @@ export class BBHelpHelpWidget {
     return this.ready()
       .then(() => {
         this.loadCalled = true;
-        this.config = mergeConfig(config);
-        if (this.config.defaultHelpKey !== undefined) {
-          this.defaultHelpKey = this.config.defaultHelpKey;
+        this.config = config;
+        if (config.defaultHelpKey !== undefined) {
+          this.defaultHelpKey = config.defaultHelpKey;
         }
 
-        // TODO move to mergeConfig
-        this.config.hostQueryParams = location.search;
+        config.hostQueryParams = this.getQueryParams();
 
-        if (this.config.getCurrentHelpKey !== undefined) {
-          this.getCurrentHelpKey = this.config.getCurrentHelpKey;
-          delete this.config.getCurrentHelpKey;
-        }
-
-        if (this.config.onHelpLoaded !== undefined) {
-          this.onHelpLoaded = this.config.onHelpLoaded;
-          delete this.config.onHelpLoaded;
-        }
-        if (this.config.defaultHelpKey) {
-          this.defaultHelpKey = this.config.defaultHelpKey;
+        if (config.getCurrentHelpKey !== undefined) {
+          this.getCurrentHelpKey = config.getCurrentHelpKey;
+          delete config.getCurrentHelpKey;
         }
 
-        this.renderInvoker(location);
-        if (this.onHelpLoaded) {
-          this.onHelpLoaded();
+        if (config.onHelpLoaded !== undefined) {
+          this.onHelpLoaded = config.onHelpLoaded;
+          delete config.onHelpLoaded;
         }
+
+        this.sanitizeConfig();
+        this.sendConfig();
       });
   }
 
-  /**
-   * Help keys are opened into new tabs, thus closing the widget isn't relevant anymore.
-   * @deprecated This is a no-op function for backward compatibility.
-   */
   public close() {
-    // no op
+    // Wait for client close transition to finish to send close message to SPA
+    setTimeout(() => {
+      this.communicationService.postMessage({
+        messageType: 'help-widget-closed'
+      });
+    }, 300);
+    this.container.classList.add(HELP_CLOSED_CLASS);
+    this.invoker.setAttribute('aria-pressed', 'false');
+    this.invoker.setAttribute('aria-expanded', 'false');
   }
 
   public open(helpKey: string = this.getHelpKey()) {
     if (!this.widgetDisabled) {
+      this.communicationService.postMessage({
+        helpKey,
+        messageType: 'open-to-help-key'
+      });
+
+      this.container.classList.remove(HELP_CLOSED_CLASS);
+      this.invoker.setAttribute('aria-pressed', 'true');
+      this.invoker.setAttribute('aria-expanded', 'true');
       this.invoker.focus();
-      const url = `${this.config.helpBaseUrl}${helpKey}`;
-      window.open(url, '_blank');
     }
   }
 
-  /**
-   * Help keys are opened into new tabs, thus toggling the widget isn't relevant anymore.
-   * @deprecated This function will always open for backward compatibility.
-   */
   public toggleOpen(helpKey?: string) {
     if (this.isCollapsed()) {
       this.open(helpKey);
@@ -120,9 +126,13 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
+
     this.currentHelpKey = helpKey;
-    const anchor: HTMLAnchorElement = this.menu.querySelector('a.bb-help-content-link');
-    anchor.href = `${this.config.helpBaseUrl}${helpKey}`;
+
+    this.communicationService.postMessage({
+      helpKey,
+      messageType: 'update-current-help-key'
+    });
   }
 
   public setHelpKeyToDefault(): void {
@@ -142,9 +152,6 @@ export class BBHelpHelpWidget {
     this.container.classList.remove('bb-help-hidden');
   }
 
-  /**
-   * @deprecated
-   */
   public getWhatsNewRevision(): number {
     if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
       const revisions = this.config.whatsNewRevisions.split(';');
@@ -179,150 +186,86 @@ export class BBHelpHelpWidget {
     });
   }
 
-  private renderInvoker(location: Location) {
+  private setUpCommunication() {
+    this.communicationService.bindChildWindowReference(this.iframe);
+    this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
+      this.actionResponse(action);
+    });
+  }
+
+  private actionResponse(action: CommunicationAction) {
+    switch (action.messageType) {
+      case 'Close Widget':
+        this.invoker.focus();
+        this.close();
+        break;
+        case 'Open Widget':
+          this.invoker.focus();
+          this.open(action.helpKey);
+          break;
+      case 'Child Window Ready':
+        if (this.loadCalled) {
+          this.sendConfig();
+        }
+        break;
+      case 'Config Loaded':
+        const configData = JSON.parse(action.data);
+        this.updateConfigKeys(configData);
+        this.renderInvoker();
+        if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
+        break;
+      default:
+        console.error(`No matching response for action: ${action.messageType}`);
+    }
+  }
+
+  private updateConfigKeys(configOptions: any) {
+    this.config = configOptions;
+    if (configOptions.defaultHelpKey) {
+      this.defaultHelpKey = configOptions.defaultHelpKey;
+    }
+  }
+
+  private getQueryParams(): string {
+    const results = window.location.search;
+    return results;
+  }
+
+  private sendConfig() {
+    this.communicationService.postMessage({
+      config: this.config,
+      messageType: 'user-config'
+    });
+  }
+
+  private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
-    const contentUrl = `${this.config.helpBaseUrl}${this.getHelpKey()}`;
-    this.menu = this.widgetRenderer.createMenu(contentUrl, this.config.whatsNewConfig, location);
-    this.setUpMenuEvents();
-    this.container.appendChild(this.invoker);
-    this.container.appendChild(this.menu);
+    this.container.insertBefore(this.invoker, this.iframe);
   }
 
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
+    this.iframe = this.widgetRenderer.createIframe();
     this.elementsLoaded = true;
   }
 
   private renderElements() {
     this.setClassesForWindowSize();
     this.widgetRenderer.appendElement(this.container);
+    this.widgetRenderer.appendElement(this.iframe, this.container);
   }
 
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
-      if (this.isMenuCollapsed()) {
-        this.expandMenu(true);
-      } else {
-        this.collapseMenu(true);
-      }
+      this.toggleOpen();
     });
-    this.invoker.addEventListener('keydown', (event: KeyboardEvent) => this.handleInvokerKeydown(event));
   }
 
-  private setUpMenuEvents() {
-    this.menu.addEventListener('focusout', (event: FocusEvent) => {
-      const relatedTarget = event.relatedTarget as HTMLElement;
-      // if the focus is being moved to something outside of the menu, hide the menu.
-      if (!this.container.contains(relatedTarget)) {
-        this.collapseMenu(false);
-      }
-    });
-    this.menu.addEventListener('keydown', (event: KeyboardEvent) => this.handleMenuKeydown(event));
-  }
-
-  private handleInvokerKeydown(event: KeyboardEvent): void {
-    switch (event.key.toLowerCase()) {
-      case 'arrowdown':
-      case 'arrowright':
-      case 'down': // ie support
-      case 'right': // ie support
-        this.expandMenu(true);
-        break;
-      case 'arrowup':
-      case 'arrowleft':
-      case 'up': // ie support
-      case 'left': // ie support
-        this.expandMenu(false);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private handleMenuKeydown(event: KeyboardEvent): void {
-    switch (event.key.toLowerCase()) {
-      case 'escape':
-      case 'esc': // ie support
-      case 'tab':
-        this.collapseMenu(true);
-        break;
-      case 'arrowdown':
-      case 'arrowright':
-      case 'down': // ie support
-      case 'right': // ie support
-        this.focusOnNextMenuItem();
-        break;
-      case 'arrowup':
-      case 'arrowleft':
-      case 'up': // ie support
-      case 'left': // ie support
-        this.focusOnPreviousMenuItem();
-        break;
-      default:
-        break;
-    }
-  }
-
-  private focusOnPreviousMenuItem() {
-    if (this.menu.contains(document.activeElement)) {
-      let prevElement = document.activeElement.previousElementSibling as HTMLElement;
-      if (prevElement) {
-        // skip the separator
-        if (prevElement.classList.contains('help-menu-separator')) {
-          prevElement = prevElement.previousElementSibling as HTMLElement;
-        }
-        prevElement.focus();
-      } else {
-        (this.menu.lastElementChild as HTMLElement).focus();
-      }
-    }
-  }
-
-  private focusOnNextMenuItem() {
-    if (this.menu.contains(document.activeElement)) {
-      let nextElement = document.activeElement.nextElementSibling as HTMLElement;
-      if (nextElement) {
-        // skip the separator
-        if (nextElement.classList.contains('help-menu-separator')) {
-          nextElement = nextElement.nextElementSibling as HTMLElement;
-        }
-        nextElement.focus();
-      } else {
-        (this.menu.firstElementChild as HTMLElement).focus();
-      }
-    }
-  }
-
-  /**
-   * @deprecated widget no longer expands, thus it is always collapsed in the original definition of the function.
-   */
   private isCollapsed() {
-    return true;
-  }
-
-  private isMenuCollapsed(): boolean {
-    return this.menu.classList.contains('help-menu-collapse');
-  }
-
-  private expandMenu(focusOnFirst: boolean): void {
-    this.menu.classList.remove('help-menu-collapse');
-    this.invoker.classList.add('bb-help-active');
-    this.container.classList.add('bb-help-active');
-    if (focusOnFirst) {
-      (this.menu.firstElementChild as HTMLElement).focus();
-    } else {
-      (this.menu.lastElementChild as HTMLElement).focus();
-    }
-  }
-
-  private collapseMenu(focusOnInvoker: boolean): void {
-    this.menu.classList.add('help-menu-collapse');
-    this.invoker.classList.remove('bb-help-active');
-    this.container.classList.remove('bb-help-active');
-    if (focusOnInvoker) {
-      this.invoker.focus();
-    }
+    return this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
   private setClassesForWindowSize() {
@@ -377,5 +320,9 @@ export class BBHelpHelpWidget {
 
   private getCurrentHelpKey: any = () => {
     return this.currentHelpKey || this.defaultHelpKey;
+  }
+
+  private sanitizeConfig() {
+    this.config = JSON.parse(JSON.stringify(this.config));
   }
 }
