@@ -1,7 +1,7 @@
 import { BBHelpHelpWidget } from './help-widget';
 import { MockCommunicationService } from './mocks/mock-communication-service';
 import { MockWidgetRenderer} from './mocks/mock-renderer';
-import { MockStyleUtility } from './mocks/mock-style-utilty';
+import { MockStyleUtility } from './mocks/mock-style-utility';
 
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;

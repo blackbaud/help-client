@@ -4,7 +4,7 @@ import { BBHelpHelpWidgetRenderer } from './help-widget-renderer';
 import { BBHelpStyleUtility } from './help-widget-style-utility';
 import { createCommSvcSpy, expectNoCommCalls, Spied } from './mocks/mock-communication-service';
 import { expectNoBodyElements } from './mocks/mock-renderer';
-import { expectNoStyleElements } from './mocks/mock-style-utilty';
+import { expectNoStyleElements } from './mocks/mock-style-utility';
 import { BBHelpCommunicationService } from './service/communication.service';
 import { mergeConfig } from './service/config-merge.utils';
 
