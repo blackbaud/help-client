@@ -7,6 +7,11 @@ describe('BBHelpStyleUtility', () => {
     styleUtility = new BBHelpStyleUtility();
   });
 
+  afterEach(() => {
+    const styleElements = document.head.querySelectorAll('style');
+    styleElements.forEach(ele => ele.remove());
+  });
+
   it('should add CSS elements to the document\'s head', () => {
     const testCss = '.test-class { color: green }';
 
