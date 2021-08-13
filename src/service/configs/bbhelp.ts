@@ -1,7 +1,9 @@
 import { HelpConfig } from '../../help-config';
 
 /**
- * this is a config used for local dev. it is kept around for pure backward compatibility reasons.
+ * This is a config previously used for local dev.
+ * It is kept around for pure backward compatibility reasons.
+ * For local dev, use a real config instead.
  * @deprecated
  */
 export const BB_HELP_CONFIG: HelpConfig = {

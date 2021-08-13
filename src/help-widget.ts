@@ -14,9 +14,29 @@ const SCREEN_XS_MAX: number = 767;
 const PANEL_HEIGHT: number = 591;
 
 export class BBHelpHelpWidget {
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public iframe: HTMLIFrameElement;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public config: HelpConfig;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public currentHelpKey: string;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public onHelpLoaded: any;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
@@ -41,6 +61,11 @@ export class BBHelpHelpWidget {
     this.communicationService = communicationService;
   }
 
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public init() {
     if (!this.isOmnibarMode()) {
       this.styleUtility.addAllStyles();
@@ -54,6 +79,11 @@ export class BBHelpHelpWidget {
     }
   }
 
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public ready() {
     if (this.isOmnibarMode()) {
       return Promise.resolve();
@@ -109,6 +139,10 @@ export class BBHelpHelpWidget {
       });
   }
 
+  /**
+   * This does nothing when {@link HelpConfig#mode} is omnibar.
+   * @deprecated
+   */
   public close() {
     if (!this.isOmnibarMode()) {
       // Wait for client close transition to finish to send close message to SPA
@@ -142,6 +176,11 @@ export class BBHelpHelpWidget {
     }
   }
 
+  /**
+   * This only opens when {@link HelpConfig#mode} is omnibar.
+   * Use {@link BBHelpHelpWidget#open} directly instead.
+   * @deprecated
+   */
   public toggleOpen(helpKey?: string) {
     if (this.isCollapsed()) {
       this.open(helpKey);
@@ -183,6 +222,11 @@ export class BBHelpHelpWidget {
     }
   }
 
+  /**
+   * This was a proposed solution to What's new years ago that never was acted upon.
+   * This is kept around solely for backwards compatibility because the method is public.
+   * @deprecated
+   */
   public getWhatsNewRevision(): number {
     if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
       const revisions = this.config.whatsNewRevisions.split(';');
@@ -196,6 +240,11 @@ export class BBHelpHelpWidget {
     return 0;
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
@@ -216,6 +265,11 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private setUpCommunication() {
     this.communicationService.bindChildWindowReference(this.iframe);
     this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
@@ -223,6 +277,11 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private actionResponse(action: CommunicationAction) {
     switch (action.messageType) {
       case 'Close Widget':
@@ -251,6 +310,11 @@ export class BBHelpHelpWidget {
     }
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private updateConfigKeys(configOptions: any) {
     this.config = configOptions;
     if (configOptions.defaultHelpKey) {
@@ -263,6 +327,11 @@ export class BBHelpHelpWidget {
     return results;
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private sendConfig() {
     this.communicationService.postMessage({
       config: this.config,
@@ -270,11 +339,21 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
     this.container.insertBefore(this.invoker, this.iframe);
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
@@ -282,22 +361,42 @@ export class BBHelpHelpWidget {
     this.elementsLoaded = true;
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private renderElements() {
     this.setClassesForWindowSize();
     this.widgetRenderer.appendElement(this.container);
     this.widgetRenderer.appendElement(this.iframe, this.container);
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
       this.toggleOpen();
     });
   }
 
+  /**
+   * The widget is effectively always collapsed @link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private isCollapsed() {
     return this.isOmnibarMode() || this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private setClassesForWindowSize() {
     this.container.classList.add(DISABLE_TRANSITION);
 
@@ -321,6 +420,11 @@ export class BBHelpHelpWidget {
     this.container.classList.remove(DISABLE_TRANSITION);
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private isMobileWidth(): boolean {
     if (window.innerWidth <= SCREEN_XS_MAX) {
       if (!this.invoker.classList.contains(MOBILE_WIDTH_CLASS)) {
@@ -336,6 +440,11 @@ export class BBHelpHelpWidget {
     return false;
   }
 
+  /**
+   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
+   * Instead of using this method, switch to omnibar mode.
+   * @deprecated
+   */
   private isMobileHeight(): boolean {
     return window.innerHeight <= PANEL_HEIGHT;
   }
