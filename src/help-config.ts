@@ -77,9 +77,9 @@ export interface HelpConfig {
   whats_new_help_key?: string;
   whatsNewConfig?: WhatsNewConfig;
   /**
-   * Version 0 (the default) refers to the legacy, green-ear style of widget.
-   * Version 5 refers to a menu-based style of widget that is controlled by omnibar.
-   * This version is the version expected to be used by apps that are SKY UX 5 or greater.
+   * Legacy mode (default) refers to the green-ear style of widget.
+   * Omnibar modes refers to a menu-based style of widget where the menu is controlled by omnibar.
+   * Omnibar mode is the expected mode for apps that are SKY UX 5 or greater.
    */
-  version?: 0 | 5;
+  mode?: 'legacy' | 'omnibar';
 }

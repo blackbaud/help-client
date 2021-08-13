@@ -42,7 +42,7 @@ export class BBHelpHelpWidget {
   }
 
   public init() {
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       this.styleUtility.addAllStyles();
       this.createElements();
       this.setUpInvokerEvents();
@@ -55,7 +55,7 @@ export class BBHelpHelpWidget {
   }
 
   public ready() {
-    if (this.isVersionFive()) {
+    if (this.isOmnibarMode()) {
       return Promise.resolve();
     }
     return this.widgetReady()
@@ -72,7 +72,7 @@ export class BBHelpHelpWidget {
       return;
     }
 
-    this.config = (this.isVersionFive(config)) ? mergeConfig(config) : config;
+    this.config = (this.isOmnibarMode(config)) ? mergeConfig(config) : config;
     this.init();
 
     return this.ready()
@@ -101,7 +101,7 @@ export class BBHelpHelpWidget {
         }
 
         this.sanitizeConfig();
-        if (!this.isVersionFive()) {
+        if (!this.isOmnibarMode()) {
           this.sendConfig();
         } else if (this.onHelpLoaded) {
           this.onHelpLoaded();
@@ -110,7 +110,7 @@ export class BBHelpHelpWidget {
   }
 
   public close() {
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       // Wait for client close transition to finish to send close message to SPA
       setTimeout(() => {
         this.communicationService.postMessage({
@@ -127,7 +127,7 @@ export class BBHelpHelpWidget {
     if (this.widgetDisabled) {
       return;
     }
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'open-to-help-key'
@@ -152,7 +152,7 @@ export class BBHelpHelpWidget {
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
     this.currentHelpKey = helpKey;
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'update-current-help-key'
@@ -169,7 +169,7 @@ export class BBHelpHelpWidget {
   public disableWidget(): void {
     this.widgetDisabled = true;
     this.close();
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       this.invoker.classList.add('bb-help-hidden');
       this.container.classList.add('bb-help-hidden');
     }
@@ -177,7 +177,7 @@ export class BBHelpHelpWidget {
 
   public enableWidget(): void {
     this.widgetDisabled = false;
-    if (!this.isVersionFive()) {
+    if (!this.isOmnibarMode()) {
       this.invoker.classList.remove('bb-help-hidden');
       this.container.classList.remove('bb-help-hidden');
     }
@@ -295,7 +295,7 @@ export class BBHelpHelpWidget {
   }
 
   private isCollapsed() {
-    return this.isVersionFive() || this.container.classList.contains(HELP_CLOSED_CLASS);
+    return this.isOmnibarMode() || this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
   private setClassesForWindowSize() {
@@ -356,8 +356,8 @@ export class BBHelpHelpWidget {
     this.config = JSON.parse(JSON.stringify(this.config));
   }
 
-  private isVersionFive(config: HelpConfig = this.config): boolean {
-    return config && config.version === 5;
+  private isOmnibarMode(config: HelpConfig = this.config): boolean {
+    return config && config.mode === 'omnibar';
   }
 
   private buildCurrentUrl(helpKey: string): string {
