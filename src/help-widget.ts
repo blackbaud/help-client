@@ -4,6 +4,7 @@ import { BBHelpStyleUtility } from './help-widget-style-utility';
 
 import { CommunicationAction } from './models/communication-action';
 import { BBHelpCommunicationService } from './service/communication.service';
+import { mergeConfig } from './service/config-merge.utils';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
@@ -28,6 +29,7 @@ export class BBHelpHelpWidget {
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
+  private helpUpdateCallback: (args: { url: string }) => void = undefined;
 
   constructor(
     widgetRenderer: BBHelpHelpWidgetRenderer,
@@ -40,17 +42,22 @@ export class BBHelpHelpWidget {
   }
 
   public init() {
-    this.styleUtility.addAllStyles();
-    this.createElements();
-    this.setUpInvokerEvents();
-    this.renderElements();
-    this.setUpCommunication();
-    window.addEventListener('resize', () => {
-      this.setClassesForWindowSize();
-    });
+    if (!this.isVersionFive()) {
+      this.styleUtility.addAllStyles();
+      this.createElements();
+      this.setUpInvokerEvents();
+      this.renderElements();
+      this.setUpCommunication();
+      window.addEventListener('resize', () => {
+        this.setClassesForWindowSize();
+      });
+    }
   }
 
   public ready() {
+    if (this.isVersionFive()) {
+      return Promise.resolve();
+    }
     return this.widgetReady()
       .then(() => {
         return this.communicationService.ready();
@@ -65,47 +72,62 @@ export class BBHelpHelpWidget {
       return;
     }
 
+    this.config = (this.isVersionFive(config)) ? mergeConfig(config) : config;
     this.init();
 
     return this.ready()
       .then(() => {
         this.loadCalled = true;
-        this.config = config;
-        if (config.defaultHelpKey !== undefined) {
+        if (this.config.defaultHelpKey !== undefined) {
           this.defaultHelpKey = config.defaultHelpKey;
         }
 
-        config.hostQueryParams = this.getQueryParams();
+        // TODO move to mergeConfig
+        this.config.hostQueryParams = this.getQueryParams();
 
-        if (config.getCurrentHelpKey !== undefined) {
-          this.getCurrentHelpKey = config.getCurrentHelpKey;
-          delete config.getCurrentHelpKey;
+        if (this.config.getCurrentHelpKey !== undefined) {
+          this.getCurrentHelpKey = this.config.getCurrentHelpKey;
+          delete this.config.getCurrentHelpKey;
         }
 
-        if (config.onHelpLoaded !== undefined) {
-          this.onHelpLoaded = config.onHelpLoaded;
-          delete config.onHelpLoaded;
+        if (this.config.onHelpLoaded !== undefined) {
+          this.onHelpLoaded = this.config.onHelpLoaded;
+          delete this.config.onHelpLoaded;
+        }
+
+        if (this.config.helpUpdateCallback !== undefined) {
+          this.helpUpdateCallback = this.config.helpUpdateCallback;
+          delete this.config.helpUpdateCallback;
         }
 
         this.sanitizeConfig();
-        this.sendConfig();
+        if (!this.isVersionFive()) {
+          this.sendConfig();
+        } else if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
       });
   }
 
   public close() {
-    // Wait for client close transition to finish to send close message to SPA
-    setTimeout(() => {
-      this.communicationService.postMessage({
-        messageType: 'help-widget-closed'
-      });
-    }, 300);
-    this.container.classList.add(HELP_CLOSED_CLASS);
-    this.invoker.setAttribute('aria-pressed', 'false');
-    this.invoker.setAttribute('aria-expanded', 'false');
+    if (!this.isVersionFive()) {
+      // Wait for client close transition to finish to send close message to SPA
+      setTimeout(() => {
+        this.communicationService.postMessage({
+          messageType: 'help-widget-closed'
+        });
+      }, 300);
+      this.container.classList.add(HELP_CLOSED_CLASS);
+      this.invoker.setAttribute('aria-pressed', 'false');
+      this.invoker.setAttribute('aria-expanded', 'false');
+    }
   }
 
   public open(helpKey: string = this.getHelpKey()) {
-    if (!this.widgetDisabled) {
+    if (this.widgetDisabled) {
+      return;
+    }
+    if (!this.isVersionFive()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'open-to-help-key'
@@ -115,6 +137,8 @@ export class BBHelpHelpWidget {
       this.invoker.setAttribute('aria-pressed', 'true');
       this.invoker.setAttribute('aria-expanded', 'true');
       this.invoker.focus();
+    } else {
+      window.open(this.buildCurrentUrl(helpKey), '_blank');
     }
   }
 
@@ -127,13 +151,15 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-
     this.currentHelpKey = helpKey;
-
-    this.communicationService.postMessage({
-      helpKey,
-      messageType: 'update-current-help-key'
-    });
+    if (!this.isVersionFive()) {
+      this.communicationService.postMessage({
+        helpKey,
+        messageType: 'update-current-help-key'
+      });
+    } else if (this.helpUpdateCallback) {
+      this.helpUpdateCallback({ url: this.buildCurrentUrl(helpKey) });
+    }
   }
 
   public setHelpKeyToDefault(): void {
@@ -143,14 +169,18 @@ export class BBHelpHelpWidget {
   public disableWidget(): void {
     this.widgetDisabled = true;
     this.close();
-    this.invoker.classList.add('bb-help-hidden');
-    this.container.classList.add('bb-help-hidden');
+    if (!this.isVersionFive()) {
+      this.invoker.classList.add('bb-help-hidden');
+      this.container.classList.add('bb-help-hidden');
+    }
   }
 
   public enableWidget(): void {
     this.widgetDisabled = false;
-    this.invoker.classList.remove('bb-help-hidden');
-    this.container.classList.remove('bb-help-hidden');
+    if (!this.isVersionFive()) {
+      this.invoker.classList.remove('bb-help-hidden');
+      this.container.classList.remove('bb-help-hidden');
+    }
   }
 
   public getWhatsNewRevision(): number {
@@ -265,7 +295,7 @@ export class BBHelpHelpWidget {
   }
 
   private isCollapsed() {
-    return this.container.classList.contains(HELP_CLOSED_CLASS);
+    return this.isVersionFive() || this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
   private setClassesForWindowSize() {
@@ -324,5 +354,13 @@ export class BBHelpHelpWidget {
 
   private sanitizeConfig() {
     this.config = JSON.parse(JSON.stringify(this.config));
+  }
+
+  private isVersionFive(config: HelpConfig = this.config): boolean {
+    return config && config.version === 5;
+  }
+
+  private buildCurrentUrl(helpKey: string): string {
+    return `${this.config.helpBaseUrl}${helpKey}`;
   }
 }

@@ -22,3 +22,8 @@ export class MockWidgetRenderer {
     parentEl.appendChild(el);
   }
 }
+
+export function expectNoBodyElements() {
+    const elements: NodeListOf<Element> = document.body.querySelectorAll('*:not(script)');
+    expect(elements.length).toEqual(0);
+}
