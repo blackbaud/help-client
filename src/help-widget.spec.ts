@@ -92,6 +92,8 @@ describe('BBHelpHelpWidget', () => {
     mockCommunicationService.commReadyStatus = Promise.resolve();
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     helpWidget['elementsLoaded'] = false;
+    // reduce the amount of checks so the test doesn't take too long
+    helpWidget['maxReadyChecks'] = 5;
     helpWidget.ready()
       .then(() => {
         expect(mockCommunicationService.ready).not.toHaveBeenCalled();
