@@ -22,6 +22,7 @@ export class BBHelpHelpWidget {
   private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
+  private maxReadyChecks: number = 50;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
@@ -169,7 +170,6 @@ export class BBHelpHelpWidget {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
       const duration: number = 100;
-      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
@@ -178,7 +178,7 @@ export class BBHelpHelpWidget {
           resolve();
         }
 
-        if (readyAttempts >= maxIterations) {
+        if (readyAttempts >= this.maxReadyChecks) {
           clearInterval(interval);
           reject('The Help Widget failed to load.');
         }
