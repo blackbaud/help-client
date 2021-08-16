@@ -631,4 +631,30 @@ describe('BBHelpHelpWidget', () => {
     helpWidget['sanitizeConfig']();
     expect(helpWidget.config).toEqual(finalConfig);
   });
+
+  it('should unload widget', (done: DoneFn) => {
+    let config = { onHelpLoaded: jasmine.createSpy('onHelpLoaded') };
+    spyOn(mockCommunicationService, 'unload');
+    spyOn(mockStyleUtility, 'removeAllStyles');
+    helpWidget.load(config)
+      .then(() => {
+        helpWidget.unload();
+        expect(helpWidget.onHelpLoaded).toBeUndefined();
+        expect(helpWidget.currentHelpKey).toBeUndefined();
+        expect(helpWidget.config).toBeUndefined();
+        expect(helpWidget.iframe).toBeUndefined();
+        expect(mockCommunicationService.unload).toHaveBeenCalledTimes(1);
+        expect(mockStyleUtility.removeAllStyles).toHaveBeenCalledTimes(1);
+        config = { onHelpLoaded: jasmine.createSpy('onHelpLoaded') };
+        return helpWidget.load(config);
+      })
+      .then(() => {
+        expect(helpWidget.onHelpLoaded).toBeDefined();
+        helpWidget.setCurrentHelpKey('foo.html');
+        expect(helpWidget.currentHelpKey).toEqual('foo.html');
+        expect(helpWidget.config).toBeDefined();
+        expect(helpWidget.iframe).toBeDefined();
+        done();
+      });
+  });
 });

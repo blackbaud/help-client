@@ -19,6 +19,10 @@ export class MockCommunicationService {
     return this.commReadyStatus;
   }
 
+  public unload() {
+
+  }
+
   public postMessage() {
     //
   }
@@ -31,7 +35,7 @@ export type Spied<T> = {
 export function createCommSvcSpy(): Spied<BBHelpCommunicationService> {
   return jasmine.createSpyObj(
     'BBHelpCommunicationService',
-    ['bindChildWindowReference', 'ready', 'isFromHelpWidget', 'postMessage']
+    ['bindChildWindowReference', 'ready', 'isFromHelpWidget', 'postMessage', 'unload']
   );
 }
 

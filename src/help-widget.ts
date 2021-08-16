@@ -73,9 +73,7 @@ export class BBHelpHelpWidget {
       this.setUpInvokerEvents();
       this.renderElements();
       this.setUpCommunication();
-      window.addEventListener('resize', () => {
-        this.setClassesForWindowSize();
-      });
+      window.addEventListener('resize', this.setClassesForWindowSize);
     }
   }
 
@@ -95,6 +93,33 @@ export class BBHelpHelpWidget {
       .catch((err: string) => {
         console.error(err);
       });
+  }
+
+  public unload(): void {
+    if (!this.loadCalled) {
+      return;
+    }
+    if (!this.isOmnibarMode()) {
+      this.invoker.remove();
+      this.invoker = undefined;
+      this.iframe.remove();
+      this.iframe = undefined;
+      this.container.remove();
+      this.container = undefined;
+      this.communicationService.unload();
+      this.styleUtility.removeAllStyles();
+      window.removeEventListener('resize', this.setClassesForWindowSize);
+    }
+    this.elementsLoaded = false;
+    this.widgetDisabled = false;
+    this.onHelpLoaded = undefined;
+    this.currentHelpKey = undefined;
+    this.helpUpdateCallback = undefined;
+    this.getCurrentHelpKey = () => this.currentHelpKey || this.defaultHelpKey;
+    this.defaultHelpKey = 'default.html';
+    this.isSetForMobile = undefined;
+    this.config = undefined;
+    this.loadCalled = false;
   }
 
   public load(config: HelpConfig) {
@@ -397,7 +422,7 @@ export class BBHelpHelpWidget {
    * Instead of using this method, switch to omnibar mode.
    * @deprecated
    */
-  private setClassesForWindowSize() {
+  private setClassesForWindowSize = () => {
     this.container.classList.add(DISABLE_TRANSITION);
 
     if (this.isSetForMobile !== true && (this.isMobileWidth() || this.isMobileHeight())) {
