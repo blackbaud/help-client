@@ -14,7 +14,7 @@ function addListener(listenerType: string, cb: Function) {
 function removeListener(type: string, callback: Function) {
   const listener = listeners[type];
   if (listener === callback) {
-    delete listeners[type]
+    delete listeners[type];
     currentMessageListener = undefined;
   }
 }
@@ -271,6 +271,6 @@ describe('BBHelpCommunicationService', () => {
         expect(currentMessageListener).toBeUndefined();
         expect(commService.childWindow).toBeUndefined();
         expect(commService.childWindowReady).toBe(false);
-      })
+      });
   });
 });
