@@ -71,13 +71,27 @@ describe('BBHelpHelpWidgetRenderer', () => {
     done();
   });
 
-  it('should not add styles directly to the invoker if no header configs exist', (done) => {
+  it('should add styles to the invoker to defaults if no header configs exists', (done) => {
     const invokerEl: HTMLButtonElement = widgetRenderer.createInvoker();
+    // Different browsers return the color value as rgb or hex.
+    const bgColorHex: string = '#71bf43';
+    const bgColorRGB: string = 'rgb(113, 191, 67)';
+
+    const headerTexColorHex: string = '#fffff';
+    const headerTextcolorRGB: string = 'rgb(255, 255, 255)';
 
     widgetRenderer.addInvokerStyles(invokerEl, {});
 
-    expect(invokerEl.style.backgroundColor).toEqual('');
-    expect(invokerEl.style.color).toEqual('');
+    const BG_COLOR: string = (invokerEl.style.backgroundColor.indexOf('rgb') > -1)
+      ? bgColorRGB
+      : bgColorHex;
+
+    const TEXT_COLOR: string = (invokerEl.style.color.indexOf('rgb') > -1)
+      ? headerTextcolorRGB
+      : headerTexColorHex;
+
+    expect(invokerEl.style.backgroundColor).toEqual(BG_COLOR);
+    expect(invokerEl.style.color).toEqual(TEXT_COLOR);
     expect(invokerEl.innerHTML).toEqual('<span>?</span>');
     done();
   });

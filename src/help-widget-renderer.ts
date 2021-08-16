@@ -1,20 +1,13 @@
-import { HelpConfig, WhatsNewConfig } from './help-config';
+import { HelpConfig } from './help-config';
 
 const IFRAME_ID: string = 'bb-help-iframe';
 const IFRAME_TITLE: string = 'BB Help';
 const IFRAME_SRC: string = 'https://host.nxt.blackbaud.com/bb-help/';
+// Some browsers return the hexdecimal values are rgb and vice versa when the style is set with javascript.
+const BB_HEADER_COLOR: string = '#71bf43'; // 'rgb(113, 191, 67)';
+const BB_HEADER_TEXT_COLOR: string = '#fff'; // 'rgb(255, 255, 255)';
 const BB_HELP_INVOKER_ID: string = 'bb-help-invoker';
 const BB_HELP_HIDE_ON_MOBILE_CLASS: string = 'bb-help-hide-on-mobile';
-
-const SEPARATOR: '|' = '|';
-type LinkMenuItem = { label: string, url: string, newTab: boolean, class?: string };
-type SeparatorMenuItem = { label: typeof SEPARATOR };
-type MenuItem = LinkMenuItem | SeparatorMenuItem;
-
-function isSeparator(item: MenuItem): item is SeparatorMenuItem {
-  return item.label === SEPARATOR;
-}
-
 export class BBHelpHelpWidgetRenderer {
 
   public createContainer(): HTMLElement {
@@ -22,6 +15,7 @@ export class BBHelpHelpWidgetRenderer {
     domElement = document.createElement('div');
     domElement.id = 'bb-help-container';
     domElement.classList.add('bb-help-container');
+    domElement.classList.add('bb-help-closed');
     return domElement;
   }
 
@@ -35,33 +29,6 @@ export class BBHelpHelpWidgetRenderer {
     return invoker;
   }
 
-  public createMenu(contentUrl: string, whatsNewConfig: WhatsNewConfig, location: Location): HTMLDivElement {
-    const menuItemInfo: MenuItem[] = [
-      { label: 'Open help', url: contentUrl, class: 'bb-help-content-link', newTab: true },
-      { label: SEPARATOR },
-      { label: 'Support resources', url: 'https://support.blackbaud.com', newTab: true }
-    ];
-    if (whatsNewConfig && whatsNewConfig.url) {
-      const queryParams = decodeURIComponent(location.search);
-      const whatsNewItem = {
-        label: 'What\'s new',
-        url: `${whatsNewConfig.url}${queryParams}`,
-        newTab: whatsNewConfig.newTab
-      };
-      menuItemInfo.splice(1, 0, whatsNewItem);
-    }
-    const menu = document.createElement('div');
-    menu.classList.add('help-menu');
-    menu.classList.add('help-menu-collapse');
-    menu.setAttribute('role', 'menu');
-    menuItemInfo.map(label => this.createMenuItem(label))
-      .forEach(item => menu.appendChild(item));
-    return menu;
-  }
-
-  /**
-   * @deprecated
-   */
   public createIframe(): HTMLIFrameElement {
     let iframe: HTMLIFrameElement;
     iframe = document.createElement('iframe');
@@ -72,12 +39,8 @@ export class BBHelpHelpWidgetRenderer {
   }
 
   public addInvokerStyles(invoker: HTMLElement, config: HelpConfig) {
-    if (config.headerColor) {
-      invoker.style.backgroundColor = config.headerColor;
-    }
-    if (config.headerTextColor) {
-      invoker.style.color = config.headerTextColor;
-    }
+    invoker.style.backgroundColor = config.headerColor || BB_HEADER_COLOR;
+    invoker.style.color = config.headerTextColor || BB_HEADER_TEXT_COLOR;
     invoker.innerHTML = '<span>?</span>';
     if (config.hideWidgetOnMobile !== false) {
       invoker.classList.add(BB_HELP_HIDE_ON_MOBILE_CLASS);
@@ -86,31 +49,5 @@ export class BBHelpHelpWidgetRenderer {
 
   public appendElement(el: HTMLElement, parentEl: HTMLElement = document.body) {
     parentEl.appendChild(el);
-  }
-
-  /**
-   * Creates a menu item based on the label and url.
-   * If the label is {@link SEPARATOR}, then a separator item is created and the url is ignored.
-   */
-  private createMenuItem(item: MenuItem): HTMLAnchorElement | HTMLDivElement {
-    if (isSeparator(item)) {
-      const separator = document.createElement('div');
-      separator.classList.add('help-menu-separator');
-      separator.setAttribute('aria-hidden', 'true');
-      return separator;
-    } else {
-      const anchor = document.createElement('a');
-      anchor.href = item.url;
-      if (item.newTab) {
-        anchor.target = '_blank';
-      }
-      anchor.classList.add('help-menu-item');
-      if (item.class) {
-        anchor.classList.add(item.class);
-      }
-      anchor.setAttribute('role', 'menuitem');
-      anchor.appendChild(document.createTextNode(item.label));
-      return anchor;
-    }
   }
 }
