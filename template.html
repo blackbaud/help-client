@@ -50,6 +50,22 @@
     main {
       margin-top: 50px;
     }
+
+    input[type="checkbox"] {
+      border: 1px solid #cdcfd2;
+      width: 22px;
+      border-radius: 3px;
+    }
+
+    .checkbox-label, input[type="checkbox"] {
+      height: 22px;
+      line-height: 22px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 5px;
+    }
   </style>
 </head>
 <body onload="renderFormAndLoadWidget()">
@@ -67,6 +83,12 @@
   <section class="sky-margin-stacked-separate">
     <h2>Load widget</h2>
     <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
+      <div class="sky-form-group checkbox-group">
+        <input type="checkbox" id="omnibarMode"/>
+        <label for="omnibarMode" class="sky-control-label checkbox-label">
+          Omnibar mode
+        </label>
+      </div>
       <div class="sky-form-group">
         <label for="svcid" class="sky-control-label sky-control-label-required">Service Id</label>
         <select class="sky-form-control" id="svcid"></select>
@@ -117,11 +139,15 @@
 
   function buildConfig() {
     const form = document.forms['widgetLoad'];
-    const svcid = form.elements['svcid'].value
-    const locale = form.elements['locale'].value
+    const svcid = form.elements['svcid'].value;
+    const locale = form.elements['locale'].value;
+    const omnibarMode = form.elements['omnibarMode'].checked;
     const config = { extends: svcid };
     if (locale) {
       config.locale = locale;
+    }
+    if (omnibarMode) {
+      config.mode = 'omnibar';
     }
     return config;
   }
