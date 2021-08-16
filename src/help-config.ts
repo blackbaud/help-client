@@ -77,9 +77,10 @@ export interface HelpConfig {
   whats_new_help_key?: string;
   whatsNewConfig?: WhatsNewConfig;
   /**
-   * Legacy mode (default) refers to the green-ear style of widget.
-   * Omnibar modes refers to a menu-based style of widget where the menu is controlled by omnibar.
-   * Omnibar mode is the expected mode for apps that are SKY UX 5 or greater.
+   * Determines if widget will attempt to mimic being in the omnibar.
+   * If true (default), the widget will create a green-ear trigger in the DOM that is designed to be on top of the omnibar.
+   * If false, the widget will not create any visual elements in the DOM and will open all topics in a new tab.
+   * It's recommended to disable omnibar mimicking.
    */
-  mode?: 'legacy' | 'omnibar';
+  mimicOmnibar?: boolean;
 }
