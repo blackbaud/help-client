@@ -1,21 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>BB Help Client</title>
-  </head>
-  <body>
-    Demo:
-    <button id="demo-button">Load Help Client</button>
-    <script>
-      let button = document.getElementById('demo-button');
-      button.addEventListener('click', loadDemo);
+<head>
+  <title>help-client demo</title>
+  <!--a hacky, get-it-done-now way to bring in styles from @skyux/theme-->
+  <link rel="stylesheet" type="text/css"
+        href="https://d1ed2bc0tt12m5.cloudfront.net/styles.c10433e4334ac7100968.css"/>
+  <style>
+    body {
+      overflow: auto;
+    }
 
-      function loadDemo() {
-        const config = {
-          extends: 'bbhelp'
-        };
-        BBHELP.HelpWidget.load(config);
-      }
-    </script>
-  </body>
+    body.sky-theme-modern {
+      background-color: #fcfcfc;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .fake-omnibar {
+      background-color: #4d5259;
+      width: 100%;
+      height: 45px;
+      position: fixed;
+      top: 5px;
+      left: 0;
+      right: 0;
+    }
+
+    body.sky-theme-modern > .fake-omnibar {
+      background-color: #fff;
+      height: 46px;
+      top: 4px;
+      border-bottom: solid 1px #e2e3e4;
+    }
+
+    .fake-omnibar-accent {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, #71bf44 0, #31b986 50%, #00b2ec 100%);
+    }
+
+    body.sky-theme-modern > .fake-omnibar-accent {
+      height: 4px;
+    }
+
+    main {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body onload="renderFormAndLoadWidget()">
+<div class="fake-omnibar-accent"></div>
+<div class="fake-omnibar"></div>
+<main class="sky-padding-even-default">
+  <div class="sky-margin-stacked-separate">
+    <button class="sky-btn sky-btn-default" onclick="switchTheme()">Switch theme</button>
+    <button class="sky-btn sky-btn-default" onclick="unloadWidget()">Unload widget</button>
+  </div>
+  <h1>help-client demo</h1>
+
+  <hr/>
+
+  <section class="sky-margin-stacked-separate">
+    <h2>Load widget</h2>
+    <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
+      <div class="sky-form-group">
+        <label for="svcid" class="sky-control-label sky-control-label-required">Service Id</label>
+        <select class="sky-form-control" id="svcid"></select>
+      </div>
+      <div class="sky-form-group">
+        <label for="locale" class="sky-control-label">Locale</label>
+        <select class="sky-form-control" id="locale">
+          <option value="">Unspecified</option>
+        </select>
+      </div>
+    </form>
+    <h3>Resulting config</h3>
+    <pre><code id="config"></code></pre>
+  </section>
+
+  <hr/>
+
+  <section class="sky-margin-stacked-separate">
+    <h2>Open topic</h2>
+    <form name="topicOpen">
+      <div class="sky-form-group">
+        <label for="topic" class="sky-control-label">New topic</label>
+        <input class="sky-form-control" id="topic" type="text" placeholder="Leave empty to open current topic"/>
+      </div>
+    </form>
+    <button class="sky-btn sky-btn-default" onclick="openTopic()">Open topic</button>
+  </section>
+
+  <hr/>
+
+  <section class="sky-margin-stacked-separate">
+    <h2>Set current topic</h2>
+    <form name="topicSet">
+      <div class="sky-form-group">
+        <label for="newTopic" class="sky-control-label">New current topic</label>
+        <input type="text" class="sky-form-control" id="newTopic" placeholder="Leave empty to reset to default topic"/>
+      </div>
+    </form>
+    <button class="sky-btn sky-btn-default" onclick="setTopic()">Set topic</button>
+    <button class="sky-btn sky-btn-default" onclick="openTopic(true)">Open current topic</button>
+  </section>
+</main>
+
+<script>
+  function renderConfig() {
+    document.getElementById('config').textContent = JSON.stringify(buildConfig());
+  }
+
+  function buildConfig() {
+    const form = document.forms['widgetLoad'];
+    const svcid = form.elements['svcid'].value
+    const locale = form.elements['locale'].value
+    const config = { extends: svcid };
+    if (locale) {
+      config.locale = locale;
+    }
+    return config;
+  }
+
+  function unloadWidget() {
+    BBHELP.HelpWidget.unload();
+  }
+
+  function loadWidget() {
+    unloadWidget();
+    const config = buildConfig();
+    return BBHELP.HelpWidget.load(config)
+      .then(() => renderTopic(BBHELP.HelpWidget.currentHelpKey));
+  }
+
+  function renderSvcIds() {
+    const svcids = [
+      'admin', 'award-management', 'bbcrm', 'chrch', 'edu', 'faith', 'fenxt', 'fenxt(fenxt.cdev)', 'fenxt(fenxt.ate)',
+      'fndlite', 'gmk', 'marketplace', 'renxt', 'smallgroups', 'stewardship-management', 'tcs'
+    ];
+    const select = document.getElementById('svcid');
+    svcids.forEach((id) => {
+      const option = document.createElement('option');
+      option.appendChild(document.createTextNode(id));
+      option.setAttribute('value', id);
+      select.appendChild(option);
+    });
+  }
+
+  function renderLocales() {
+    const locales = ['en-us', 'en-gb', 'en-ca', 'en-au', 'en-nz', 'es-mx', 'qa', 'fr'];
+    const select = document.getElementById('locale');
+    locales.forEach(locale => {
+      const option = document.createElement('option');
+      option.appendChild(document.createTextNode(locale));
+      option.setAttribute('value', locale);
+      select.appendChild(option);
+    });
+  }
+
+  renderFormAndLoadWidget = async () => {
+    renderLocales();
+    renderSvcIds();
+    renderConfig();
+    await loadWidget();
+  }
+
+  function switchTheme() {
+    document.body.classList.toggle('sky-theme-modern');
+  }
+
+  function openTopic(openCurrentTopic = false) {
+    const form = document.forms['topicOpen'];
+    const topic = form.elements['topic'].value;
+    if (topic && !openCurrentTopic) {
+      BBHELP.HelpWidget.open(topic);
+    } else {
+      BBHELP.HelpWidget.open();
+    }
+  }
+
+  function setTopic() {
+    const form = document.forms['topicSet'];
+    const topic = form.elements['newTopic'].value;
+    if (topic) {
+      BBHELP.HelpWidget.setCurrentHelpKey(topic);
+      form.elements['newTopic'].value = '';
+    } else {
+      BBHELP.HelpWidget.setCurrentHelpKey();
+    }
+  }
+
+  function renderTopic(topic) {
+    if (topic) {
+      const form = document.forms['topicOpen'];
+      form.elements['topic'].value = topic;
+    }
+  }
+</script>
+</body>
 </html>
