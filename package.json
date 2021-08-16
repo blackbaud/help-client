@@ -18,7 +18,7 @@
     "posttest": "npm run lint",
     "test:ci": "karma start ci.karma.conf.js",
     "prebuild": "rimraf dist",
-    "build": "tsc && webpack --config config/webpack/webpack.prod.config.js",
+    "build": "tsc && webpack --config config/webpack/webpack.prod.config.js && cp package.json dist",
     "watch": "karma start local.karma.conf.js --auto-watch --no-single-run",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack serve --open --config config/webpack/webpack.dev.config.js"
