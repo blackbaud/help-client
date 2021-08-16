@@ -12,7 +12,7 @@ function noOp() {
 }
 
 describe('BBHelpHelpWidget', () => {
-  describe('when in omnibar mode', () => {
+  describe('when not mimicking the omnibar', () => {
     let helpWidget: BBHelpHelpWidget;
     let commSvcSpy: Spied<BBHelpCommunicationService>;
     let windowSpy: jasmine.Spy;
@@ -30,7 +30,7 @@ describe('BBHelpHelpWidget', () => {
 
     describe('with standard config', () => {
       beforeEach(async () => {
-        config = { mode: 'omnibar', helpBaseUrl: 'https://bb.com', defaultHelpKey: 'renxtDefault.html', extends: 'renxt' };
+        config = { mimicOmnibar: false, helpBaseUrl: 'https://bb.com', defaultHelpKey: 'renxtDefault.html', extends: 'renxt' };
         await helpWidget.load(config);
       });
 
@@ -110,7 +110,7 @@ describe('BBHelpHelpWidget', () => {
 
       beforeEach(async () => {
         onHelpLoadedSpy = jasmine.createSpy('onHelpLoaded');
-        config = { mode: 'omnibar', onHelpLoaded: onHelpLoadedSpy };
+        config = { mimicOmnibar: false, onHelpLoaded: onHelpLoadedSpy };
         await helpWidget.load(config);
       });
 
@@ -124,7 +124,7 @@ describe('BBHelpHelpWidget', () => {
 
       beforeEach(async () => {
         helpUpdateCallbackSpy = jasmine.createSpy('helpUpdateCallback');
-        config = { mode: 'omnibar', helpBaseUrl: 'https://bb.com', helpUpdateCallback: helpUpdateCallbackSpy };
+        config = { mimicOmnibar: false, helpBaseUrl: 'https://bb.com', helpUpdateCallback: helpUpdateCallbackSpy };
         await helpWidget.load(config);
       });
 

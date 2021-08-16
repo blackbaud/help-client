@@ -84,9 +84,9 @@
     <h2>Load widget</h2>
     <form name="widgetLoad" onchange="renderConfig(); loadWidget()">
       <div class="sky-form-group checkbox-group">
-        <input type="checkbox" id="omnibarMode"/>
-        <label for="omnibarMode" class="sky-control-label checkbox-label">
-          Omnibar mode
+        <input type="checkbox" id="omnibarMimic"/>
+        <label for="omnibarMimic" class="sky-control-label checkbox-label">
+          Enable omnibar mimicking
         </label>
       </div>
       <div class="sky-form-group">
@@ -141,13 +141,13 @@
     const form = document.forms['widgetLoad'];
     const svcid = form.elements['svcid'].value;
     const locale = form.elements['locale'].value;
-    const omnibarMode = form.elements['omnibarMode'].checked;
+    const omnibarMimic = form.elements['omnibarMimic'].checked;
     const config = { extends: svcid };
     if (locale) {
       config.locale = locale;
     }
-    if (omnibarMode) {
-      config.mode = 'omnibar';
+    if (omnibarMimic === false) {
+      config.mimicOmnibar = false;
     }
     return config;
   }

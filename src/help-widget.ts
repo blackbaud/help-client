@@ -67,7 +67,7 @@ export class BBHelpHelpWidget {
    * @deprecated
    */
   public init() {
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.styleUtility.addAllStyles();
       this.createElements();
       this.setUpInvokerEvents();
@@ -83,7 +83,7 @@ export class BBHelpHelpWidget {
    * @deprecated
    */
   public ready() {
-    if (this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingDisabled()) {
       return Promise.resolve();
     }
     return this.widgetReady()
@@ -99,7 +99,7 @@ export class BBHelpHelpWidget {
     if (!this.loadCalled) {
       return;
     }
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.invoker.remove();
       this.invoker = undefined;
       this.iframe.remove();
@@ -127,7 +127,7 @@ export class BBHelpHelpWidget {
       return;
     }
 
-    this.config = (this.isOmnibarMode(config)) ? mergeConfig(config) : config;
+    this.config = (this.isOmnibarMimickingDisabled(config)) ? mergeConfig(config) : config;
     this.init();
 
     return this.ready()
@@ -156,7 +156,7 @@ export class BBHelpHelpWidget {
         }
 
         this.sanitizeConfig();
-        if (!this.isOmnibarMode()) {
+        if (this.isOmnibarMimickingEnabled()) {
           this.sendConfig();
         } else if (this.onHelpLoaded) {
           this.onHelpLoaded();
@@ -165,11 +165,12 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This does nothing when {@link HelpConfig#mode} is omnibar.
+   * This does nothing when {@link HelpConfig#mimicOmnibar} is true.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   public close() {
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       // Wait for client close transition to finish to send close message to SPA
       setTimeout(() => {
         this.communicationService.postMessage({
@@ -186,7 +187,7 @@ export class BBHelpHelpWidget {
     if (this.widgetDisabled) {
       return;
     }
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'open-to-help-key'
@@ -202,8 +203,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This only opens when {@link HelpConfig#mode} is omnibar.
-   * Use {@link BBHelpHelpWidget#open} directly instead.
+   * This only opens when {@link HelpConfig#mimicOmnibar} is true.
+   * Instead of using this method, disable omnibar mimicking and use {@link BBHelpHelpWidget#open} directly instead.
    * @deprecated
    */
   public toggleOpen(helpKey?: string) {
@@ -216,7 +217,7 @@ export class BBHelpHelpWidget {
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
     this.currentHelpKey = helpKey;
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'update-current-help-key'
@@ -233,7 +234,7 @@ export class BBHelpHelpWidget {
   public disableWidget(): void {
     this.widgetDisabled = true;
     this.close();
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.invoker.classList.add('bb-help-hidden');
       this.container.classList.add('bb-help-hidden');
     }
@@ -241,7 +242,7 @@ export class BBHelpHelpWidget {
 
   public enableWidget(): void {
     this.widgetDisabled = false;
-    if (!this.isOmnibarMode()) {
+    if (this.isOmnibarMimickingEnabled()) {
       this.invoker.classList.remove('bb-help-hidden');
       this.container.classList.remove('bb-help-hidden');
     }
@@ -266,8 +267,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private widgetReady() {
@@ -291,8 +292,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private setUpCommunication() {
@@ -303,8 +304,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private actionResponse(action: CommunicationAction) {
@@ -336,8 +337,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private updateConfigKeys(configOptions: any) {
@@ -353,8 +354,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private sendConfig() {
@@ -365,8 +366,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private renderInvoker() {
@@ -375,8 +376,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private createElements() {
@@ -387,8 +388,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private renderElements() {
@@ -398,8 +399,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private setUpInvokerEvents() {
@@ -409,17 +410,17 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * The widget is effectively always collapsed @link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * The concept of collapsing isn't relevant when {@link HelpConfig#mimicOmnibar} is false.
+   * Thus the widget is effectively always collapsed in that state.
    * @deprecated
    */
   private isCollapsed() {
-    return this.isOmnibarMode() || this.container.classList.contains(HELP_CLOSED_CLASS);
+    return this.isOmnibarMimickingDisabled() || this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private setClassesForWindowSize = () => {
@@ -446,8 +447,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private isMobileWidth(): boolean {
@@ -466,8 +467,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when in {@link HelpConfig#mode} is omnibar.
-   * Instead of using this method, switch to omnibar mode.
+   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
+   * Instead of using this method, disable omnibar mimicking.
    * @deprecated
    */
   private isMobileHeight(): boolean {
@@ -490,8 +491,15 @@ export class BBHelpHelpWidget {
     this.config = JSON.parse(JSON.stringify(this.config));
   }
 
-  private isOmnibarMode(config: HelpConfig = this.config): boolean {
-    return config && config.mode === 'omnibar';
+  /**
+   * @return false iff config is defined and {@link HelpConfig#mimicOmnibar} is defined as false.
+   */
+  private isOmnibarMimickingEnabled(config: HelpConfig = this.config): boolean {
+    return config === undefined || config.mimicOmnibar !== false;
+  }
+
+  private isOmnibarMimickingDisabled(config: HelpConfig = this.config): boolean {
+    return !this.isOmnibarMimickingEnabled(config);
   }
 
   private buildCurrentUrl(helpKey: string): string {
