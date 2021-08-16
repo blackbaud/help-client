@@ -91,6 +91,18 @@ describe('BBHelpHelpWidget', () => {
         expect(windowSpy).toHaveBeenCalledWith('https://bb.com/renxtDefault.html', '_blank');
         expectNoBodyElements();
       });
+
+      it('should unload widget', async () => {
+        helpWidget.unload();
+        expect(helpWidget.currentHelpKey).toBeUndefined();
+        expect(helpWidget.config).toBeUndefined();
+        await helpWidget.load(config)
+          .then(() => {
+            helpWidget.setCurrentHelpKey('foo.html');
+            expect(helpWidget.currentHelpKey).toEqual('foo.html');
+            expect(helpWidget.config).toBeDefined();
+          });
+      });
     });
 
     describe('with a configured onHelpLoaded', () => {

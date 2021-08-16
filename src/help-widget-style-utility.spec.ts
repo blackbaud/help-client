@@ -34,4 +34,18 @@ describe('BBHelpStyleUtility', () => {
     styleUtility.addAllStyles();
     expect(styleUtility.addCssToHead).not.toHaveBeenCalled();
   });
+
+  it('should remove added style elements on unload', () => {
+    const greenClass = '.green { color: green }';
+    const redClass = '.red { color: red }';
+
+    styleUtility.addCssToHead(greenClass);
+    styleUtility.addCssToHead(redClass);
+    expect(document.head.querySelectorAll('style').length).toEqual(2);
+    styleUtility.removeAllStyles();
+    expect(document.head.querySelectorAll('style').length).toEqual(0);
+    styleUtility.addCssToHead(greenClass);
+    styleUtility.addCssToHead(redClass);
+    expect(document.head.querySelectorAll('style').length).toEqual(2);
+  });
 });

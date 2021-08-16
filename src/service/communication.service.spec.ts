@@ -1,12 +1,22 @@
 import { BBHelpCommunicationService } from './communication.service';
 
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
-let triggerEvent: any;
+let currentMessageListener: Function;
+let listeners: Record<string, Function> = {};
 
-function fakeMessageTrigger(listenerType: string, cb: any) {
-  triggerEvent = (event: any) => {
-    cb(event);
-  };
+function addListener(listenerType: string, cb: Function) {
+  listeners[listenerType] = cb;
+  if (listenerType === 'message') {
+    currentMessageListener = cb;
+  }
+}
+
+function removeListener(type: string, callback: Function) {
+  const listener = listeners[type];
+  if (listener === callback) {
+    delete listeners[type]
+    currentMessageListener = undefined;
+  }
 }
 
 const mockChildWindow = {
@@ -25,7 +35,8 @@ describe('BBHelpCommunicationService', () => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-    spyOn(window, 'addEventListener').and.callFake(fakeMessageTrigger);
+    spyOn(window, 'addEventListener').and.callFake(addListener);
+    spyOn(window, 'removeEventListener').and.callFake(removeListener);
 
     commService = new BBHelpCommunicationService();
     commService.bindChildWindowReference(mockChildWindow);
@@ -51,7 +62,7 @@ describe('BBHelpCommunicationService', () => {
         return Promise.reject('test failed');
       })
       .catch((error) => {
-        expect(error).toEqual('The Help Widget failed to load.');
+        expect(error).toEqual('The Help Widget\'s Communication Service failed to load.');
         done();
       });
   });
@@ -147,7 +158,7 @@ describe('BBHelpCommunicationService', () => {
 
     spyOn(commService, 'postMessage').and.callThrough();
     spyOn(commService.communicationAction, 'next').and.callThrough();
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(commService.postMessage).toHaveBeenCalledWith({ messageType: 'host-ready', source: 'help-client' });
     expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Child Window Ready' });
     expect(commService.childWindowReady).toBe(true);
@@ -164,7 +175,7 @@ describe('BBHelpCommunicationService', () => {
     };
 
     spyOn(commService.communicationAction, 'next').and.callThrough();
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Close Widget'});
     done();
   });
@@ -180,7 +191,7 @@ describe('BBHelpCommunicationService', () => {
     };
 
     spyOn(commService.communicationAction, 'next').and.callThrough();
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(commService.communicationAction.next).toHaveBeenCalledWith({
       helpKey: 'whats-new.html',
       messageType: 'Open Widget'
@@ -201,7 +212,7 @@ describe('BBHelpCommunicationService', () => {
     };
 
     spyOn(commService.communicationAction, 'next').and.callThrough();
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(commService.communicationAction.next).toHaveBeenCalledWith({
       data: event.data.data,
       messageType: 'Config Loaded'
@@ -222,7 +233,7 @@ describe('BBHelpCommunicationService', () => {
     spyOn(window.console, 'error').and.callFake(() => {
       return;
     });
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(window.console.error).toHaveBeenCalledWith(`No matching response for message type: ${testMessageType}`);
     done();
   });
@@ -238,9 +249,28 @@ describe('BBHelpCommunicationService', () => {
       },
       origin: 'Other Source'
     };
-    triggerEvent(event);
+    currentMessageListener(event);
     expect(commService.communicationAction.next).not.toHaveBeenCalled();
     expect(window.console.error).not.toHaveBeenCalled();
     done();
+  });
+
+  it('should reset state on unload', async () => {
+    const readyEvent = {
+      data: {
+        messageType: 'ready',
+        source: 'skyux-spa-bb-help'
+      },
+      origin: HOST_ORIGIN
+    };
+    currentMessageListener(readyEvent);
+    await commService.ready()
+      .then(() => commService.unload())
+      .then(() => {
+        expect(listeners.message).toBeUndefined();
+        expect(currentMessageListener).toBeUndefined();
+        expect(commService.childWindow).toBeUndefined();
+        expect(commService.childWindowReady).toBe(false);
+      })
   });
 });

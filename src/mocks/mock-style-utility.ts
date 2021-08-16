@@ -1,6 +1,9 @@
 export class MockStyleUtility {
   public addAllStyles() {
-    //
+  }
+
+  public removeAllStyles() {
+
   }
 }
 
