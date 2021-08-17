@@ -7,6 +7,10 @@ export class MockHelpWidget {
     return;
   }
 
+  public unload() {
+    return;
+  }
+
   public open(helpKey?: string) {
     return;
   }
