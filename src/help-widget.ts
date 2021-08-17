@@ -64,6 +64,7 @@ export class BBHelpHelpWidget {
   /**
    * This was not intended to be public.
    * It is not recommended for consumers to use.
+   * Use {@link BBHelpHelpWidget#load} instead.
    * @deprecated
    */
   public init() {
@@ -80,6 +81,7 @@ export class BBHelpHelpWidget {
   /**
    * This was not intended to be public.
    * It is not recommended for consumers to use.
+   * Use {@link BBHelpHelpWidget#load} instead.
    * @deprecated
    */
   public ready() {
@@ -157,6 +159,8 @@ export class BBHelpHelpWidget {
 
         this.sanitizeConfig();
         if (this.isOmnibarMimickingEnabled()) {
+          // sending the config will result is a response "Config Loaded" message that will trigger onHelpLoaded,
+          // thus no need to do it here
           this.sendConfig();
         } else if (this.onHelpLoaded) {
           this.onHelpLoaded();
