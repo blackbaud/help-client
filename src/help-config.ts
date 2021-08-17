@@ -1,8 +1,3 @@
-export interface WhatsNewConfig {
-  url: string;
-  newTab: boolean;
-}
-
 export interface HelpConfig {
   /**
    * @deprecated
@@ -75,7 +70,6 @@ export interface HelpConfig {
    * @deprecated
    */
   whats_new_help_key?: string;
-  whatsNewConfig?: WhatsNewConfig;
   /**
    * Determines if widget will attempt to mimic being in the omnibar.
    * If true (default), the widget will create a green-ear trigger in the DOM that is designed to be on top of the omnibar.

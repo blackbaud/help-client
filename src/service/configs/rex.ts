@@ -6,9 +6,5 @@ export const config: HelpConfig = {
   communityUrl: 'http://community.blackbaud.com/products/raisersedgenxt',
   caseCentralUrl: 'https://www.blackbaud.com/casecentral/casesearch.aspx',
   knowledgebaseUrl: 'https://kb.blackbaud.com/',
-  useFlareSearch: true,
-  whatsNewConfig: {
-    url: 'https://host.nxt.blackbaud.com/renxt-homepage',
-    newTab: false
-  }
+  useFlareSearch: true
 };
