@@ -4,6 +4,7 @@ import { BBHelpStyleUtility } from './help-widget-style-utility';
 
 import { CommunicationAction } from './models/communication-action';
 import { BBHelpCommunicationService } from './service/communication.service';
+import { mergeConfig } from './service/config-merge.utils';
 
 const HELP_CLOSED_CLASS: string = 'bb-help-closed';
 const MOBILE_CONTAINER_CLASS: string = 'bb-help-container-mobile';
@@ -13,20 +14,42 @@ const SCREEN_XS_MAX: number = 767;
 const PANEL_HEIGHT: number = 591;
 
 export class BBHelpHelpWidget {
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public iframe: HTMLIFrameElement;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public config: HelpConfig;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public currentHelpKey: string;
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * @deprecated
+   */
   public onHelpLoaded: any;
   private widgetRenderer: BBHelpHelpWidgetRenderer;
   private communicationService: BBHelpCommunicationService;
   private styleUtility: BBHelpStyleUtility;
   private container: HTMLElement;
   private invoker: HTMLElement;
+  private maxReadyChecks: number = 50;
   private elementsLoaded: boolean = false;
   private widgetDisabled: boolean = false;
   private defaultHelpKey: string = 'default.html';
   private loadCalled: boolean = false;
   private isSetForMobile: boolean;
+  private helpUpdateCallback: (args: { url: string }) => void = undefined;
 
   constructor(
     widgetRenderer: BBHelpHelpWidgetRenderer,
@@ -38,18 +61,33 @@ export class BBHelpHelpWidget {
     this.communicationService = communicationService;
   }
 
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * Use {@link BBHelpHelpWidget#load} instead.
+   * @deprecated
+   */
   public init() {
-    this.styleUtility.addAllStyles();
-    this.createElements();
-    this.setUpInvokerEvents();
-    this.renderElements();
-    this.setUpCommunication();
-    window.addEventListener('resize', () => {
-      this.setClassesForWindowSize();
-    });
+    if (this.isOmnibarMimickingEnabled()) {
+      this.styleUtility.addAllStyles();
+      this.createElements();
+      this.setUpInvokerEvents();
+      this.renderElements();
+      this.setUpCommunication();
+      window.addEventListener('resize', this.setClassesForWindowSize);
+    }
   }
 
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * Use {@link BBHelpHelpWidget#load} instead.
+   * @deprecated
+   */
   public ready() {
+    if (this.isOmnibarMimickingDisabled()) {
+      return Promise.resolve();
+    }
     return this.widgetReady()
       .then(() => {
         return this.communicationService.ready();
@@ -59,52 +97,101 @@ export class BBHelpHelpWidget {
       });
   }
 
+  public unload(): void {
+    if (!this.loadCalled) {
+      return;
+    }
+    if (this.isOmnibarMimickingEnabled()) {
+      this.invoker.remove();
+      this.invoker = undefined;
+      this.iframe.remove();
+      this.iframe = undefined;
+      this.container.remove();
+      this.container = undefined;
+      this.communicationService.unload();
+      this.styleUtility.removeAllStyles();
+      window.removeEventListener('resize', this.setClassesForWindowSize);
+    }
+    this.elementsLoaded = false;
+    this.widgetDisabled = false;
+    this.onHelpLoaded = undefined;
+    this.currentHelpKey = undefined;
+    this.helpUpdateCallback = undefined;
+    this.getCurrentHelpKey = () => this.currentHelpKey || this.defaultHelpKey;
+    this.defaultHelpKey = 'default.html';
+    this.isSetForMobile = undefined;
+    this.config = undefined;
+    this.loadCalled = false;
+  }
+
   public load(config: HelpConfig) {
     if (this.loadCalled) {
       return;
     }
 
+    this.config = (this.isOmnibarMimickingDisabled(config)) ? mergeConfig(config) : config;
     this.init();
 
     return this.ready()
       .then(() => {
         this.loadCalled = true;
-        this.config = config;
-        if (config.defaultHelpKey !== undefined) {
+        if (this.config.defaultHelpKey !== undefined) {
           this.defaultHelpKey = config.defaultHelpKey;
         }
 
-        config.hostQueryParams = this.getQueryParams();
+        // TODO move to mergeConfig
+        this.config.hostQueryParams = this.getQueryParams();
 
-        if (config.getCurrentHelpKey !== undefined) {
-          this.getCurrentHelpKey = config.getCurrentHelpKey;
-          delete config.getCurrentHelpKey;
+        if (this.config.getCurrentHelpKey !== undefined) {
+          this.getCurrentHelpKey = this.config.getCurrentHelpKey;
+          delete this.config.getCurrentHelpKey;
         }
 
-        if (config.onHelpLoaded !== undefined) {
-          this.onHelpLoaded = config.onHelpLoaded;
-          delete config.onHelpLoaded;
+        if (this.config.onHelpLoaded !== undefined) {
+          this.onHelpLoaded = this.config.onHelpLoaded;
+          delete this.config.onHelpLoaded;
+        }
+
+        if (this.config.helpUpdateCallback !== undefined) {
+          this.helpUpdateCallback = this.config.helpUpdateCallback;
+          delete this.config.helpUpdateCallback;
         }
 
         this.sanitizeConfig();
-        this.sendConfig();
+        if (this.isOmnibarMimickingEnabled()) {
+          // sending the config will result is a response "Config Loaded" message that will trigger onHelpLoaded,
+          // thus no need to do it here
+          this.sendConfig();
+        } else if (this.onHelpLoaded) {
+          this.onHelpLoaded();
+        }
       });
   }
 
+  /**
+   * This does nothing when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   public close() {
-    // Wait for client close transition to finish to send close message to SPA
-    setTimeout(() => {
-      this.communicationService.postMessage({
-        messageType: 'help-widget-closed'
-      });
-    }, 300);
-    this.container.classList.add(HELP_CLOSED_CLASS);
-    this.invoker.setAttribute('aria-pressed', 'false');
-    this.invoker.setAttribute('aria-expanded', 'false');
+    if (this.isOmnibarMimickingEnabled()) {
+      // Wait for client close transition to finish to send close message to SPA
+      setTimeout(() => {
+        this.communicationService.postMessage({
+          messageType: 'help-widget-closed'
+        });
+      }, 300);
+      this.container.classList.add(HELP_CLOSED_CLASS);
+      this.invoker.setAttribute('aria-pressed', 'false');
+      this.invoker.setAttribute('aria-expanded', 'false');
+    }
   }
 
   public open(helpKey: string = this.getHelpKey()) {
-    if (!this.widgetDisabled) {
+    if (this.widgetDisabled) {
+      return;
+    }
+    if (this.isOmnibarMimickingEnabled()) {
       this.communicationService.postMessage({
         helpKey,
         messageType: 'open-to-help-key'
@@ -114,9 +201,16 @@ export class BBHelpHelpWidget {
       this.invoker.setAttribute('aria-pressed', 'true');
       this.invoker.setAttribute('aria-expanded', 'true');
       this.invoker.focus();
+    } else {
+      window.open(this.buildCurrentUrl(helpKey), '_blank');
     }
   }
 
+  /**
+   * This only opens anything when {@link HelpConfig#helpMode} is legacy.
+   * Instead of using this method, enter menu mode and use {@link BBHelpHelpWidget#open} directly instead.
+   * @deprecated
+   */
   public toggleOpen(helpKey?: string) {
     if (this.isCollapsed()) {
       this.open(helpKey);
@@ -126,13 +220,15 @@ export class BBHelpHelpWidget {
   }
 
   public setCurrentHelpKey(helpKey: string = this.defaultHelpKey): void {
-
     this.currentHelpKey = helpKey;
-
-    this.communicationService.postMessage({
-      helpKey,
-      messageType: 'update-current-help-key'
-    });
+    if (this.isOmnibarMimickingEnabled()) {
+      this.communicationService.postMessage({
+        helpKey,
+        messageType: 'update-current-help-key'
+      });
+    } else if (this.helpUpdateCallback) {
+      this.helpUpdateCallback({ url: this.buildCurrentUrl(helpKey) });
+    }
   }
 
   public setHelpKeyToDefault(): void {
@@ -142,16 +238,25 @@ export class BBHelpHelpWidget {
   public disableWidget(): void {
     this.widgetDisabled = true;
     this.close();
-    this.invoker.classList.add('bb-help-hidden');
-    this.container.classList.add('bb-help-hidden');
+    if (this.isOmnibarMimickingEnabled()) {
+      this.invoker.classList.add('bb-help-hidden');
+      this.container.classList.add('bb-help-hidden');
+    }
   }
 
   public enableWidget(): void {
     this.widgetDisabled = false;
-    this.invoker.classList.remove('bb-help-hidden');
-    this.container.classList.remove('bb-help-hidden');
+    if (this.isOmnibarMimickingEnabled()) {
+      this.invoker.classList.remove('bb-help-hidden');
+      this.container.classList.remove('bb-help-hidden');
+    }
   }
 
+  /**
+   * This was a proposed solution to What's new years ago that never was acted upon.
+   * This is kept around solely for backwards compatibility because the method is public.
+   * @deprecated
+   */
   public getWhatsNewRevision(): number {
     if (this.config.whatsNewRevisions && this.config.whatsNewRevisions.length > 0) {
       const revisions = this.config.whatsNewRevisions.split(';');
@@ -165,11 +270,15 @@ export class BBHelpHelpWidget {
     return 0;
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private widgetReady() {
     return new Promise((resolve, reject) => {
       let readyAttempts = 0;
       const duration: number = 100;
-      const maxIterations: number = 50;
 
       const interval = setInterval(() => {
         readyAttempts++;
@@ -178,7 +287,7 @@ export class BBHelpHelpWidget {
           resolve();
         }
 
-        if (readyAttempts >= maxIterations) {
+        if (readyAttempts >= this.maxReadyChecks) {
           clearInterval(interval);
           reject('The Help Widget failed to load.');
         }
@@ -186,6 +295,11 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private setUpCommunication() {
     this.communicationService.bindChildWindowReference(this.iframe);
     this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
@@ -193,6 +307,11 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private actionResponse(action: CommunicationAction) {
     switch (action.messageType) {
       case 'Close Widget':
@@ -221,6 +340,11 @@ export class BBHelpHelpWidget {
     }
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private updateConfigKeys(configOptions: any) {
     this.config = configOptions;
     if (configOptions.defaultHelpKey) {
@@ -233,6 +357,11 @@ export class BBHelpHelpWidget {
     return results;
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private sendConfig() {
     this.communicationService.postMessage({
       config: this.config,
@@ -240,11 +369,21 @@ export class BBHelpHelpWidget {
     });
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private renderInvoker() {
     this.widgetRenderer.addInvokerStyles(this.invoker, this.config);
     this.container.insertBefore(this.invoker, this.iframe);
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private createElements() {
     this.container = this.widgetRenderer.createContainer();
     this.invoker = this.widgetRenderer.createInvoker();
@@ -252,23 +391,43 @@ export class BBHelpHelpWidget {
     this.elementsLoaded = true;
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private renderElements() {
     this.setClassesForWindowSize();
     this.widgetRenderer.appendElement(this.container);
     this.widgetRenderer.appendElement(this.iframe, this.container);
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private setUpInvokerEvents() {
     this.invoker.addEventListener('click', () => {
       this.toggleOpen();
     });
   }
 
+  /**
+   * The concept of collapsing isn't relevant when {@link HelpConfig#helpMode} is menu.
+   * Thus the widget is effectively always collapsed in that state.
+   * @deprecated
+   */
   private isCollapsed() {
-    return this.container.classList.contains(HELP_CLOSED_CLASS);
+    return this.isOmnibarMimickingDisabled() || this.container.classList.contains(HELP_CLOSED_CLASS);
   }
 
-  private setClassesForWindowSize() {
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
+  private setClassesForWindowSize = () => {
     this.container.classList.add(DISABLE_TRANSITION);
 
     if (this.isSetForMobile !== true && (this.isMobileWidth() || this.isMobileHeight())) {
@@ -291,6 +450,11 @@ export class BBHelpHelpWidget {
     this.container.classList.remove(DISABLE_TRANSITION);
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private isMobileWidth(): boolean {
     if (window.innerWidth <= SCREEN_XS_MAX) {
       if (!this.invoker.classList.contains(MOBILE_WIDTH_CLASS)) {
@@ -306,6 +470,11 @@ export class BBHelpHelpWidget {
     return false;
   }
 
+  /**
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   private isMobileHeight(): boolean {
     return window.innerHeight <= PANEL_HEIGHT;
   }
@@ -324,5 +493,20 @@ export class BBHelpHelpWidget {
 
   private sanitizeConfig() {
     this.config = JSON.parse(JSON.stringify(this.config));
+  }
+
+  /**
+   * @return false iff config is defined and {@link HelpConfig#helpMode} is defined as menu.
+   */
+  private isOmnibarMimickingEnabled(config: HelpConfig = this.config): boolean {
+    return config === undefined || config.helpMode !== 'menu';
+  }
+
+  private isOmnibarMimickingDisabled(config: HelpConfig = this.config): boolean {
+    return !this.isOmnibarMimickingEnabled(config);
+  }
+
+  private buildCurrentUrl(helpKey: string): string {
+    return `${this.config.helpBaseUrl}${helpKey}`;
   }
 }

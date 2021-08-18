@@ -12,6 +12,12 @@ describe('BBHelpClient', () => {
     };
   });
 
+  it('should delegate to the Help Widget for unloading', () => {
+    const unloadSpy = spyOn(mockHelpWidget, 'unload').and.callThrough();
+    BBHelpClient.unload();
+    expect(unloadSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should pass the config to the Help Widget if the Help Widget is ready', (done) => {
     const helpLoadSpy = spyOn(mockHelpWidget, 'load').and.callThrough();
     const config = {

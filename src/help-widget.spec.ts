@@ -1,7 +1,7 @@
 import { BBHelpHelpWidget } from './help-widget';
 import { MockCommunicationService } from './mocks/mock-communication-service';
 import { MockWidgetRenderer} from './mocks/mock-renderer';
-import { MockStyleUtility } from './mocks/mock-style-utilty';
+import { MockStyleUtility } from './mocks/mock-style-utility';
 
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
@@ -92,6 +92,8 @@ describe('BBHelpHelpWidget', () => {
     mockCommunicationService.commReadyStatus = Promise.resolve();
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
     helpWidget['elementsLoaded'] = false;
+    // reduce the amount of checks so the test doesn't take too long
+    helpWidget['maxReadyChecks'] = 5;
     helpWidget.ready()
       .then(() => {
         expect(mockCommunicationService.ready).not.toHaveBeenCalled();
@@ -628,5 +630,31 @@ describe('BBHelpHelpWidget', () => {
     helpWidget.config = originalConfig;
     helpWidget['sanitizeConfig']();
     expect(helpWidget.config).toEqual(finalConfig);
+  });
+
+  it('should unload widget', (done: DoneFn) => {
+    let config = { onHelpLoaded: jasmine.createSpy('onHelpLoaded') };
+    spyOn(mockCommunicationService, 'unload');
+    spyOn(mockStyleUtility, 'removeAllStyles');
+    helpWidget.load(config)
+      .then(() => {
+        helpWidget.unload();
+        expect(helpWidget.onHelpLoaded).toBeUndefined();
+        expect(helpWidget.currentHelpKey).toBeUndefined();
+        expect(helpWidget.config).toBeUndefined();
+        expect(helpWidget.iframe).toBeUndefined();
+        expect(mockCommunicationService.unload).toHaveBeenCalledTimes(1);
+        expect(mockStyleUtility.removeAllStyles).toHaveBeenCalledTimes(1);
+        config = { onHelpLoaded: jasmine.createSpy('onHelpLoaded') };
+        return helpWidget.load(config);
+      })
+      .then(() => {
+        expect(helpWidget.onHelpLoaded).toBeDefined();
+        helpWidget.setCurrentHelpKey('foo.html');
+        expect(helpWidget.currentHelpKey).toEqual('foo.html');
+        expect(helpWidget.config).toBeDefined();
+        expect(helpWidget.iframe).toBeDefined();
+        done();
+      });
   });
 });
