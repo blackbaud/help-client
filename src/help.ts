@@ -42,8 +42,8 @@ export abstract class BBHelpClient {
   }
 
   /**
-   * This only opens when {@link HelpConfig#mimicOmnibar} is true.
-   * Instead of using this method, disable omnibar mimicking and use {@link BBHelpClient#openWidget} directly instead.
+   * This only opens when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode and use {@link BBHelpClient#openWidget} directly instead.
    * @deprecated
    */
   public static toggleOpen(): void {
@@ -55,8 +55,8 @@ export abstract class BBHelpClient {
   }
 
   /**
-   * This does nothing when {@link HelpConfig#mimicOmnibar} is true.
-   * Instead of using this method, disable omnibar mimicking.
+   * This does nothing when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   public static closeWidget(): void {

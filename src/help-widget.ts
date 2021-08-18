@@ -169,8 +169,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This does nothing when {@link HelpConfig#mimicOmnibar} is true.
-   * Instead of using this method, disable omnibar mimicking.
+   * This does nothing when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   public close() {
@@ -207,8 +207,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This only opens when {@link HelpConfig#mimicOmnibar} is true.
-   * Instead of using this method, disable omnibar mimicking and use {@link BBHelpHelpWidget#open} directly instead.
+   * This only opens anything when {@link HelpConfig#helpMode} is legacy.
+   * Instead of using this method, enter menu mode and use {@link BBHelpHelpWidget#open} directly instead.
    * @deprecated
    */
   public toggleOpen(helpKey?: string) {
@@ -271,8 +271,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private widgetReady() {
@@ -296,8 +296,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private setUpCommunication() {
@@ -308,8 +308,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private actionResponse(action: CommunicationAction) {
@@ -341,8 +341,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private updateConfigKeys(configOptions: any) {
@@ -358,8 +358,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private sendConfig() {
@@ -370,8 +370,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private renderInvoker() {
@@ -380,8 +380,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private createElements() {
@@ -392,8 +392,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private renderElements() {
@@ -403,8 +403,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private setUpInvokerEvents() {
@@ -414,7 +414,7 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * The concept of collapsing isn't relevant when {@link HelpConfig#mimicOmnibar} is false.
+   * The concept of collapsing isn't relevant when {@link HelpConfig#helpMode} is menu.
    * Thus the widget is effectively always collapsed in that state.
    * @deprecated
    */
@@ -423,8 +423,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private setClassesForWindowSize = () => {
@@ -451,8 +451,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private isMobileWidth(): boolean {
@@ -471,8 +471,8 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * This isn't needed when {@link HelpConfig#mimicOmnibar} is false.
-   * Instead of using this method, disable omnibar mimicking.
+   * This isn't needed when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
    * @deprecated
    */
   private isMobileHeight(): boolean {
@@ -496,10 +496,10 @@ export class BBHelpHelpWidget {
   }
 
   /**
-   * @return false iff config is defined and {@link HelpConfig#mimicOmnibar} is defined as false.
+   * @return false iff config is defined and {@link HelpConfig#helpMode} is defined as menu.
    */
   private isOmnibarMimickingEnabled(config: HelpConfig = this.config): boolean {
-    return config === undefined || config.mimicOmnibar !== false;
+    return config === undefined || config.helpMode !== 'menu';
   }
 
   private isOmnibarMimickingDisabled(config: HelpConfig = this.config): boolean {
