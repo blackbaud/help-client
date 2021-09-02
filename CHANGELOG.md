@@ -1,3 +1,13 @@
+# 3.0.1
+
+- Add `helpMode` config property to enable a _menu_ mode that will do the following:
+  - Will _not_ display any visual elements for the widget, including the iframe that embedded the bb-help SPA.
+  - Will leverage stored configs directly from this project, as opposed to the configs in bb-help SPA (since it's no longer embedded).
+  - Will open all topics in a new tab.
+  - Will call an optional `helpUpdateCallback` when the current topic is changed.
+- Deprecate properties that only apply to a `helpMode` of _legacy_; _menu_ is the preferred mode going forward.
+- Add `unload` method.
+
 # 3.0.0 (2020-06-09)
 
 ### Breaking changes
