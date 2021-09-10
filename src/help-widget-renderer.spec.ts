@@ -9,6 +9,11 @@ describe('BBHelpHelpWidgetRenderer', () => {
     widgetRenderer = new BBHelpHelpWidgetRenderer();
   });
 
+  afterEach(() => {
+    const elements = document.body.querySelectorAll('*:not(script)');
+    elements.forEach(ele => ele.remove());
+  });
+
   it('should create the help container', (done) => {
     const containerEl: HTMLElement = widgetRenderer.createContainer();
     expect(containerEl).toBeDefined();

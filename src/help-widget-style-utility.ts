@@ -109,8 +109,8 @@ const mobileCss = `
 `;
 
 export class BBHelpStyleUtility {
-
   private stylesLoaded: boolean = false;
+  private addedStyles: HTMLStyleElement[] = [];
 
   public addAllStyles() {
     if (this.stylesLoaded) {
@@ -122,13 +122,17 @@ export class BBHelpStyleUtility {
     this.stylesLoaded = true;
   }
 
+  public removeAllStyles(): void {
+    this.addedStyles.forEach(styleEl => styleEl.remove());
+    this.addedStyles = [];
+    this.stylesLoaded = false;
+  }
+
   public addCssToHead(css: string) {
     const styleEl = document.createElement('style');
-
     styleEl.appendChild(document.createTextNode(css));
-
     document.head.appendChild(styleEl);
-
+    this.addedStyles.push(styleEl);
     return styleEl;
   }
 }

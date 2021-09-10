@@ -25,6 +25,10 @@ export abstract class BBHelpClient {
     return BBHELP.HelpWidget.load(config);
   }
 
+  public static unload() {
+    BBHELP.HelpWidget.unload();
+  }
+
   public static setCurrentHelpKey(helpKey?: string): void {
     BBHELP.HelpWidget.setCurrentHelpKey(helpKey);
   }
@@ -37,6 +41,11 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.open(helpKey);
   }
 
+  /**
+   * This only opens when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode and use {@link BBHelpClient#openWidget} directly instead.
+   * @deprecated
+   */
   public static toggleOpen(): void {
     BBHELP.HelpWidget.toggleOpen();
   }
@@ -45,6 +54,11 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.open(helpKey);
   }
 
+  /**
+   * This does nothing when {@link HelpConfig#helpMode} is menu.
+   * Instead of using this method, enter menu mode.
+   * @deprecated
+   */
   public static closeWidget(): void {
     BBHELP.HelpWidget.close();
   }
@@ -57,10 +71,21 @@ export abstract class BBHelpClient {
     BBHELP.HelpWidget.enableWidget();
   }
 
+  /**
+   * This was a proposed solution to What's new years ago that never was acted upon.
+   * This is kept around solely for backwards compatibility because the method is public.
+   * @deprecated
+   */
   public static getWhatsNewRevision(): void {
     BBHELP.HelpWidget.getWhatsNewRevision();
   }
 
+  /**
+   * This was not intended to be public.
+   * It is not recommended for consumers to use.
+   * Use {@link BBHelpClient#load} instead.
+   * @deprecated
+   */
   public static ready(): Promise<any> {
     return BBHELP.HelpWidget.ready()
       .catch((err: string) => {

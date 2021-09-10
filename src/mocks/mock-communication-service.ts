@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import { BBHelpCommunicationService } from '../service/communication.service';
 
 export class MockCommunicationService {
 
@@ -18,7 +19,29 @@ export class MockCommunicationService {
     return this.commReadyStatus;
   }
 
+  public unload() {
+
+  }
+
   public postMessage() {
     //
   }
+}
+
+export type Spied<T> = {
+  [func in keyof T]: jasmine.Spy;
+};
+
+export function createCommSvcSpy(): Spied<BBHelpCommunicationService> {
+  return jasmine.createSpyObj(
+    'BBHelpCommunicationService',
+    ['bindChildWindowReference', 'ready', 'isFromHelpWidget', 'postMessage', 'unload']
+  );
+}
+
+export function expectNoCommCalls(commSvcSpy: Spied<BBHelpCommunicationService>) {
+  expect(commSvcSpy.bindChildWindowReference).not.toHaveBeenCalled();
+  expect(commSvcSpy.ready).not.toHaveBeenCalled();
+  expect(commSvcSpy.isFromHelpWidget).not.toHaveBeenCalled();
+  expect(commSvcSpy.postMessage).not.toHaveBeenCalled();
 }
