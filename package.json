@@ -4,7 +4,7 @@
     "publishToCDN": true,
     "publishToNPM": true
   },
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Provides a client-side library for interacting with the Help Widget.",
   "main": "dist/bundles/help-client.umd.js",
   "module": "index.ts",
