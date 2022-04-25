@@ -23,11 +23,10 @@ jobs:
     - name: Build
       run: npm run build
     - name: Publish
-      run: npm publish
+      run: npm publish --tag latest --access public
+      working-directory: dist
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      with:
-        working-directory: dist
     - uses: rtCamp/action-slack-notify@master
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
