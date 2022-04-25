@@ -31,9 +31,7 @@
   },
   "homepage": "https://github.com/blackbaud/help-client#readme",
   "dependencies": {},
-  "peerDependencies": {
-    "rxjs": "^6.0.0"
-  },
+  "peerDependencies": {},
   "devDependencies": {
     "@types/core-js": "0.9.41",
     "@types/jasmine": "2.5.47",
@@ -52,7 +50,6 @@
     "node-sass": "4.14.1",
     "raw-loader": "0.5.1",
     "rimraf": "2.6.1",
-    "rxjs": "6.3.3",
     "source-map-inline-loader": "1.0.0",
     "ts-loader": "6.0.4",
     "tslint": "5.18.0",

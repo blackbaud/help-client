@@ -1,12 +1,12 @@
-import { Subject } from 'rxjs';
 import { CommunicationAction } from '../models/communication-action';
 
 const HOST_ORIGIN: string = 'https://host.nxt.blackbaud.com';
 
 export class BBHelpCommunicationService {
-  public communicationAction: Subject<CommunicationAction> = new Subject();
   public childWindow: HTMLIFrameElement;
   public childWindowReady: boolean = false;
+
+  private communicationListener: (action: CommunicationAction) => void;
 
   public unload(): void {
     window.removeEventListener('message', this.messageHandler);
@@ -54,28 +54,38 @@ export class BBHelpCommunicationService {
     this.childWindow.contentWindow.postMessage(message, origin);
   }
 
+  public setListener(listener: (action: CommunicationAction) => void) {
+    this.communicationListener = listener;
+  }
+
   private messageHandler = (event: any) => {
     if (this.isFromHelpWidget(event)) {
       const message = event.data;
       switch (message.messageType) {
         case 'ready':
           this.postMessage({ messageType: 'host-ready' });
-          this.communicationAction.next({ messageType: 'Child Window Ready' });
+          this.communicate({ messageType: 'Child Window Ready' });
           this.childWindowReady = true;
           break;
         case 'close-widget':
-          this.communicationAction.next({ messageType: 'Close Widget' });
+          this.communicate({ messageType: 'Close Widget' });
           break;
         case 'open-widget':
-          this.communicationAction.next({ messageType: 'Open Widget', helpKey: message.helpKey });
+          this.communicate({ messageType: 'Open Widget', helpKey: message.helpKey });
           break;
         case 'config-loaded':
-          this.communicationAction.next({ messageType: 'Config Loaded', data: message.data });
+          this.communicate({ messageType: 'Config Loaded', data: message.data });
           break;
         default:
           console.error(`No matching response for message type: ${message.messageType}`);
           break;
       }
+    }
+  }
+
+  private communicate(action: CommunicationAction) {
+    if (this.communicationListener) {
+      this.communicationListener(action);
     }
   }
 }

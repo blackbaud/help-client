@@ -2,13 +2,15 @@ import { BBHelpHelpWidget } from './help-widget';
 import { MockCommunicationService } from './mocks/mock-communication-service';
 import { MockWidgetRenderer} from './mocks/mock-renderer';
 import { MockStyleUtility } from './mocks/mock-style-utility';
+import { CommunicationAction } from './models/communication-action';
 
 describe('BBHelpHelpWidget', () => {
   let helpWidget: BBHelpHelpWidget;
   let originalTimeout: number;
   let mockWidgetRenderer: any;
-  let mockCommunicationService: any;
+  let mockCommunicationService: MockCommunicationService;
   let mockStyleUtility: any;
+  let communicationListener: (action: CommunicationAction) => void | undefined;
 
   beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -16,21 +18,26 @@ describe('BBHelpHelpWidget', () => {
 
     mockWidgetRenderer = new MockWidgetRenderer();
     mockCommunicationService = new MockCommunicationService();
+
+    spyOn(mockCommunicationService, 'setListener').and.callFake(
+      (listener: (action: CommunicationAction) => void) => communicationListener = listener
+    );
+
     mockStyleUtility = new MockStyleUtility();
     helpWidget = new BBHelpHelpWidget(
       mockWidgetRenderer,
-      mockCommunicationService,
+      mockCommunicationService as any,
       mockStyleUtility
     );
     helpWidget.init();
     spyOn(mockCommunicationService, 'postMessage').and.callThrough();
     spyOn(mockCommunicationService, 'ready').and.callThrough();
-    spyOn(mockCommunicationService, 'communicationAction').and.callThrough();
   });
 
   afterEach(() => {
     document.body.innerHTML = '';
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+    communicationListener = undefined;
   });
 
   it('should call the createContainer method on the renderer', (done) => {
@@ -409,7 +416,7 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should react to actions, Close Widget', (done) => {
     spyOn(helpWidget, 'close').and.callThrough();
-    mockCommunicationService.communicationAction.next({ messageType: 'Close Widget' });
+    communicationListener({ messageType: 'Close Widget' });
     expect(helpWidget.close).toHaveBeenCalled();
     expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
@@ -417,7 +424,7 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should react to actions, Open Widget', (done) => {
     spyOn(helpWidget, 'open').and.callThrough();
-    mockCommunicationService.communicationAction.next({ messageType: 'Open Widget', helpKey: 'whats-new.html' });
+    communicationListener({ messageType: 'Open Widget', helpKey: 'whats-new.html' });
     expect(helpWidget.open).toHaveBeenCalledWith('whats-new.html');
     expect(document.activeElement.id).toEqual(helpWidget['invoker'].id);
     done();
@@ -425,7 +432,7 @@ describe('BBHelpHelpWidget', () => {
 
   it ('should react to actions, Child Window Ready (loadCalled false) by not sending the config', (done) => {
     const consoleSpy = spyOn(window.console, 'error').and.callFake(() => { return; });
-    mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
+    communicationListener({ messageType: 'Child Window Ready' });
     expect(mockCommunicationService.postMessage).not.toHaveBeenCalled();
     expect(consoleSpy).not.toHaveBeenCalled();
     done();
@@ -437,7 +444,7 @@ describe('BBHelpHelpWidget', () => {
     };
 
     helpWidget.load(fakeConfig).then(() => {
-      mockCommunicationService.communicationAction.next({ messageType: 'Child Window Ready' });
+      communicationListener({ messageType: 'Child Window Ready' });
       expect(mockCommunicationService.postMessage).toHaveBeenCalledWith({
         config: helpWidget.config,
         messageType: 'user-config'
@@ -464,7 +471,7 @@ describe('BBHelpHelpWidget', () => {
     helpWidget.load(originalConfig).then(() => {
       expect(helpWidget.config).toEqual(originalConfig);
       expect(helpWidget['defaultHelpKey']).toEqual(originalConfig.defaultHelpKey);
-      mockCommunicationService.communicationAction.next({
+      communicationListener({
         data: JSON.stringify(extendedConfig),
         messageType: 'Config Loaded'
       });
@@ -490,7 +497,7 @@ describe('BBHelpHelpWidget', () => {
     const rendererSpy = spyOn(mockWidgetRenderer, 'addInvokerStyles').and.callThrough();
     helpWidget.load(originalConfig).then(() => {
       expect(helpWidget.config).toEqual(originalConfig);
-      mockCommunicationService.communicationAction.next({
+      communicationListener({
         data: JSON.stringify(extendedConfig),
         messageType: 'Config Loaded'
       });
@@ -509,7 +516,7 @@ describe('BBHelpHelpWidget', () => {
     spyOn(window.console, 'error').and.callFake(() => {
       return;
     });
-    mockCommunicationService.communicationAction.next(testAction);
+    communicationListener(testAction);
     expect(window.console.error).toHaveBeenCalledWith(`No matching response for action: ${testAction.messageType}`);
     done();
   });

@@ -156,11 +156,13 @@ describe('BBHelpCommunicationService', () => {
       origin: HOST_ORIGIN
     };
 
+    const communicationListenerSpy = jasmine.createSpy('listener');
+    commService.setListener(communicationListenerSpy);
+
     spyOn(commService, 'postMessage').and.callThrough();
-    spyOn(commService.communicationAction, 'next').and.callThrough();
     currentMessageListener(event);
     expect(commService.postMessage).toHaveBeenCalledWith({ messageType: 'host-ready', source: 'help-client' });
-    expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Child Window Ready' });
+    expect(communicationListenerSpy).toHaveBeenCalledWith({ messageType: 'Child Window Ready' });
     expect(commService.childWindowReady).toBe(true);
     done();
   });
@@ -174,9 +176,11 @@ describe('BBHelpCommunicationService', () => {
       origin: HOST_ORIGIN
     };
 
-    spyOn(commService.communicationAction, 'next').and.callThrough();
+    const communicationListenerSpy = jasmine.createSpy('listener');
+    commService.setListener(communicationListenerSpy);
+
     currentMessageListener(event);
-    expect(commService.communicationAction.next).toHaveBeenCalledWith({ messageType: 'Close Widget'});
+    expect(communicationListenerSpy).toHaveBeenCalledWith({ messageType: 'Close Widget'});
     done();
   });
 
@@ -190,9 +194,11 @@ describe('BBHelpCommunicationService', () => {
       origin: HOST_ORIGIN
     };
 
-    spyOn(commService.communicationAction, 'next').and.callThrough();
+    const communicationListenerSpy = jasmine.createSpy('listener');
+    commService.setListener(communicationListenerSpy);
+
     currentMessageListener(event);
-    expect(commService.communicationAction.next).toHaveBeenCalledWith({
+    expect(communicationListenerSpy).toHaveBeenCalledWith({
       helpKey: 'whats-new.html',
       messageType: 'Open Widget'
     });
@@ -211,9 +217,11 @@ describe('BBHelpCommunicationService', () => {
       origin: HOST_ORIGIN
     };
 
-    spyOn(commService.communicationAction, 'next').and.callThrough();
+    const communicationListenerSpy = jasmine.createSpy('listener');
+    commService.setListener(communicationListenerSpy);
+
     currentMessageListener(event);
-    expect(commService.communicationAction.next).toHaveBeenCalledWith({
+    expect(communicationListenerSpy).toHaveBeenCalledWith({
       data: event.data.data,
       messageType: 'Config Loaded'
     });
@@ -239,7 +247,9 @@ describe('BBHelpCommunicationService', () => {
   });
 
   it('should not try to handle messages from sources other than the skyux-spa-bb-help', (done) => {
-    spyOn(commService.communicationAction, 'next').and.callThrough();
+    const communicationListenerSpy = jasmine.createSpy('listener');
+    commService.setListener(communicationListenerSpy);
+
     spyOn(window.console, 'error').and.callThrough();
     const testMessageType = 'Test Message Type';
     const event = {
@@ -250,7 +260,7 @@ describe('BBHelpCommunicationService', () => {
       origin: 'Other Source'
     };
     currentMessageListener(event);
-    expect(commService.communicationAction.next).not.toHaveBeenCalled();
+    expect(communicationListenerSpy).not.toHaveBeenCalled();
     expect(window.console.error).not.toHaveBeenCalled();
     done();
   });

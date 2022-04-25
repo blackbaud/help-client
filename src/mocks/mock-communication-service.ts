@@ -1,11 +1,9 @@
-import { Subject } from 'rxjs';
+import { CommunicationAction } from '../models/communication-action';
 import { BBHelpCommunicationService } from '../service/communication.service';
 
 export class MockCommunicationService {
 
   public commReadyStatus: any = Promise.resolve();
-
-  public communicationAction: Subject<any> = new Subject();
 
   public childWindow: HTMLIFrameElement;
 
@@ -26,6 +24,10 @@ export class MockCommunicationService {
   public postMessage() {
     //
   }
+
+  public setListener(_listener: (action: CommunicationAction) => void) {
+    //
+  }
 }
 
 export type Spied<T> = {
@@ -35,7 +37,7 @@ export type Spied<T> = {
 export function createCommSvcSpy(): Spied<BBHelpCommunicationService> {
   return jasmine.createSpyObj(
     'BBHelpCommunicationService',
-    ['bindChildWindowReference', 'ready', 'isFromHelpWidget', 'postMessage', 'unload']
+    ['bindChildWindowReference', 'ready', 'isFromHelpWidget', 'postMessage', 'unload', 'setListener']
   );
 }
 
