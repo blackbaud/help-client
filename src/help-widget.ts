@@ -276,7 +276,7 @@ export class BBHelpHelpWidget {
    * @deprecated
    */
   private widgetReady() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       let readyAttempts = 0;
       const duration: number = 100;
 
@@ -302,7 +302,7 @@ export class BBHelpHelpWidget {
    */
   private setUpCommunication() {
     this.communicationService.bindChildWindowReference(this.iframe);
-    this.communicationService.communicationAction.subscribe((action: CommunicationAction) => {
+    this.communicationService.setListener((action: CommunicationAction) => {
       this.actionResponse(action);
     });
   }
