@@ -1,4 +1,9 @@
-# 3.1.0 (2021-04-25)
+# 3.1.1 (2022-05-03)
+
+- Re-release to fix an issue with CDN deployment. #86
+
+# 3.1.0 (2022-04-25)
+
 - Removed the dependency on RxJS. [#83](https://github.com/blackbaud/help-client/pull/83)
 
 # 3.0.1
